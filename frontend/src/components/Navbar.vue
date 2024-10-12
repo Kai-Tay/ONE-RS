@@ -1,7 +1,12 @@
+<script setup>
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {auth} from '../firebase.js';
+</script>
+
 <template>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">ONE.RS</a>
+            <a class="navbar-brand" href="#">🧑‍🍳 ONE.RS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
                 aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -32,9 +37,6 @@
 </template>
 
 <script>
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import auth from '../firebase.js';
-
 export default {
     name: 'Navbar',
     data() {

@@ -1,7 +1,8 @@
 <script setup>
 import Navbar from './Navbar.vue';
-import auth from '../firebase.js';
+import { auth, db } from '../firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { setDoc, doc } from 'firebase/firestore';
 </script>
 
 <!-- HTML STUFF -->
@@ -9,7 +10,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfi
     <Navbar />
     <div class="login-container">
         <form @submit.prevent="handleLogin" v-if="isLogin">
-            <h1>Login</h1>
+            <h1> 🔒 Login</h1>
             <div class="form-group">
                 <label for="email">Email </label>
                 <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
@@ -19,14 +20,25 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfi
                 <label for="password">Password </label>
                 <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
             </div>
-            <button type="submit">Log In</button>
+            <button class="button-submit" type="submit">Log In</button>
         </form>
 
         <form @submit.prevent="handleSignUp" v-else>
-            <h1>Sign Up</h1>
+            <h1> 📋 Sign Up</h1>
+            <div class="form-group">
+                <label for="email">User Type </label>
+                <div class="btn-group w-100">
+                    <button type="button" class="btn"
+                        :class="{ 'btn-primary': !isSupplier, 'btn-outline-primary': isSupplier }"
+                        @click="isSupplier = false">Restaurant</button>
+                    <button type="button" class="btn"
+                        :class="{ 'btn-primary': isSupplier, 'btn-outline-primary': !isSupplier }"
+                        @click="isSupplier = true">Supplier</button>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="email">Name </label>
-                <input type="text" v-model="userName" placeholder="Enter Your username" required />
+                <input type="text" v-model="userName" placeholder="Enter your username" required />
             </div>
 
             <div class="form-group">
@@ -38,10 +50,11 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfi
                 <label for="password">Password </label>
                 <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
             </div>
-            <button type="submit">Sign Up</button>
+
+            <button class="button-submit" type="submit">Sign Up</button>
         </form>
 
-        <button class="d-inline" @click="toggleLogin">{{ switchLabel }}</button>
+        <button class="d-inline button-switch" @click="toggleLogin">{{ switchLabel }}</button>
     </div>
 </template>
 
@@ -55,16 +68,17 @@ export default {
             password: '',
             userName: '',
             isLogin: true,
-            switchLabel: 'Sign Up Instead',
+            isSupplier: false,
+            switchLabel: "Don't have an account? Sign Up Instead",
         };
     },
     methods: {
         toggleLogin() {
             this.isLogin = !this.isLogin;
             if (this.isLogin) {
-                this.switchLabel = "Sign Up Instead"
+                this.switchLabel = "Don't have an account? Sign Up Instead"
             } else {
-                this.switchLabel = "Login Instead"
+                this.switchLabel = 'Already have an account? Log In Instead'
             }
 
         },
@@ -74,7 +88,6 @@ export default {
                     alert("Signed In")
                     // Signed in -> Redirect to home page
                     const user = userCredential.user;
-                    console.log(userCredential)
                     this.$router.push('/');
                 })
                 .catch((error) => {
@@ -85,19 +98,33 @@ export default {
                 });
         },
         handleSignUp() {
+            // Check if userName is taken
             createUserWithEmailAndPassword(auth, this.email, this.password)
                 .then((userCredential) => {
                     // Signed up + Store UserName
                     const user = userCredential.user;
                     updateProfile(user, {
-                        displayName: this.userName 
+                        displayName: this.userName
                     })
-                    alert("User signed up")
+
+                    // Add user data into firebase DB (Username + Account Type + Points )
+                    // Store additional data in Firestore
+                    setDoc(doc(db, "users", user.uid), {
+                        userName: this.userName,
+                        userType: this.isSupplier ? "supplier" : "restaurant",
+                        points: this.isSupplier ? null : 0,
+                    })
+                        .then(() => {
+                            alert("User signed up");
+                            this.$router.push('/');
+                        })
+                        .catch((error) => {
+                            console.error("Error adding document: ", error);
+                        }
+                        )
                 })
                 .catch((error) => {
-                    alert("Error in Signing Up, Please Try Again!")
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
+                    console.error("Error in Signing Up, Please Try Again!", error)
                     // ..
                 });
         }
@@ -108,7 +135,49 @@ export default {
 <!-- CSS STUFF -->
 <style>
 .login-container {
-    background-color: whitesmoke;
-    color: black;
+    width: 80%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.button-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.button-switch {
+    width: 100%;
+    padding: 10px;
+    background-color: #ebebeb;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
 }
 </style>
