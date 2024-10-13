@@ -2,8 +2,8 @@
         <div class="chat-container">
         <div class="messages-container" ref="messagesContainer">
             <ul id="messages">
-            <li v-for="(message, index) in messages" :key="message.id" :class="{ odd: index % 2 !== 0 }">
-                <strong>{{ message.userId }}</strong>: {{ message.text }}
+            <li v-for="(message, index) in messages" :key="message.id" :class="{ 'current-user': message.userId === currentUser.uid }">
+                <strong>{{ getUserName(message.userId) }}</strong>: {{ message.text }}
             </li>
             </ul>
         </div>
@@ -19,22 +19,23 @@
     import { ref, onMounted, nextTick } from 'vue';
     import { auth, db } from '../firebase.js';
     import { onAuthStateChanged } from 'firebase/auth';
-    import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
+    import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, getDoc, doc } from 'firebase/firestore';
     
-    const user = ref(null);
+    const currentUser = ref(null);
     const messages = ref([]);
     const newMessage = ref('');
     const error = ref(null);
     const messagesContainer = ref(null);
+    const userNames = ref({});
     
     const sendMessage = async () => {
         error.value = null;
-        if (newMessage.value && user.value) {
+        if (newMessage.value && currentUser.value) {
         try {
             await addDoc(collection(db, 'messages'), {
             text: newMessage.value,
             timestamp: serverTimestamp(),
-            userId: user.value.uid
+            userId: currentUser.value.uid
             });
             newMessage.value = '';
         } catch (err) {
@@ -58,6 +59,12 @@
         nextTick(() => {
             scrollToBottom();
         });
+        // Fetch usernames for new users
+        messages.value.forEach(message => {
+            if (!userNames.value[message.userId]) {
+            fetchUserName(message.userId);
+            }
+        });
         }, (err) => {
         console.error("Error loading messages: ", err);
         error.value = "Failed to load messages: " + err.message;
@@ -70,11 +77,31 @@
         }
     };
     
+    const fetchUserName = async (userId) => {
+        try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            userNames.value[userId] = userData.username || 'Unknown User';
+        } else {
+            userNames.value[userId] = 'Unknown User';
+        }
+        } catch (err) {
+        console.error("Error fetching username: ", err);
+        userNames.value[userId] = 'Unknown User';
+        }
+    };
+    
+    const getUserName = (userId) => {
+        return userNames.value[userId] || 'Loading...';
+    };
+    
     onMounted(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-        user.value = currentUser;
-        if (currentUser) {
+        onAuthStateChanged(auth, (user) => {
+        currentUser.value = user;
+        if (user) {
             loadMessages();
+            fetchUserName(user.uid); // Fetch current user's name
         } else {
             error.value = "Please log in to use the chat";
         }
@@ -111,8 +138,9 @@
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     
-    #messages li.odd {
+    #messages li.current-user {
         background-color: #e6f3ff;
+        text-align: right;
     }
     
     .message-form {
