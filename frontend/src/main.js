@@ -7,15 +7,15 @@ import Home from './components/Home.vue';
 
 // Define Page Routing
 const routes = [
-  { path: '/', component: Home },
-  { path: '/login', component: Authentication }
+    { path: '/', component: Home },
+    { path: '/login', component: Authentication }
     // INCLUDE PATH TO OTHER PAGES HERE
 ];
 
 // Create the router instance
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes,
+    history: createWebHashHistory(),
+    routes,
 });
 
 // Mount app to html
