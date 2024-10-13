@@ -3,12 +3,15 @@ import App from './App.vue'
 import Authentication from './components/Authentication.vue'
 import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from './components/Home.vue';
+import Chat from './components/Chat.vue'
+
 
 
 // Define Page Routing
 const routes = [
     { path: '/', component: Home },
-    { path: '/login', component: Authentication }
+    { path: '/login', component: Authentication },
+    { path: '/chat', component: Chat}
     // INCLUDE PATH TO OTHER PAGES HERE
 ];
 
