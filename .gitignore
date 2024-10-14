@@ -32,5 +32,4 @@ coverage
 # Ignore .env file
 .env
 
-# Ignore Firebase configuration file
-firebase.js
+#ignore serviceAccountKey.json file
