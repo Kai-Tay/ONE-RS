@@ -33,3 +33,6 @@ coverage
 .env
 
 #ignore serviceAccountKey.json file
+
+# Ignore Backend Deployment file
+/backend/deployment
