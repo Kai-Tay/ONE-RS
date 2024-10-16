@@ -1,39 +1,37 @@
     <template>
         <div class="chat-container">
-        <!-- <div v-if="loading">Loading...</div> -->
         <div v-if="isLoadingPartners">Loading partners...</div>
         <div v-else-if="!currentUser">Please log in to use the chat.</div>
         <div v-else-if="!selectedPartner" class="partner-selection">
-        <h2>Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
-        <ul>
-            <li v-for="partner in availablePartners" :key="partner.id" @click="selectPartner(partner)">
-            {{ partner.name }}
-            </li>
-        </ul>
-        </div>
-        <div v-else>
-        <h2>Chat with {{ selectedPartner.name }}</h2>
-        <div class="messages-container" ref="messagesContainer">
-            <ul id="messages">
-            <li v-for="message in filteredMessages" :key="message.id" :class="{ 'current-user': message.userId === currentUser.uid }">
-                <strong>{{ getUserName(message.userId) }}</strong>: {{ message.text }}
+            <h2>Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
+            <ul>
+            <li v-for="partner in availablePartners" :key="partner.id" class="partner-item">
+                <span class="partner-name">{{ partner.userName }}</span>
+                <button @click="selectPartner(partner)" class="chat-button">Chat</button>
             </li>
             </ul>
         </div>
-        <form @submit.prevent="sendMessage" class="message-form">
-            <label :for="messageInputId">Type a message:</label>
-            <input 
-            :id="messageInputId"
-            v-model="newMessage" 
-            autocomplete="off" 
-            placeholder="Type a message..." 
+        <div v-else class="chat-window">
+            <h2>Chat with {{ selectedPartner.userName }}</h2>
+            <div class="messages-container" ref="messagesContainer">
+            <ul id="messages">
+                <li v-for="message in filteredMessages" :key="message.id" :class="{ 'sent': message.userId === currentUser.uid, 'received': message.userId !== currentUser.uid }">
+                <strong>{{ getUserName(message.userId) }}</strong>: {{ message.text }}
+                </li>
+            </ul>
+            </div>
+            <form @submit.prevent="sendMessage" class="message-form">
+            <input
+                :id="messageInputId"
+                v-model="newMessage" 
+                autocomplete="off" 
+                placeholder="Type a message..." 
             />
             <button type="submit">Send</button>
-        </form>
-        <div v-if="error" class="error-message">{{ error }}</div>
-        <div v-else-if="availablePartners.length === 0">No available partners found.</div>  
+            </form>
+            <div v-if="error" class="error-message">{{ error }}</div>
         </div>
-    </div>
+        </div>
     </template>
     
     <script setup>
@@ -55,6 +53,7 @@
     
     const conversationId = computed(() => {
         if (currentUser.value && selectedPartner.value) {
+            console.log(conversationId,123)
         return [currentUser.value.uid, selectedPartner.value.id].sort().join('_');
         }
         return null;
@@ -86,35 +85,48 @@
         }
     };
     
-    const loadMessages = () => {
-        if (!conversationId.value) return;
+
+
     
-        const messagesRef = collection(db, 'messages');
-        const q = query(
+        const loadMessages = () => {
+    if (!conversationId.value) {
+        console.error("No conversation ID available");
+        return;
+    }
+
+    const messagesRef = collection(db, 'messages');
+    const q = query(
         messagesRef,
         where('conversationId', '==', conversationId.value),
-        orderBy('timestamp', 'asc')
-        );
-    
-        onSnapshot(q, (snapshot) => {
+        orderBy('timestamp', 'asc')  // Make sure this matches the field name in your Firestore documents
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
         messages.value = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        id: doc.id,
+        ...doc.data()
         }));
-        
+        console.log("Updated messages:", messages.value);
         nextTick(() => {
-            scrollToBottom();
+        scrollToBottom();
         });
-    
+
         messages.value.forEach(message => {
-            if (!userNames.value[message.userId]) {
+        if (!userNames.value[message.userId]) {
             fetchUserName(message.userId);
-            }
+        }
         });
-        }, (err) => {
+    }, (err) => {
         console.error("Error loading messages: ", err);
+        if (err.code === 'failed-precondition' || err.code === 'resource-exhausted') {
+        error.value = "Message loading is temporarily unavailable. Please try again later.";
+        } else {
         error.value = "Failed to load messages: " + err.message;
-        });
+        }
+    });
+
+    // Return the unsubscribe function
+    return unsubscribe;
     };
     
     const fetchUserName = async (userId) => {
@@ -122,7 +134,8 @@
         const userDoc = await getDoc(doc(db, 'users', userId));
         if (userDoc.exists()) {
             const userData = userDoc.data();
-            userNames.value[userId] = userData.username || 'Unknown User';
+            // console.log(userData, "abc")
+            userNames.value[userId] = userData.userName || 'Unknown User';
         } else {
             userNames.value[userId] = 'Unknown User';
         }
@@ -141,16 +154,31 @@
         loadMessages();
     };
     
+    const scrollToBottom = () => {
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+    };
+
+
+
+    watch(filteredMessages, (newMessages) => {
+    console.log("Filtered messages updated:", newMessages);
+});
+
+    
     onMounted(() => {
     console.log("Component mounted");
+
     onAuthStateChanged(auth, async (user) => {
         console.log("Auth state changed. User:", user);
         loading.value = true;
         if (user) {
-            console.log("User is authenticated. UID:", user.uid);
+            // console.log("User is authenticated. UID:", user.uid);
             try {
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
+                console.log(userDoc.data(), 456);
                 if (userDoc.exists()) {
                     currentUser.value = { 
                         uid: user.uid, 
@@ -176,14 +204,15 @@
 });
 
     const loadAvailablePartners = async () => {
+        // console.log("Loading partners for user type:", currentUser.value.userType, 12345);
         if (!currentUser.value) return;
 
         isLoadingPartners.value = true;
         const usersRef = collection(db, 'users');
         const partnerType = currentUser.value.userType === 'restaurant' ? 'supplier' : 'restaurant';
-        // console.log(partnerType);
+        console.log(partnerType, 123);
         const q = query(usersRef, where('userType', '==', partnerType), orderBy('userName'))
-
+        
         try {
             const snapshot = await getDocs(q);
             availablePartners.value = snapshot.docs.map(doc => ({
@@ -247,15 +276,156 @@
 
     .message-form {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
     }
 
     .message-form input {
     flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    margin-right: 0;
     }
 
     .message-form button {
-    align-self: flex-end;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    }
+
+    .message-form button:hover {
+    background-color: #45a049;
+    }
+
+    .partner-selection {
+    padding: 1rem;
+    }
+
+    .partner-selection ul {
+    list-style-type: none;
+    padding: 0;
+    }
+
+    .partner-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    }
+
+    .partner-name {
+    font-weight: bold;
+    }
+
+    .chat-button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    }
+
+    .chat-button:hover {
+    background-color: #45a049;
+    }
+
+    .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    }
+
+    .chat-window {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    }
+
+    .messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    }
+
+    #messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    }
+
+    #messages li {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 18px;
+    max-width: 70%;
+    clear: both;
+    }
+
+    #messages li.sent {
+    background-color: #e6f3ff;
+    float: right;
+    text-align: right;
+    border-bottom-right-radius: 0;
+    }
+
+    #messages li.received {
+    background-color: #f0f0f0;
+    float: left;
+    text-align: left;
+    border-bottom-left-radius: 0;
+    }
+
+    .message-form {
+    display: flex;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+    }
+
+    .message-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+    }
+
+    .message-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    }
+
+    .message-form button:hover {
+    background-color: #45a049;
+    }
+
+        .no-messages {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    }
+
+    .error-message {
+    color: red;
+    text-align: center;
+    padding: 10px;
     }
     </style>
