@@ -3,9 +3,11 @@ import Navbar from './Navbar.vue';
 import { auth, db } from '../firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from 'firebase/firestore';
-import { Card , CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card , CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem,  } from "@/components/ui/select";
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 </script>
 
 <!-- HTML STUFF -->
@@ -59,25 +61,25 @@ import { Select } from "@/components/ui/select";
     </div>
     <div class="login-container">
         <form @submit.prevent="handleLogin" v-if="isLogin">
-            <h1> 🔒 Login</h1>
+            <h1 class="tw-text-4xl"> 🔒 Login</h1>
             <div class="form-group">
                 <label for="email">Email </label>
-                <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
+                <input type="email" id="email" v-model="email" class="form-control rounded-3" placeholder="Enter your email" required />
             </div>
 
             <div class="form-group">
                 <label for="password">Password </label>
-                <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
+                <input type="password" id="password" v-model="password" class="form-control rounded-3" placeholder="Enter your password" required />
             </div>
             <button class="button-submit" type="submit">Log In</button>
         </form>
 
         <form @submit.prevent="handleSignUp" v-else>
-            <h1> 📋 Sign Up</h1>
+            <h1 class="tw-text-4xl"> 📋 Sign Up</h1>
             <div class="form-group">
                 <label for="email">User Type </label>
                 <div class="btn-group w-100">
-                    <button type="button" class="btn"
+                    <button type="button" class="btn "
                         :class="{ 'btn-primary': !isSupplier, 'btn-outline-primary': isSupplier }"
                         @click="isSupplier = false">Restaurant</button>
                     <button type="button" class="btn"
@@ -87,17 +89,17 @@ import { Select } from "@/components/ui/select";
             </div>
             <div class="form-group">
                 <label for="email">Name </label>
-                <input type="text" v-model="userName" placeholder="Enter your username" required />
+                <input type="text" v-model="userName" class="form-control rounded-3" placeholder="Enter your username" required />
             </div>
 
             <div class="form-group">
                 <label for="email">Email </label>
-                <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
+                <input type="email" id="email" v-model="email" class="form-control rounded-3" placeholder="Enter your email" required />
             </div>
 
             <div class="form-group">
                 <label for="password">Password </label>
-                <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
+                <input type="password" id="password" class="form-control rounded-3" v-model="password" placeholder="Enter your password" required />
             </div>
 
             <button class="button-submit" type="submit">Sign Up</button>
