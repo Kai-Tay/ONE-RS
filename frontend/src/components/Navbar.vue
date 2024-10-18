@@ -1,6 +1,7 @@
 <script setup>
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import {auth} from '../firebase.js';
+import { auth, db } from '../firebase.js';
+import { doc, getDoc } from "firebase/firestore";
 </script>
 
 <template>
@@ -15,36 +16,46 @@ import {auth} from '../firebase.js';
                 <!-- Restaurant Tabs -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="userType == 'restaurant'">
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page"
+                            href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/buyer' }" href="#/find">Find</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/buyer' }" href="#/find">Find
+                            Suppliers</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Orders</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Order History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Order Analytics</a>
                     </li>
                 </ul>
 
                 <!-- Supplier Tabs -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-else>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page"
+                            href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/find' }" href="#/find">Create Listing</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Current
+                            Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Order Statistics</a>
+                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Inventory
+                            Management</a>
                     </li>
                 </ul>
 
                 <span class="navbar-text" v-if="!isLoggedIn">
-                    <button type="button" class="btn btn-success"
-                        @click="handleLogin">Login / Sign Up</button>
+                    <button type="button" class="btn btn-success" @click="handleLogin">Login / Sign Up</button>
                 </span>
                 <span class="navbar-text" v-else>
+                    <button type="button" class="btn btn-success rounded-pill" @click="handleLogOut"
+                        v-if="userType == 'supplier'">Create Listing</button>
                     <div class="d-inline" style="margin-right: 10px;">{{ userName }}</div>
-                    <button type="button" class="btn btn-outline-danger" @click="handleLogOut">Logout</button>
+                    <button type="button" class="btn btn-outline-danger rounded-pill"
+                        @click="handleLogOut">Logout</button>
                 </span>
             </div>
         </div>
@@ -70,7 +81,32 @@ export default {
                     const uid = user.uid;
                     this.userName = user.displayName;
                     this.isLoggedIn = true;
-                    console.log(uid)
+
+                    user.getIdTokenResult().then((idTokenResult) => {
+                        // Retrieve expirationTime from the token result
+                        const expirationTime = new Date(idTokenResult.expirationTime).getTime(); // Convert to milliseconds
+                        const currentTime = new Date().getTime(); // Get current time in milliseconds
+
+                        // Check if the token is expired
+                        if (currentTime > expirationTime) {
+                            firebase.auth().signOut();
+                            console.log("Session expired. User logged out.");
+
+                            this.isLoggedIn = false;
+                            this.userType = "restaurant";
+                        } else {
+                            // Enter database and find userType
+                            const docRef = doc(db, "users", uid);
+                            getDoc(docRef).then((docSnap) => {
+                                console.log(":HI")
+                                if (docSnap.exists()) {
+                                    this.userType = docSnap.data().userType;
+                                }
+                            });
+
+                            
+                        }
+                    });
                 } else {
                     // User is signed out
                     this.isLoggedIn = false;
@@ -98,10 +134,11 @@ export default {
 </script>
 
 <style>
-.navbar{
+.navbar {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .navbar-brand {
-  font-size: 25px;
+    font-size: 25px;
 }
 </style>
