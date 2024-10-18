@@ -23,6 +23,9 @@ import {auth} from '../firebase.js';
                     <li class="nav-item">
                         <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Orders</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" :class="{ active: $route.path === '/buyerDashboard' }" href="#/buyerDashboard">Dashboard</a>
+                    </li>
                 </ul>
 
                 <!-- Supplier Tabs -->
@@ -35,6 +38,9 @@ import {auth} from '../firebase.js';
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Order Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" :class="{ active: $route.path === '/supplierDashboard' }" href="#/supplierDashboard">Dashboard</a>
                     </li>
                 </ul>
 
