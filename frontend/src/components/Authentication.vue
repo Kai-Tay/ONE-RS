@@ -3,11 +3,60 @@ import Navbar from './Navbar.vue';
 import { auth, db } from '../firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from 'firebase/firestore';
+import { Card , CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Select } from "@/components/ui/select";
 </script>
 
 <!-- HTML STUFF -->
 <template>
     <Navbar />
+    <div>
+        <Card class="tw-w-[350px]">
+            <CardHeader>
+                <CardTitle>Create project</CardTitle>
+                <CardDescription>Deploy your new project in one-click.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form>
+                    <div class="tw-grid tw-items-center tw-w-full tw-gap-4">
+                        <div class="tw-flex tw-flex-col tw-space-y-1.5">
+                            <Label for="name">Name</Label>
+                            <Input id="name" placeholder="Name of your project" />
+                        </div>
+                        <div class="tw-flex tw-flex-col tw-space-y-1.5">
+                            <Label for="framework">Framework</Label>
+                            <Select>
+                                <SelectTrigger id="framework">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent position="popper">
+                                    <SelectItem value="nuxt">
+                                        Nuxt
+                                    </SelectItem>
+                                    <SelectItem value="next">
+                                        Next.js
+                                    </SelectItem>
+                                    <SelectItem value="sveltekit">
+                                        SvelteKit
+                                    </SelectItem>
+                                    <SelectItem value="astro">
+                                        Astro
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </form>
+            </CardContent>
+            <CardFooter class="tw-flex tw-justify-between tw-px-6 tw-pb-6">
+                <Button variant="outline">
+                    Cancel
+                </Button>
+                <Button>Deploy</Button>
+            </CardFooter>
+        </Card>
+    </div>
     <div class="login-container">
         <form @submit.prevent="handleLogin" v-if="isLogin">
             <h1> 🔒 Login</h1>
