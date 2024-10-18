@@ -3,7 +3,8 @@ import App from './App.vue'
 import Authentication from './components/Authentication.vue'
 import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from './components/Home.vue';
-import Chat from './components/chat.vue'
+import Chat from './components/chat.vue';
+import BuyerDashboard from './components/buyerDashboard.vue';
 import './firebase.js';
 
 
@@ -12,7 +13,8 @@ import './firebase.js';
 const routes = [
     { path: '/', component: Home },
     { path: '/login', component: Authentication },
-    { path: '/chat', component: Chat}
+    { path: '/chat', component: Chat},
+    { path: '/buyerDashboard', component: BuyerDashboard}
     // INCLUDE PATH TO OTHER PAGES HERE
 ];
 
