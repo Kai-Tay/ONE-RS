@@ -84,16 +84,21 @@ export default {
 
                     user.getIdTokenResult().then((idTokenResult) => {
                         // Retrieve expirationTime from the token result
-                        const expirationTime = new Date(idTokenResult.expirationTime).getTime(); // Convert to milliseconds
+                        const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
-
+         
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
-                            firebase.auth().signOut();
-                            console.log("Session expired. User logged out.");
+                            signOut(auth).then(() => {
+                                console.log("Session expired. User logged out.");
 
-                            this.isLoggedIn = false;
-                            this.userType = "restaurant";
+                                this.isLoggedIn = false;
+                                this.userType = "restaurant";
+                                
+                            }).catch((error) => {
+                                alert("Error logging out: ", error);
+                            });
+                            
                         } else {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
@@ -103,7 +108,7 @@ export default {
                                 }
                             });
 
-                            
+
                         }
                     });
                 } else {
@@ -119,8 +124,8 @@ export default {
         },
         handleLogOut() {
             signOut(auth).then(() => {
-                alert("User logged out successfully!");
                 // Redirect the user to the login page or handle it appropriately
+                this.$router.push('/');
             }).catch((error) => {
                 alert("Error logging out: ", error);
             });
