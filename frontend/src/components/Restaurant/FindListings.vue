@@ -5,6 +5,14 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button'
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card'
 </script>
 
 <template>
@@ -43,19 +51,22 @@ import { Button } from '@/components/ui/button'
         </div>
     </div> -->
 
+    <!-- Header -->
     <header class="bg-dark tw-py-10">
         <!-- Bootstrap Grid System -->
-        <div class="container">
+        <div class="container-fluid">
             <div class="row justify-content-center mb-4">
                 <div class="col-lg-9">
                     <div class="my-5">
-                        <h1 class="tw-text-5xl fw-bolder tw-text-white tw-mb-10">Find 🔎</h1>
-                        <div class="search-container ">
+                        <h1 class="tw-text-5xl fw-bolder tw-text-white tw-mb-10">Find Suppliers</h1>
+                        <!-- Search Component -->
+                        <div class="search-container tw- ">
                             <Input class="searchInput" :placeholder="searchPlaceholder" v-model="searchQuery" />
                         </div>
                         <div class="tw-my-4 tw-mx-2 tw-flex tw-items-center tw-align-middle tw-justify-center">
                             <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
-                            <Label for="aiSearch" class="tw-text-white tw-ml-2">Use AI Search {{ isAiSearch ? 'Enabled'
+                            <Label for="aiSearch" class="tw-text-white tw-ml-2 tw-text-lg">Use AI Search {{ isAiSearch ?
+                                'Enabled'
                                 : 'Disabled' }}</Label>
                         </div>
                         <div class="tw-flex tw-items-center tw-align-middle tw-justify-center tw-mt-8">
@@ -67,6 +78,38 @@ import { Button } from '@/components/ui/button'
             </div>
         </div>
     </header>
+
+    <!-- Filter Bar from Search -->
+    <div class="mt-5 mb-5 mx-4">
+        <div class="tw-text-4xl tw-font-bold">Listings</div>
+
+    </div>
+
+
+    <!-- Listings -->
+    <div class="tw-flex tw-flex-wrap tw-justify-center">
+        <div class="row container-fluid ">
+            <div class="col-xl-3 col-lg-4 col-md-6 mb-4 " v-for="listing in filteredListings" :key="listing.id">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{{ listing.title }}</CardTitle>
+                        <CardDescription>{{ listing.category }}</CardDescription>
+
+                    </CardHeader>
+                    <CardContent>
+                        <img class="tw-w-full tw-h-72 tw-mx-auto tw-block tw-object-cover tw-my-4" :src="listing.image"
+                            alt="Listing Image" />
+                        <CardDescription class="tw-text-xl">Sold By {{ listing.supplier }}</CardDescription>
+                        <CardDescription class="tw-text-xl">{{ listing.price }}</CardDescription>
+                        {{ listing.description }}
+                    </CardContent>
+                    <CardFooter>
+                        <Button >View Listing</Button>
+                    </CardFooter>
+                </Card>
+            </div>
+        </div>
+    </div>
 
 
 </template>
@@ -88,10 +131,96 @@ export default {
         return {
             searchQuery: '',
             listings: [
-                { id: 1, title: 'Listing 1', description: 'Description for listing 1', price: '$100', image: 'https://via.placeholder.com/150' },
-                { id: 2, title: 'Listing 2', description: 'Description for listing 2', price: '$200', image: 'https://via.placeholder.com/150' },
-                { id: 3, title: 'Listing 3', description: 'Description for listing 3', price: '$300', image: 'https://via.placeholder.com/150' },
-                // Add more mock listings as needed
+                {
+                    id: 1,
+                    title: 'Kampung Chicken',
+                    description: 'Free-range poultry',
+                    price: '$100',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Meat: Poultry',
+                    supplier: 'Farm Fresh Poultry Co.'
+                },
+                {
+                    id: 2,
+                    title: 'Beef Ribeye',
+                    description: 'Premium ribeye cut',
+                    price: '$200',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Meat: Beef',
+                    supplier: 'Prime Cuts Butchers'
+                },
+                {
+                    id: 3,
+                    title: 'Organic Carrots',
+                    description: 'Fresh organic carrots',
+                    price: '$10',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Veg & Fruits: Vegetables',
+                    supplier: 'Green Valley Farms'
+                },
+                {
+                    id: 4,
+                    title: 'Salmon Fillet',
+                    description: 'Fresh Atlantic salmon',
+                    price: '$250',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Meat: Fish',
+                    supplier: 'Ocean Catch Seafood'
+                },
+                {
+                    id: 5,
+                    title: 'Cheddar Cheese',
+                    description: 'Aged cheddar',
+                    price: '$50',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Dairy: Cheese',
+                    supplier: 'Cheese Masters Ltd.'
+                },
+                {
+                    id: 6,
+                    title: 'Whole Wheat Bread',
+                    description: 'Freshly baked bread',
+                    price: '$5',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Carbohydrates: Bread',
+                    supplier: 'Baker’s Delight'
+                },
+                {
+                    id: 7,
+                    title: 'Spaghetti',
+                    description: 'High-quality pasta',
+                    price: '$15',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Carbohydrates: Pasta',
+                    supplier: 'Pasta Perfection'
+                },
+                {
+                    id: 8,
+                    title: 'Pork Belly',
+                    description: 'Tender pork belly',
+                    price: '$180',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Meat: Pork',
+                    supplier: 'Meat Lovers Inc.'
+                },
+                {
+                    id: 9,
+                    title: 'Eggs',
+                    description: 'Organic free-range eggs',
+                    price: '$8',
+                    image: 'https://placehold.co/600x400',
+                    category: 'Dairy: Eggs',
+                    supplier: 'Eggcellent Farms'
+                },
+                {
+                    id: 10,
+                    title: 'Bananas',
+                    description: 'Fresh bananas ',
+                    price: '$6',
+                    image: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg',
+                    category: 'Veg & Fruits: Fruits',
+                    supplier: 'Fruitful Harvest'
+                }
             ],
             filteredListings: [],
         };
@@ -138,7 +267,7 @@ export default {
     computed: {
         // Computed property to dynamically set the placeholder
         searchPlaceholder() {
-            return isAiSearch.value ? 'Tell me your dishes!' : 'Search...';
+            return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search...';
         }
     }
 };
