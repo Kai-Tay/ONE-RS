@@ -14,7 +14,7 @@ const routes = [
     { path: '/', component: Home },
     { path: '/login', component: Authentication },
     { path: '/chat', component: Chat},
-    { path: '/buyerDashboard', component: BuyerDashboard}
+    { path: '/buyerDashboard', component: BuyerDashboard},
     // INCLUDE PATH TO OTHER PAGES HERE
 
     // Supplier
