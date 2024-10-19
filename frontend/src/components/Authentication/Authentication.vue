@@ -106,7 +106,6 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
         <input type="password" id="password" class="form-control rounded-3" v-model="password"
           placeholder="Enter your password" required />
       </div>
-
       <button class="button-submit" type="submit">Sign Up</button>
     </form>
 
