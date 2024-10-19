@@ -2,17 +2,32 @@
 import Navbar from './Navbar.vue';
 import { db } from '../firebase.js';
 import {collection, doc, getDoc, getDocs} from "firebase/firestore";
+import { AreaChart } from '@/components/ui/areaChart';
 </script>
 
 
 <template>
     <Navbar />
 
+    <div>
+        <h1>Testing AreaChart Component</h1>
+        <AreaChart :data="testData" index="name" :categories="['total', 'predicted']" />
+    </div>
+
+
 </template>
 
 
 
+
 <script>
+const testData = [
+  { name: '2023-01', total: 1500, predicted: 1600 },
+  { name: '2023-02', total: 1800, predicted: 1750 },
+  { name: '2023-03', total: 2000, predicted: 2100 },
+];
+
+
 async function fetchRestaurants() {
     const restaurantCollection = collection(db, 'restaurant'); // Reference to the restaurants collection
     const restaurantSnapshot = await getDocs(restaurantCollection); // Fetch the documents
