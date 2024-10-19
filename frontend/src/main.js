@@ -16,6 +16,9 @@ const routes = [
     { path: '/chat', component: Chat},
     { path: '/buyerDashboard', component: BuyerDashboard}
     // INCLUDE PATH TO OTHER PAGES HERE
+
+    // Supplier
+    { path: '/find', component: FindListings},
 ];
 
 // Create the router instance

@@ -20,7 +20,7 @@ import { doc, getDoc } from "firebase/firestore";
                             href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/buyer' }" href="#/find">Find
+                        <a class="nav-link" :class="{ active: $route.path === '/find' }" href="#/find">Find
                             Suppliers</a>
                     </li>
                     <li class="nav-item">
@@ -104,7 +104,6 @@ export default {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
                             getDoc(docRef).then((docSnap) => {
-                                console.log(":HI")
                                 if (docSnap.exists()) {
                                     this.userType = docSnap.data().userType;
                                 }
