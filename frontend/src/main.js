@@ -12,7 +12,7 @@ import './firebase.js';
 const routes = [
     { path: '/', component: Home },
     { path: '/login', component: Authentication },
-    { path: '/chat', component: Chat}
+    { path: '/chat', component: Chat},
     // INCLUDE PATH TO OTHER PAGES HERE
 ];
 
