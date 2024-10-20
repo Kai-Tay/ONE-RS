@@ -1,200 +1,56 @@
-<!-- <template>
-    <div class="tw-flex tw-flex-col tw-h-screen tw-p-4">
-    <div v-if="isLoadingPartners" class="tw-text-center">Loading partners...</div>
-    <div v-else-if="!currentUser" class="tw-text-center">Please log in to use the chat.</div>
-    <div v-else class="tw-h-full tw-flex tw-flex-col">
-    <div v-if="!selectedPartner" class="tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
+<template>
+    <div class="chat-container">
+    <div v-if="isLoadingPartners">Loading partners...</div>
+    <div v-else-if="!currentUser">Please log in to use the chat.</div>
+    <div v-else>
+
+    <div v-if="!selectedPartner" class="partner-selection-view">
+        <h2>Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
         <ul>
-        <li v-for="partner in availablePartners" :key="partner.id" class="tw-flex tw-justify-between tw-items-center tw-p-2 tw-mb-2 tw-bg-gray-100 tw-rounded">
-            <span class="tw-font-bold">{{ partner.userName }}</span>
-        
-            <ShadcnButton @click="selectPartner(partner)">Chat</ShadcnButton>
+        <li v-for="partner in availablePartners" :key="partner.id" class="partner-item">
+            <span class="partner-name">{{ partner.userName }}</span>
+            <button @click="selectPartner(partner)" class="chat-button">Chat</button>
         </li>
         </ul>
     </div>
+    
 
-    <div v-if="selectedPartner" class="tw-flex tw-flex-col tw-h-full tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Chat with {{ selectedPartner.userName }}</h2>
-
-        <div class="tw-mb-4 tw-flex tw-items-center">
-            <Select v-model="targetLanguage" class="tw-w-[180px] tw-mr-4">
-                <SelectTrigger>
-                <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                <SelectItem value="es">Spanish</SelectItem>
-                <SelectItem value="fr">French</SelectItem>
-                <SelectItem value="de">German</SelectItem>
-                <SelectItem value="it">Italian</SelectItem>
-                <SelectItem value="ja">Japanese</SelectItem>
-                </SelectContent>
-            </Select>
-            
-            <ShadcnButton 
-                @click.prevent="translateAllMessages" 
-                :disabled="isTranslating || messages.length === 0" 
-                class="tw-bg-blue-500 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-hover:bg-blue-600 tw-disabled:bg-blue-300">
-                {{ isTranslating ? 'Translating...' : 'Translate All Messages' }}
-            </ShadcnButton>
-        </div>
-        <div class="tw-flex-grow tw-overflow-y-auto tw-p-4 tw-pb-20" ref="messagesContainer">
-        <div v-for="group in groupedMessages" :key="group.date" class="tw-mb-5 tw-relative">
-            <div class="tw-sticky tw-top-0 tw-bg-white tw-p-1 tw-text-center tw-font-bold tw-z-10 tw-mb-2 tw-shadow-sm">
-            {{ group.date }}
-            </div>
-            <ul class="tw-list-none tw-p-0 tw-mt-2"> 
-                <li v-for="message in group.messages" :key="message.timestamp" 
-                    :class="{ 'tw-bg-gray-200 tw-ml-auto': message.senderId === currentUser.uid, 'tw-bg-gray-100': message.senderId !== currentUser.uid }"
-                    class="tw-mb-2 tw-p-2 tw-rounded-lg tw-max-w-[70%] tw-clear-both">
-                    <strong>{{ getUserName(message.senderId) }}</strong>: 
-                    {{ message.translatedText || message.text }}
-                    <small v-if="message.translatedText" class="tw-block tw-text-xs tw-text-gray-500">
-                        Original: {{ message.text }}
-                    </small>
-                    <small class="tw-block tw-text-xs tw-text-gray-500">{{ formatTime(message.timestamp) }}</small>
-                </li>
+    <div v-if="selectedPartner" class="chat-window-view">
+        <h2>Chat with {{ selectedPartner.userName }}</h2>
+        <div class="messages-container" ref="messagesContainer">
+        <div v-for="group in groupedMessages" :key="group.date" class="message-group">
+            <div class="date-header">{{ group.date }}</div>
+            <ul class="messages">
+            <li v-for="message in group.messages" :key="message.timestamp" 
+                :class="{ 'sent': message.senderId === currentUser.uid, 'received': message.senderId !== currentUser.uid }">
+                <strong>{{ getUserName(message.senderId) }}</strong>: {{ message.text }}
+                <small>{{ formatTime(message.timestamp) }}</small>
+            </li>
             </ul>
         </div>
         </div>
-                <form @submit.prevent="sendMessage" class="tw-flex tw-p-4 tw-bg-gray-100 tw-border-t tw-border-gray-300 tw-fixed tw-bottom-0 tw-left-0 tw-w-full tw-box-border">
-
-                    <ShadcnInput
-                        v-model="newMessage"
-                        :id="messageInputId"
-                        placeholder="Type a message..."
-                        class="tw-flex-grow tw-mr-2"
-                    />
-
-                    <ShadcnButton type="submit">Send</ShadcnButton>
-                </form>
-                <div v-if="error" class="tw-text-red-500 tw-text-center tw-p-2">{{ error }}</div>
-            </div>
-        </div>
-    </div>
-</template> -->
-
-<template>
-    <div class="tw-flex tw-flex-col tw-h-screen tw-p-4">
-    <div v-if="isLoadingPartners" class="tw-text-center">Loading partners...</div>
-    <div v-else-if="!currentUser" class="tw-text-center">Please log in to use the chat.</div>
-    <div v-else class="tw-h-full tw-flex tw-flex-col">
-    <div v-if="!selectedPartner" class="tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
-        <ul>
-        <li v-for="partner in availablePartners" :key="partner.id" class="tw-flex tw-justify-between tw-items-center tw-p-2 tw-mb-2 tw-bg-gray-100 tw-rounded">
-            <span class="tw-font-bold">{{ partner.userName }}</span>
-            <Button @click="selectPartner(partner)">Chat</Button>
-        </li>
-        </ul>
-    </div>
-
-    <div v-if="selectedPartner" class="tw-flex tw-flex-col tw-h-full tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Chat with {{ selectedPartner.userName }}</h2>
-
-        <div class="tw-mb-4 tw-flex tw-items-center">
-        <Select v-model="targetLanguage" class="tw-w-[180px] tw-mr-4">
-            <SelectTrigger>
-            <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem v-for="lang in languages" :key="lang.code" :value="lang.code">
-                    {{ lang.name }}
-                </SelectItem>
-            </SelectContent>
-        </Select>
-        
-        <Button 
-            @click.prevent="translateAllMessages" 
-            :disabled="isTranslating || messages.length === 0" 
-            class="tw-bg-blue-500 tw-text-white tw-px-4 tw-py-2 tw-rounded hover:tw-bg-blue-600 disabled:tw-bg-blue-300">
-            {{ isTranslating ? 'Translating...' : 'Translate All Messages' }}
-        </Button>
-        </div>
-
-        <div class="tw-flex-grow tw-overflow-y-auto tw-p-4 tw-pb-20" ref="messagesContainer">
-            <div v-for="group in groupedMessages" :key="group.date" class="tw-mb-5 tw-relative">
-            <div class="tw-sticky tw-top-0 tw-bg-white tw-p-1 tw-text-center tw-font-bold tw-z-10 tw-mb-2 tw-shadow-sm">
-            {{ group.date }}
-            </div>
-                <ul class="tw-list-none tw-p-0 tw-mt-2"> 
-                    <li v-for="message in group.messages" :key="message.timestamp" 
-                        :class="{ 'tw-bg-gray-200 tw-ml-auto': message.senderId === currentUser.uid, 'tw-bg-gray-100': message.senderId !== currentUser.uid }"
-                        class="tw-mb-2 tw-p-2 tw-rounded-lg tw-max-w-[70%] tw-clear-both">
-                        <strong>{{ getUserName(message.senderId) }}</strong>: 
-                        {{ message.translatedText || message.text }}
-                        <small v-if="message.translatedText" class="tw-block tw-text-xs tw-text-gray-500">
-                            Original: {{ message.text }}
-                        </small>
-                        <small class="tw-block tw-text-xs tw-text-gray-500">{{ formatTime(message.timestamp) }}</small>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <form @submit.prevent="sendMessage" class="tw-flex tw-p-4 tw-bg-gray-100 tw-border-t tw-border-gray-300 tw-fixed tw-bottom-0 tw-left-0 tw-w-full tw-box-border">
-        <Input
-            v-model="newMessage"
+        <form @submit.prevent="sendMessage" class="message-form">
+        <input
             :id="messageInputId"
+            v-model="newMessage"
+            autocomplete="off"
             placeholder="Type a message..."
-            class="tw-flex-grow tw-mr-2"
         />
-        <Button type="submit">Send</Button>
+        <button type="submit">Send</button>
         </form>
-        <div v-if="error" class="tw-text-red-500 tw-text-center tw-p-2">{{ error }}</div>
+        <div v-if="error" class="error-message">{{ error }}</div>
     </div>
     </div>
-</div>
+    </div>
 </template>
 
-
-<script setup>
-        const languages = [
-        { code: 'en', name: 'English' },
-        { code: 'es', name: 'Spanish' },
-        { code: 'fr', name: 'French' },
-        { code: 'de', name: 'German' },
-        { code: 'it', name: 'Italian' },
-        { code: 'pt', name: 'Portuguese' },
-        { code: 'ru', name: 'Russian' },
-        { code: 'zh', name: 'Chinese (Simplified)' },
-        { code: 'ja', name: 'Japanese' },
-        { code: 'ko', name: 'Korean' },
-        { code: 'ar', name: 'Arabic' },
-        { code: 'hi', name: 'Hindi' },
-        { code: 'bn', name: 'Bengali' },
-        { code: 'ur', name: 'Urdu' },
-        { code: 'tr', name: 'Turkish' },
-        { code: 'nl', name: 'Dutch' },
-        { code: 'pl', name: 'Polish' },
-        { code: 'sv', name: 'Swedish' },
-        { code: 'fi', name: 'Finnish' },
-        { code: 'da', name: 'Danish' },
-        { code: 'no', name: 'Norwegian' },
-        { code: 'el', name: 'Greek' },
-        { code: 'cs', name: 'Czech' },
-        { code: 'th', name: 'Thai' },
-        { code: 'vi', name: 'Vietnamese' },
-        { code: 'id', name: 'Indonesian' },
-        { code: 'ms', name: 'Malay' },
-        { code: 'fa', name: 'Persian' },
-        { code: 'he', name: 'Hebrew' },
-        ]
-    import { Button } from "@/components/ui/button"
-    import { Input } from "@/components/ui/input"
-    import {
-        Select,
-        SelectContent,
-        SelectItem,
-        SelectTrigger,
-        SelectValue,
-        } from "@/components/ui/select"
-    import axios from 'axios';
+        
+    <script setup>
     import { ref, computed, onMounted, watch, nextTick } from 'vue';
     import { auth, db } from '../firebase.js';
-    import { onAuthStateChanged } from 'firebase/auth';
-    import { collection, setDoc, updateDoc, arrayUnion, onSnapshot, query, where, orderBy, serverTimestamp, getDoc, doc, getDocs } from 'firebase/firestore';
-
+    import { getAuth, onAuthStateChanged } from 'firebase/auth';
+    import { writeBatch, collection, setDoc, updateDoc, arrayUnion, onSnapshot, query, where, orderBy, serverTimestamp, getDoc, doc, getDocs } from 'firebase/firestore';
+    
     const currentUser = ref(null);
     const messages = ref([]);
     const newMessage = ref('');
@@ -205,152 +61,94 @@
     const availablePartners = ref([]);
     const loading = ref(true);
     const isLoadingPartners = ref(false);
-    const rawApiKey = import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY;
-    const cleanApiKey = rawApiKey.replace(/"/g, ''); // Remove any quotation marks
-    const apiKey = ref(cleanApiKey.substring(0, cleanApiKey.length / 2)); // Take only the first half to remove duplication
-
-    const targetLanguage = ref('es');
-    const isTranslating = ref(false);
-
-    const translateAllMessages = async () => {
-    
-    if (messages.value.length === 0 || !apiKey.value) {
-        error.value = messages.value.length === 0 ? "No messages to translate" : "No API key available for translation";
-        return;
-    }
-    
-    isTranslating.value = true;
-    
-    try {
-        const textsToTranslate = messages.value.map(message => message.text);
-        console.log("Texts to translate:", textsToTranslate);
-        
-        const response = await axios.post(
-            'https://translation.googleapis.com/language/translate/v2',
-            {
-                q: textsToTranslate,
-                target: targetLanguage.value
-            },
-            {
-                params: {
-                    key: apiKey.value
-                }
-            }
-        );
-        
-        // console.log("Translation response:", response.data);
-        
-        const translatedTexts = response.data.data.translations.map(t => t.translatedText);
-        
-        messages.value = messages.value.map((message, index) => ({
-            ...message,
-            translatedText: translatedTexts[index]
-        }));
-    } catch (error) {
-        console.error('Translation error:', error);
-        if (error.response) {
-            console.error('Error response:', error.response.data);
-            if (error.response.data && error.response.data.error) {
-                console.error('Detailed error:', error.response.data.error);
-            }
-        }
-        error.value = `Error: Could not translate messages. ${error.response?.data?.error?.message || error.message}`;
-    } finally {
-        isTranslating.value = false;
-    }
-};
-
-
 
     const groupedMessages = computed(() => {
-        const groups = {};
-
-        messages.value.forEach(message => {
-            const date = new Date(message.timestamp).toLocaleDateString();
-            if (!groups[date]) {
-                groups[date] = [];
-            }
-            groups[date].push(message);
-        });
-            return Object.entries(groups).map(([date, msgs]) => ({ date, messages: msgs }));
+    const groups = {};
+    messages.value.forEach(message => {
+        const date = new Date(message.timestamp).toLocaleDateString();
+        if (!groups[date]) {
+        groups[date] = [];
+        }
+        groups[date].push(message);
+    });
+    return Object.entries(groups).map(([date, msgs]) => ({ date, messages: msgs }));
     });
 
 
+const sendMessage = async () => {
+    error.value = null;
+    if (newMessage.value && currentUser.value && selectedPartner.value) {
+        const messageObject = {
+        senderId: currentUser.value.uid,
+        text: newMessage.value,
+        timestamp: Date.now()
+        };
 
-    const sendMessage = async () => {
-        error.value = null;
-        if (newMessage.value && currentUser.value && selectedPartner.value) {
-            const messageObject = {
-            senderId: currentUser.value.uid,
-            text: newMessage.value,
-            timestamp: Date.now()
-            };
-
-            try {
-            const messagesRef = collection(db, 'messages');
-            const userIds = [currentUser.value.uid, selectedPartner.value.id].sort();
-            const chatId = userIds.join('_');
-
-            const chatDocRef = doc(messagesRef, chatId);
-            const chatDoc = await getDoc(chatDocRef);
-
-            if (!chatDoc.exists()) {
-                // Create a new message document
-                await setDoc(chatDocRef, {
-                    participants: userIds,
-                    messages: [messageObject],
-                    lastUpdated: serverTimestamp()
-                    });
-            } else {
-                // Update existing message document
-                await updateDoc(chatDocRef, {
-                    messages: arrayUnion(messageObject),
-                    lastUpdated: serverTimestamp()
-                    });
-            }
-
-            newMessage.value = '';
-            } catch (err) {
-                console.error("Error sending message: ", err);
-                error.value = "Failed to send message: " + err.message;
-            }
-        } else {
-                error.value = newMessage.value ? "Please select a partner to chat with" : "Cannot send empty message";
-        }
-    };
-
-    const loadMessages = () => {
-        if (!currentUser.value || !selectedPartner.value) {
-            console.error("No current user or selected partner");
-            return;
-        }
-
+        try {
         const messagesRef = collection(db, 'messages');
         const userIds = [currentUser.value.uid, selectedPartner.value.id].sort();
         const chatId = userIds.join('_');
+
         const chatDocRef = doc(messagesRef, chatId);
+        const chatDoc = await getDoc(chatDocRef);
 
-        const unsubscribe = onSnapshot(chatDocRef, (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                messages.value = data.messages || [];
-                console.log("Updated messages:", messages.value);
-                nextTick(() => {
-                    scrollToBottom();
-                });
-
-            messages.value.forEach(message => {
-                if (!userNames.value[message.senderId]) {
-                fetchUserName(message.senderId);
-                }
+        if (!chatDoc.exists()) {
+            // Create a new message document
+            await setDoc(chatDocRef, {
+            participants: userIds,
+            messages: [messageObject],
+            lastUpdated: serverTimestamp()
             });
-            }
-        }, (err) => {
-            console.error("Error loading messages: ", err);
-            error.value = "Failed to load messages: " + err.message;
+        } else {
+            // Update existing message document
+            await updateDoc(chatDocRef, {
+            messages: arrayUnion(messageObject),
+            lastUpdated: serverTimestamp()
+            });
+        }
+
+        newMessage.value = '';
+        } catch (err) {
+        console.error("Error sending message: ", err);
+        error.value = "Failed to send message: " + err.message;
+        }
+    } else {
+        error.value = newMessage.value ? "Please select a partner to chat with" : "Cannot send empty message";
+    }
+    };
+
+    const loadMessages = () => {
+    if (!currentUser.value || !selectedPartner.value) {
+        console.error("No current user or selected partner");
+        return;
+    }
+
+    const messagesRef = collection(db, 'messages');
+    const userIds = [currentUser.value.uid, selectedPartner.value.id].sort();
+    const chatId = userIds.join('_');
+    const chatDocRef = doc(messagesRef, chatId);
+
+    const unsubscribe = onSnapshot(chatDocRef, (doc) => {
+        if (doc.exists()) {
+        const data = doc.data();
+        messages.value = data.messages || [];
+        console.log("Updated messages:", messages.value);
+        nextTick(() => {
+            scrollToBottom();
         });
 
-        return unsubscribe;
+        messages.value.forEach(message => {
+            if (!userNames.value[message.senderId]) {
+            fetchUserName(message.senderId);
+            }
+        });
+        }
+    }, (err) => {
+        console.error("Error loading messages: ", err);
+        error.value = "Failed to load messages: " + err.message;
+    });
+
+    return unsubscribe;
     };
 
     const fetchUserName = async (userId) => {
@@ -365,99 +163,267 @@
             userNames.value[userId] = 'Unknown User';
         }
         } catch (err) {
-            console.error("Error fetching username: ", err);
-            userNames.value[userId] = 'Unknown User';
+        console.error("Error fetching username: ", err);
+        userNames.value[userId] = 'Unknown User';
         }
     };
-        
+    
+    // const getUserName = (userId) => {
+    //     return userNames.value[userId] || 'Loading...';
+    // };
 
-        const getUserName = (userId) => {
-            if (!userNames.value[userId]) {
-                fetchUserName(userId);
-                return 'Loading...';
-            }
-            return userNames.value[userId];
+    const getUserName = (userId) => {
+    if (!userNames.value[userId]) {
+    fetchUserName(userId);
+    return 'Loading...';
+    }
+    return userNames.value[userId];
+};
+    
+    const selectPartner = (partner) => {
+        selectedPartner.value = partner;
+        loadMessages();
     };
-        
-        const selectPartner = (partner) => {
-            selectedPartner.value = partner;
-            loadMessages();
-        };
 
-        const formatTime = (timestamp) => {
-            return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        };  
-        
-        const scrollToBottom = () => {
-            if (messagesContainer.value) {
-                messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-            }
-        };
+    const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };  
+    
+    const scrollToBottom = () => {
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+    };
 
-        
-        onMounted(() => {
+    
+    onMounted(() => {
 
-        onAuthStateChanged(auth, async (user) => {
-            loading.value = true;
-            if (user) {
-                try {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    const userDoc = await getDoc(userDocRef);
-                    if (userDoc.exists()) {
-                        currentUser.value = { 
-                            uid: user.uid, 
-                            userName: userDoc.data().userName,
-                            userType: userDoc.data().userType
-                        };
-                        loadAvailablePartners();
-                    } else {
-                        console.error('User document not found in Firestore');
-                        currentUser.value = null;
-                    }
-                } catch (error) {
-                    console.error('Error fetching user document:', error);
+    onAuthStateChanged(auth, async (user) => {
+        loading.value = true;
+        if (user) {
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    currentUser.value = { 
+                        uid: user.uid, 
+                        userName: userDoc.data().userName,
+                        userType: userDoc.data().userType
+                    };
+                    loadAvailablePartners();
+                } else {
+                    console.error('User document not found in Firestore');
                     currentUser.value = null;
                 }
-            } else {
+            } catch (error) {
+                console.error('Error fetching user document:', error);
                 currentUser.value = null;
             }
-            loading.value = false;
-        });
+        } else {
+            currentUser.value = null;
+        }
+        loading.value = false;
     });
+});
 
-        const loadAvailablePartners = async () => {
-            if (!currentUser.value) return;
+    const loadAvailablePartners = async () => {
+        if (!currentUser.value) return;
 
-            isLoadingPartners.value = true;
-            const usersRef = collection(db, 'users');
-            const partnerType = currentUser.value.userType === 'restaurant' ? 'supplier' : 'restaurant';
-            const q = query(usersRef, where('userType', '==', partnerType), orderBy('userName'))
-            
-            try {
-                const snapshot = await getDocs(q);
-                availablePartners.value = snapshot.docs.map(doc => ({
-                id: doc.id,
-                userName: doc.data().userName,
-                userType: doc.data().userType,
-                }));
-            } catch (err) {
-                console.error("Error loading partners:", err);
-                error.value = "Failed to load partners: " + err.message;
-            } finally {
-                isLoadingPartners.value = false;
-            }
-            };
+        isLoadingPartners.value = true;
+        const usersRef = collection(db, 'users');
+        const partnerType = currentUser.value.userType === 'restaurant' ? 'supplier' : 'restaurant';
+        // console.log(partnerType, 123);
+        const q = query(usersRef, where('userType', '==', partnerType), orderBy('userName'))
+        
+        try {
+            const snapshot = await getDocs(q);
+            availablePartners.value = snapshot.docs.map(doc => ({
+            id: doc.id,
+            userName: doc.data().userName,
+            userType: doc.data().userType,
+            }));
+        } catch (err) {
+            console.error("Error loading partners:", err);
+            error.value = "Failed to load partners: " + err.message;
+        } finally {
+        isLoadingPartners.value = false;
+        }
+        };
 
-            watch(selectedPartner, (newPartner) => {
-            if (newPartner) {
-                messages.value = []; 
-                loadMessages(); 
-            }
-        });
-        const messageInputId = 'message-input';
+        watch(selectedPartner, (newPartner) => {
+    if (newPartner) {
+    messages.value = []; // Clear existing messages
+    loadMessages(); // Load new messages
+    }
+});
+    const messageInputId = 'message-input';
 
+    
+    </script>
 
-</script>
+    
+    
+    <style scoped>
 
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 1rem;
+}
 
+.chat-window-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;  
+}
 
+.messages-container {
+    flex-grow: 1;  
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.date-header {
+    position: sticky;
+    top: 0;
+    background-color: #f0f0f0;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.messages {
+    list-style-type: none;
+    padding: 0;
+}
+
+.message-group {
+    margin-bottom: 20px;
+}
+
+.sent, .received {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sent {
+    background-color: #dcf8c6;
+    text-align: right;
+}
+
+.received {
+    background-color: #f0f0f0;
+}
+
+#messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#messages li {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 18px;
+    max-width: 70%;
+    clear: both;
+}
+
+#messages li.sent {
+    background-color: #e6f3ff;
+    float: right;
+    text-align: right;
+    border-bottom-right-radius: 0;
+}
+
+#messages li.received {
+    background-color: #f0f0f0;
+    float: left;
+    text-align: left;
+    border-bottom-left-radius: 0;
+}
+
+.message-form {
+    display: flex;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.message-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;  
+}
+
+.message-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;  
+    cursor: pointer;
+}
+
+.message-form button:hover {
+    background-color: #45a049;
+}
+
+.partner-selection-view {
+    width: 100%;  
+}
+
+.partner-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+.partner-name {
+    font-weight: bold;
+}
+
+.chat-button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.chat-button:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    padding: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+    </style>

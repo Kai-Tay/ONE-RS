@@ -32,8 +32,7 @@ coverage
 # Ignore .env file
 .env
 
-# Ignore serviceAccountKey.json file
-/backend/credentials.json
+#ignore serviceAccountKey.json file
 
 # Ignore Backend Deployment file
 /backend/deployment
