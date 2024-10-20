@@ -1,10 +1,9 @@
 <script setup>
 import { cn } from '@/lib/utils';
-import { Label } from 'radix-vue';
+import { DialogDescription, useForwardProps } from 'radix-vue';
 import { computed } from 'vue';
 
 const props = defineProps({
-  for: { type: String, required: false },
   asChild: { type: Boolean, required: false },
   as: { type: null, required: false },
   class: { type: null, required: false },
@@ -15,18 +14,15 @@ const delegatedProps = computed(() => {
 
   return delegated;
 });
+
+const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>
-  <Label
-    v-bind="delegatedProps"
-    :class="
-      cn(
-        'tw-font-medium tw-leading-none peer-disabled:tw-cursor-not-allowed peer-disabled:tw-opacity-70',
-        props.class,
-      )
-    "
+  <DialogDescription
+    v-bind="forwardedProps"
+    :class="cn('tw-text-sm tw-text-muted-foreground', props.class)"
   >
     <slot />
-  </Label>
+  </DialogDescription>
 </template>
