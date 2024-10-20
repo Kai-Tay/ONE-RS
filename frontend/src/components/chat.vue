@@ -14,42 +14,46 @@
     </div>
 
     <div v-if="selectedPartner" class="tw-flex tw-flex-col tw-h-full tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Chat with {{ selectedPartner.userName }}</h2>
+        <h2 class="tw-text-xl tw-font-bold tw-mb-4">{{ selectedPartner.userName }}</h2>
 
-        <div class="tw-mb-4 tw-flex tw-items-center">
-        <Select v-model="targetLanguage" class="tw-w-[180px] tw-mr-4">
-            <SelectTrigger>
-            <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem v-for="lang in languages" :key="lang.code" :value="lang.code">
+        <div class="tw-mb-4 tw-flex tw-items-center tw-space-x-4">
+            <div class="tw-w-[130px]">
+                <Select v-model="targetLanguage">
+                <SelectTrigger>
+                    <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem v-for="lang in languages" :key="lang.code" :value="lang.code">
                     {{ lang.name }}
-                </SelectItem>
-            </SelectContent>
-        </Select>
-        
-        <Button 
-            @click.prevent="translateAllMessages" 
-            :disabled="isTranslating || messages.length === 0" 
-            class="tw-bg-blue-500 tw-text-white tw-px-4 tw-py-2 tw-rounded hover:tw-bg-blue-600 disabled:tw-bg-blue-300">
-            {{ isTranslating ? 'Translating...' : 'Translate All Messages' }}
-        </Button>
+                    </SelectItem>
+                </SelectContent>
+                </Select>
+            </div>
+
+            <Button 
+                @click.prevent="translateAllMessages" 
+                :disabled="isTranslating || messages.length === 0" 
+                class="tw-bg-blue-500 tw-text-white tw-px-4 tw-py-2 tw-rounded hover:tw-bg-blue-600 disabled:tw-bg-blue-300">
+                {{ isTranslating ? 'Translating...' : 'Translate All' }}
+            </Button>
         </div>
 
         <div class="tw-flex-grow tw-overflow-y-auto tw-p-4 tw-pb-20" ref="messagesContainer">
             <div v-for="group in groupedMessages" :key="group.date" class="tw-mb-5 tw-relative">
-            <div class="tw-sticky tw-top-0 tw-bg-white tw-p-1 tw-text-center tw-font-bold tw-z-10 tw-mb-2 tw-shadow-sm">
-            {{ group.date }}
-            </div>
+                <div class="tw-sticky tw-top-0 tw-z-10 tw-flex tw-justify-center tw-mb-2">
+                    <span class="tw-bg-white tw-text-gray-700 tw-px-3 tw-py-1 tw-rounded-full tw-text-sm tw-font-semibold tw-shadow-sm">
+                        {{ group.date }}
+                    </span>
+                </div>
                 <ul class="tw-list-none tw-p-0 tw-mt-2"> 
                     <li v-for="message in group.messages" :key="message.timeStamp" 
                         :class="{ 'tw-bg-gray-200 tw-ml-auto': message.senderId === currentUser.uid, 'tw-bg-gray-100': message.senderId !== currentUser.uid }"
                         class="tw-mb-2 tw-p-2 tw-rounded-lg tw-max-w-[70%] tw-clear-both">
                         <strong>{{ getUserName(message.senderId) }}</strong>: 
                         {{ message.translatedText || message.text }}
-                        <small v-if="message.translatedText" class="tw-block tw-text-xs tw-text-gray-500">
+                        <!-- <small v-if="message.translatedText" class="tw-block tw-text-xs tw-text-gray-500">
                             Original: {{ message.text }}
-                        </small>
+                        </small> -->
                         <small class="tw-block tw-text-xs tw-text-gray-500">{{ formatTime(message.timeStamp) }}</small>
                     </li>
                 </ul>
