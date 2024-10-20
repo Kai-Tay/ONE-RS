@@ -75,7 +75,7 @@ vertexai.init(
     credentials=credentials
 )
 
-@app.route('/search-ai', methods=['POST'])
+@app.route('/search_ai', methods=['POST'])
 def generate_ingredients():
     # Get JSON data from the request
     data = request.get_json()
