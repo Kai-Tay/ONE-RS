@@ -1,23 +1,23 @@
 <template>
-    <div class="tw-flex tw-flex-col tw-h-screen tw-p-4">
-    <div v-if="isLoadingPartners" class="tw-text-center">Loading partners...</div>
-    <div v-else-if="!currentUser" class="tw-text-center">Please log in to use the chat.</div>
-    <div v-else class="tw-h-full tw-flex tw-flex-col">
-    <div v-if="!selectedPartner" class="tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
+    <div class="flex flex-col h-screen p-4">
+    <div v-if="isLoadingPartners" class="text-center">Loading partners...</div>
+    <div v-else-if="!currentUser" class="text-center">Please log in to use the chat.</div>
+    <div v-else class="h-full flex flex-col">
+    <div v-if="!selectedPartner" class="w-full">
+        <h2 class="text-xl font-bold mb-4">Select a {{ currentUser.userType === 'supplier' ? 'Restaurant' : 'Supplier' }} to chat with:</h2>
         <ul>
-        <li v-for="partner in availablePartners" :key="partner.id" class="tw-flex tw-justify-between tw-items-center tw-p-2 tw-mb-2 tw-bg-gray-100 tw-rounded">
-            <span class="tw-font-bold">{{ partner.userName }}</span>
+        <li v-for="partner in availablePartners" :key="partner.id" class="flex justify-between items-center p-2 mb-2 bg-gray-100 rounded">
+            <span class="font-bold">{{ partner.userName }}</span>
             <Button @click="selectPartner(partner)">Chat</Button>
         </li>
         </ul>
     </div>
 
-    <div v-if="selectedPartner" class="tw-flex tw-flex-col tw-h-full tw-w-full">
-        <h2 class="tw-text-xl tw-font-bold tw-mb-4">{{ selectedPartner.userName }}</h2>
+    <div v-if="selectedPartner" class="flex flex-col h-full w-full">
+        <h2 class="text-xl font-bold mb-4">{{ selectedPartner.userName }}</h2>
 
-        <div class="tw-mb-4 tw-flex tw-items-center tw-space-x-4">
-            <div class="tw-w-[130px]">
+        <div class="mb-4 flex items-center space-x-4">
+            <div class="w-[130px]">
                 <Select v-model="targetLanguage">
                 <SelectTrigger>
                     <SelectValue placeholder="Select language" />
@@ -33,43 +33,43 @@
             <Button 
                 @click.prevent="translateAllMessages" 
                 :disabled="isTranslating || messages.length === 0" 
-                class="tw-bg-blue-500 tw-text-white tw-px-4 tw-py-2 tw-rounded hover:tw-bg-blue-600 disabled:tw-bg-blue-300">
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300">
                 {{ isTranslating ? 'Translating...' : 'Translate All' }}
             </Button>
         </div>
 
-        <div class="tw-flex-grow tw-overflow-y-auto tw-p-4 tw-pb-20" ref="messagesContainer">
-            <div v-for="group in groupedMessages" :key="group.date" class="tw-mb-5 tw-relative">
-                <div class="tw-sticky tw-top-0 tw-z-10 tw-flex tw-justify-center tw-mb-2">
-                    <span class="tw-bg-white tw-text-gray-700 tw-px-3 tw-py-1 tw-rounded-full tw-text-sm tw-font-semibold tw-shadow-sm">
+        <div class="flex-grow overflow-y-auto p-4 pb-20" ref="messagesContainer">
+            <div v-for="group in groupedMessages" :key="group.date" class="mb-5 relative">
+                <div class="sticky top-0 z-10 flex justify-center mb-2">
+                    <span class="bg-white text-gray-700 px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
                         {{ group.date }}
                     </span>
                 </div>
-                <ul class="tw-list-none tw-p-0 tw-mt-2"> 
+                <ul class="list-none p-0 mt-2"> 
                     <li v-for="message in group.messages" :key="message.timeStamp" 
-                        :class="{ 'tw-bg-gray-200 tw-ml-auto': message.senderId === currentUser.uid, 'tw-bg-gray-100': message.senderId !== currentUser.uid }"
-                        class="tw-mb-2 tw-p-2 tw-rounded-lg tw-max-w-[70%] tw-clear-both">
+                        :class="{ 'bg-gray-200 ml-auto': message.senderId === currentUser.uid, 'bg-gray-100': message.senderId !== currentUser.uid }"
+                        class="mb-2 p-2 rounded-lg max-w-[70%] clear-both">
                         <strong>{{ getUserName(message.senderId) }}</strong>: 
                         {{ message.translatedText || message.text }}
-                        <!-- <small v-if="message.translatedText" class="tw-block tw-text-xs tw-text-gray-500">
+                        <!-- <small v-if="message.translatedText" class="block text-xs text-gray-500">
                             Original: {{ message.text }}
                         </small> -->
-                        <small class="tw-block tw-text-xs tw-text-gray-500">{{ formatTime(message.timeStamp) }}</small>
+                        <small class="block text-xs text-gray-500">{{ formatTime(message.timeStamp) }}</small>
                     </li>
                 </ul>
             </div>
         </div>
 
-        <form @submit.prevent="sendMessage" class="tw-flex tw-p-4 tw-bg-gray-100 tw-border-t tw-border-gray-300 tw-fixed tw-bottom-0 tw-left-0 tw-w-full tw-box-border">
+        <form @submit.prevent="sendMessage" class="flex p-4 bg-gray-100 border-t border-gray-300 fixed bottom-0 left-0 w-full box-border">
         <Input
             v-model="newMessage"
             :id="messageInputId"
             placeholder="Type a message..."
-            class="tw-flex-grow tw-mr-2"
+            class="flex-grow mr-2"
         />
         <Button type="submit">Send</Button>
         </form>
-        <div v-if="error" class="tw-text-red-500 tw-text-center tw-p-2">{{ error }}</div>
+        <div v-if="error" class="text-red-500 text-center p-2">{{ error }}</div>
     </div>
     </div>
 </div>

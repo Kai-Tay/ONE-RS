@@ -2,70 +2,87 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from '../firebase.js';
 import { doc, getDoc } from "firebase/firestore";
+import { Button } from "./ui/button/index.js";
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand " href="#">🧑‍🍳 ONE.RS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
-                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-                <!-- Restaurant Tabs -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="userType == 'restaurant'">
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page"
-                            href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/find' }" href="#/find">Find
-                            Suppliers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Order History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/">Order Analytics</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/buyerDashboard' }" href="#/buyerDashboard">Dashboard</a>
-                    </li>
-                </ul>
+    <div>
+        <nav class="h-16 flex items-center justify-between shadow-lg">
+            <!-- Logo + Nav Bar-->
+            <div class="mx-5 text-xl flex flex-inline">
+                <div>🧑‍🍳 ONE.RS</div>
+                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
+                    <!-- Restaurant Tabs -->
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-if="userType == 'restaurant'">
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
+                                Suppliers</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
+                                href="#/order-history">Order History</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
+                                href="#/order-analytics">Order Analytics</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
+                                href="#/buyerDashboard">Dashboard</a></li>
+                    </ul>
 
-                <!-- Supplier Tabs -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-else>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/' }" aria-current="page"
-                            href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Current
-                            Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/?' }" href="#/supplier">Inventory
-                            Management</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" :class="{ active: $route.path === '/supplierDashboard' }" href="#/supplierDashboard">Dashboard</a>
-                    </li>
-                </ul>
+                    <!-- Supplier Tabs -->
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
+                                href="#/supplier">Current Orders</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                                href="#/supplier">Inventory Management</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
+                                href="#/supplierDashboard">Dashboard</a></li>
+                    </ul>
+                </div>
 
-                <span class="navbar-text" v-if="!isLoggedIn">
-                    <button type="button" class="btn btn-success" @click="handleLogin">Login / Sign Up</button>
-                </span>
-                <span class="navbar-text" v-else>
-                    <button type="button" class="btn btn-success rounded-pill" @click="handleLogOut"
-                        v-if="userType == 'supplier'">Create Listing</button>
-                    <div class="d-inline" style="margin-right: 10px;">{{ userName }}</div>
-                    <button type="button" class="btn btn-outline-danger rounded-pill"
-                        @click="handleLogOut">Logout</button>
-                </span>
             </div>
-        </div>
-    </nav>
+
+            <!-- Login Button -->
+            <div class="mx-5 flex flex-inline">
+                <!-- Hamburger Icon (Visible on small screens) -->
+                <Button @click="isMenuOpen = !isMenuOpen" class="ml-4 lg:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </Button>
+                <div v-if="!isLoggedIn" class="lg:flex justify-end hidden">
+                    <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
+                </div>
+                <div v-else class="lg:flex items-center gap-4 hidden">
+                    <span>{{ userName }}</span>
+                    <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
+                </div>
+            </div>
+
+        </nav>
+        <!-- Hamburger Version of Nav Bar -->
+        <transition name="fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+            <div :class="{ 'hidden': isMenuOpen, 'lg:hidden': true }">
+                <ul class="flex flex-col items-left space-y-4 pb-5 px-5">
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
+                            Suppliers</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
+                            href="#/order-history">Order History</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
+                            href="#/order-analytics">Order Analytics</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
+                            href="#/buyerDashboard">Dashboard</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
+                            href="#/supplier">Current Orders</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                            href="#/supplier">Inventory Management</a></li>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
+                            href="#/supplierDashboard">Dashboard</a></li>
+                </ul>
+            </div>
+        </transition>
+    </div>
+
 </template>
 
 <script>
@@ -73,6 +90,7 @@ export default {
     name: 'Navbar',
     data() {
         return {
+            isMenuOpen: false,
             isLoggedIn: false,
             userName: "",
             userType: "restaurant",
@@ -92,7 +110,7 @@ export default {
                         // Retrieve expirationTime from the token result
                         const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
-         
+
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
                             signOut(auth).then(() => {
@@ -100,17 +118,19 @@ export default {
 
                                 this.isLoggedIn = false;
                                 this.userType = "restaurant";
-                                
+                                this.updateParentLoggedOut();
+
                             }).catch((error) => {
                                 alert("Error logging out: ", error);
                             });
-                            
+
                         } else {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
                             getDoc(docRef).then((docSnap) => {
                                 if (docSnap.exists()) {
                                     this.userType = docSnap.data().userType;
+                                    this.updateParentLogIn();
                                 }
                             });
 
@@ -131,10 +151,24 @@ export default {
         handleLogOut() {
             signOut(auth).then(() => {
                 // Redirect the user to the login page or handle it appropriately
+                this.updateParentLoggedOut();
                 this.$router.push('/');
+
             }).catch((error) => {
                 alert("Error logging out: ", error);
             });
+        },
+        updateParentLogIn() {
+            this.$emit('userName', this.userName);
+            this.$emit('userType', this.userType);
+            this.$emit('isLoggedIn', this.isLoggedIn);
+            this.$emit('uid', uid);
+        },
+        updateParentLoggedOut() {
+            this.$emit('userName', "");
+            this.$emit('userType', "restaurant");
+            this.$emit('isLoggedIn', false);
+            this.$emit('uid', "");
         },
     },
     mounted() {
