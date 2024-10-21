@@ -81,8 +81,8 @@ import { Button } from './ui/button';
             <div class="container px-5 my-5">
                 <div class="row justify-content-center gx-5">
                     <div class="col-lg-3 mb-5 mb-lg-0 text-center">
-                        <i class="bi bi-list-columns text-primary fs-1"></i>
-                        <h2 class="h4 fw-bolder">Manage Listings</h2>
+                        <i class="bi bi-list-columns text-primary"></i>
+                        <h2 class="h4 fw-bolder">Listings</h2>
                         <p></p>
                         <a class="text-decoration-none" href="#!">
                             Move to Listings
@@ -90,16 +90,17 @@ import { Button } from './ui/button';
                         </a>
                     </div>
                     <div class="col-lg-3 mb-5 mb-lg-0 text-center">
-                        <i class="bi bi-database-check text-primary fs-1"></i>
+                        <i class="bi bi-database-check text-primary"></i>
                         <h2 class="h4 fw-bolder">Real-time Database</h2>
-                        <p></p>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another
+                            sentence and probably just keep going until we run out of words.</p>
                         <a class="text-decoration-none" href="#!">
                             Move to Real-time Database
                             <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
                     <div class="col-lg-3 text-center">
-                        <i class="bi bi-gear-wide-connected text-primary fs-1"></i>
+                        <i class="bi bi-gear-wide-connected text-primary"></i>
                         <h2 class="h4 fw-bolder">Order Optimisation</h2>
                         <p></p>
                         <a class="text-decoration-none" href="#!">
@@ -111,11 +112,11 @@ import { Button } from './ui/button';
             </div>
         </section>
 
-        <!-- Restaurant -->
+        <!-- Buyer -->
         <section class="py-5 border-bottom" id="features" v-else>
             <div class="container px-5 my-5">
                 <div class="row justify-content-center gx-5">
-                    <div class="col-lg-3 mb-5 mb-lg-0 text-center fs-1">
+                    <div class="col-lg-3 mb-5 mb-lg-0 text-center">
                         <i class="bi bi-robot text-primary"></i>
                         <h2 class="h4 fw-bolder">AI Sourcing</h2>
                         <p>Find the ingredients needed for your restaurant using our AI Sourcing!
@@ -126,7 +127,7 @@ import { Button } from './ui/button';
                         </a>
                     </div>
                     <div class="col-lg-3 mb-5 mb-lg-0 text-center">
-                        <i class="bi bi-credit-card text-primary fs-1"></i>
+                        <i class="bi bi-credit-card text-primary"></i>
                         <h2 class="h4 fw-bolder">Credit Score</h2>
                         <p>As a buyer, you have a credit score to maintain. These will increase for every payment made
                             on time to the supplier. Check your score here!</p>
@@ -136,7 +137,7 @@ import { Button } from './ui/button';
                         </a>
                     </div>
                     <div class="col-lg-3 text-center">
-                        <i class="bi bi-gear-wide-connected text-primary fs-1"></i>
+                        <i class="bi bi-gear-wide-connected text-primary"></i>
                         <h2 class="h4 fw-bolder">Order Optimisation</h2>
                         <p>Are you overbuying ingredients for your business? Use our order optimiser to analyse your
                             order history and plan out your next purchase!</p>
@@ -185,7 +186,7 @@ import { Button } from './ui/button';
             </div>
             <div class="row justify-content-center mb-5">
                 <div class="col-lg-6">
-                    <h4 class="fw-bolder">Manage your Listings</h4>
+                    <h4 class="fw-bolder">Listings</h4>
                     <p class="lead mb-0">Leverage the power of AI to source the finest ingredients with precision and
                         efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to ensure
                         that every ingredient meets your standards, streamlining the sourcing process for optimal
@@ -213,6 +214,10 @@ export default {
             userType: "restaurant",
         };
     },
+    created() {
+        // Initially set the filtered listings to all listings
+        this.filteredListings = this.listings;
+    },
     methods: {
         handleUserName(name) {
             this.userName = name;
@@ -232,9 +237,8 @@ export default {
         searchPlaceholder() {
             return this.isAiSearch ? 'Tell me your dishes!' : 'Search...';
         }
-    },
-    mounted() {
-        this.checkAuthentication();
     }
 };
 </script>
+
+<style></style>
