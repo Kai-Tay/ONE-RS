@@ -26,7 +26,7 @@ import { Button } from "./ui/button/index.js";
                 </ul>
 
                 <!-- Supplier Tabs -->
-                <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0" v-else>
+                <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                             href="#/supplier">Current Orders</a></li>
@@ -45,8 +45,6 @@ import { Button } from "./ui/button/index.js";
                 <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
             </div>
             <div v-else class="flex items-center gap-4">
-                <Button class="" @click="handleLogOut" v-if="userType == 'supplier'">Create
-                    Listing</Button>
                 <span>{{ userName }}</span>
                 <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
             </div>
