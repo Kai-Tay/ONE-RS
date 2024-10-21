@@ -38,36 +38,30 @@ import Navbar from './Navbar.vue';
         </div>
     </div> -->
 
-    <header class="bg-dark py-5">
-        <div class="container px-5">
-            <div class="row gx-5 justify-content-center">
-                <div class="col-lg-6">
-                    <div class="text-center my-5">
-                        <h1 class="display-5 fw-bolder text-white mb-2" v-if="isLogin">Welcome, {{ userName }}</h1>
-                        <h1 class="display-5 fw-bolder text-white mb-2" v-else>Welcome to ONE.RS</h1>
-                        <div v-if="isLogin">
-                            <p class="lead text-white-50 mb-4" v-if="isSupplier">Start setting up your listings!</p>
-                            <p class="lead text-white-50 mb-4" v-else>Start finding your ingredients from
-                                suppliers!
-                            </p>
-                        </div>
-                        <p class="lead text-white-50 mb-4" v-else>The best place for restaurants and suppliers to
-                            connect!</p>
-                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center" v-if="isLogin">
-                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-if="isSupplier">Start
-                                Listing</a>
-                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-else>Find
-                                Suppliers</a>
-                            <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
-                        </div>
-                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center" v-else>
-
-                        </div>
+    <header class="bg-gray-900 py-5 h-80">
+    <div class="container px-5">
+        <div class="row gx-5 justify-center">
+            <div class="col-lg-6">
+                <div class="text-center my-5">
+                    <h1 class="display-5 fw-bolder text-white mb-2" v-if="isLogin">Welcome, {{ userName }}</h1>
+                    <h1 class="display-5 fw-bolder text-white mb-2" v-else>Welcome to ONE.RS</h1>
+                    <div v-if="isLogin">
+                        <p class="lead text-white-50 mb-4" v-if="isSupplier">Start setting up your listings!</p>
+                        <p class="lead text-white-50 mb-4" v-else>Start finding your ingredients from suppliers!</p>
+                    </div>
+                    <p class="lead text-white-50 mb-4" v-else>The best place for restaurants and suppliers to connect!</p>
+                    <div class="grid gap-3 d-sm-flex justify-center" v-if="isLogin">
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-if="isSupplier">Start Listing</a>
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-else>Find Suppliers</a>
+                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+                    </div>
+                    <div class="grid gap-3 d-sm-flex justify-center" v-else>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- When Logged In -->
     <div v-if="isLogin">
