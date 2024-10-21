@@ -1,9 +1,10 @@
 <script setup>
 import Navbar from './Navbar.vue';
+import { Button } from './ui/button';
 </script>
 
 <template>
-    <Navbar />
+    <Navbar @userName="handleUserName" @userType="handleUserType" @isLoggedIn="handleIsLoggedIn" @uid=""handleUid/>
     <!-- <div class="container">
         Search
         <div class="my-5">
@@ -38,35 +39,45 @@ import Navbar from './Navbar.vue';
         </div>
     </div> -->
 
-    <header class="bg-gray-900 py-5 h-80">
-    <div class="container px-5">
-        <div class="row gx-5 justify-center">
+    <header class="bg-gray-900 py-5 h-80 flex flex-col justify-center">
+        <div class="px-5 row gx-5 justify-center">
             <div class="col-lg-6">
-                <div class="text-center my-5">
-                    <h1 class="display-5 fw-bolder text-white mb-2" v-if="isLogin">Welcome, {{ userName }}</h1>
-                    <h1 class="display-5 fw-bolder text-white mb-2" v-else>Welcome to ONE.RS</h1>
-                    <div v-if="isLogin">
-                        <p class="lead text-white-50 mb-4" v-if="isSupplier">Start setting up your listings!</p>
-                        <p class="lead text-white-50 mb-4" v-else>Start finding your ingredients from suppliers!</p>
+                <div class="text-center my-5 ">
+                    <!-- Welcome Text -->
+                    <div class="text-4xl font-bold">
+                        <h1 class="display-5 fw-bolder text-white mb-2" v-if="isLoggedIn">Welcome, {{ userName }}</h1>
+                        <h1 class="display-5 fw-bolder text-white mb-2" v-else>Welcome to ONE.RS</h1>
                     </div>
-                    <p class="lead text-white-50 mb-4" v-else>The best place for restaurants and suppliers to connect!</p>
-                    <div class="grid gap-3 d-sm-flex justify-center" v-if="isLogin">
-                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-if="isSupplier">Start Listing</a>
-                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features" v-else>Find Suppliers</a>
-                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
+                    <!-- SUBHEADERR -->
+                    <div class="text-gray-500 text-2xl">
+                        <div v-if="isLoggedIn">
+                            <p class="lead text-white-50 mb-4" v-if="userType == 'supplier'">Start setting up your listings!</p>
+                            <p class="lead text-white-50 mb-4" v-else>Start finding your ingredients from suppliers!</p>
+                        </div>
+                        <p class="lead text-white-50 mb-4" v-else>The best place for restaurants and suppliers to
+                            connect!
+                        </p>
                     </div>
-                    <div class="grid gap-3 d-sm-flex justify-center" v-else>
+
+                    <!-- Buttons for navigation -->
+                    <div>
+                        <div class="justify-center flex flex-inline "  v-if="isLoggedIn">
+                            <a class="mx-5" href="#features" v-if="userType == 'supplier'"><Button>Find Suppliers!</Button></a>
+                            <a class="mx-5" href="#/find" v-else><Button>Find Suppliers!</Button></a>
+                            <a class="mx-5" href="#!"><Button variant="secondary">Learn More</Button></a>
+                        </div>
+                        <div class="grid gap-3 d-sm-flex justify-center" v-else>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- When Logged In -->
     <div v-if="isLogin">
         <!-- Supplier -->
-        <section class="py-5 border-bottom" id="features" v-if="isSupplier">
+        <section class="py-5 border-bottom" id="features" v-if="userType == 'supplier'">
             <div class="container px-5 my-5">
                 <div class="row justify-content-center gx-5">
                     <div class="col-lg-3 mb-5 mb-lg-0 text-center">
@@ -198,15 +209,9 @@ export default {
     },
     data() {
         return {
-            searchQuery: '',
-            isAiSearch: false,
-            listings: [
-                { id: 1, title: 'Listing 1', description: 'Description for listing 1', price: '$100', image: 'https://via.placeholder.com/150' },
-                { id: 2, title: 'Listing 2', description: 'Description for listing 2', price: '$200', image: 'https://via.placeholder.com/150' },
-                { id: 3, title: 'Listing 3', description: 'Description for listing 3', price: '$300', image: 'https://via.placeholder.com/150' },
-                // Add more mock listings as needed
-            ],
-            filteredListings: [],
+            isLoggedIn: false,
+            userName: "",
+            userType: "restaurant",
         };
     },
     created() {
@@ -214,17 +219,17 @@ export default {
         this.filteredListings = this.listings;
     },
     methods: {
-        filterListings() {
-            if (this.searchQuery) {
-                // Insert CHATGPT QUERY HERE
-                const query = this.searchQuery.toLowerCase();
-                this.filteredListings = this.listings.filter(listing =>
-                    listing.title.toLowerCase().includes(query) ||
-                    listing.description.toLowerCase().includes(query)
-                );
-            } else {
-                this.filteredListings = this.listings;
-            }
+        handleUserName(name) {
+            this.userName = name;
+        },  
+        handleUserType(type) {
+            this.userType = type;
+        }, 
+        handleIsLoggedIn(status) {
+            this.isLoggedIn = status;
+        },
+        handleUid(uid) {
+            this.uid = uid;
         },
     },
     computed: {
