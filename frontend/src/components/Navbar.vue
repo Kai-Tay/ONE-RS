@@ -7,13 +7,62 @@ import { Button } from "./ui/button/index.js";
 
 <template>
     <div>
-    <nav class="h-16 flex items-center justify-between">
-        <!-- Logo + Nav Bar-->
-        <div class="mx-5 text-xl flex flex-inline">
-            <div>🧑‍🍳 ONE.RS</div>
-            <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
-                <!-- Restaurant Tabs -->
-                <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-if="userType == 'restaurant'">
+        <nav class="h-16 flex items-center justify-between shadow-lg">
+            <!-- Logo + Nav Bar-->
+            <div class="mx-5 text-xl flex flex-inline">
+                <div>🧑‍🍳 ONE.RS</div>
+                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
+                    <!-- Restaurant Tabs -->
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-if="userType == 'restaurant'">
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
+                                Suppliers</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
+                                href="#/order-history">Order History</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
+                                href="#/order-analytics">Order Analytics</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
+                                href="#/buyerDashboard">Dashboard</a></li>
+                    </ul>
+
+                    <!-- Supplier Tabs -->
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
+                                href="#/supplier">Current Orders</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                                href="#/supplier">Inventory Management</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
+                                href="#/supplierDashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Login Button -->
+            <div class="mx-5 flex flex-inline">
+                <!-- Hamburger Icon (Visible on small screens) -->
+                <Button @click="isMenuOpen = !isMenuOpen" class="ml-4 lg:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </Button>
+                <div v-if="!isLoggedIn" class="lg:flex justify-end hidden">
+                    <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
+                </div>
+                <div v-else class="lg:flex items-center gap-4 hidden">
+                    <span>{{ userName }}</span>
+                    <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
+                </div>
+            </div>
+
+        </nav>
+        <!-- Hamburger Version of Nav Bar -->
+        <transition name="fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+            <div :class="{ 'hidden': isMenuOpen, 'lg:hidden': true }">
+                <ul class="flex flex-col items-left space-y-4 pb-5 px-5">
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                             Suppliers</a></li>
@@ -23,11 +72,6 @@ import { Button } from "./ui/button/index.js";
                             href="#/order-analytics">Order Analytics</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
                             href="#/buyerDashboard">Dashboard</a></li>
-                </ul>
-
-                <!-- Supplier Tabs -->
-                <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                             href="#/supplier">Current Orders</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
@@ -36,55 +80,9 @@ import { Button } from "./ui/button/index.js";
                             href="#/supplierDashboard">Dashboard</a></li>
                 </ul>
             </div>
-            
-        </div>
-
-        <!-- Login Button -->
-        <div class="mx-5 flex flex-inline">
-            <!-- Hamburger Icon (Visible on small screens) -->
-            <button @click="isMenuOpen = !isMenuOpen" class="ml-4 lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-            <div v-if="!isLoggedIn" class="lg:flex justify-end hidden">
-                <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
-            </div>
-            <div v-else class="lg:flex items-center gap-4 hidden">
-                <span>{{ userName }}</span>
-                <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
-            </div>
-        </div>
-
-    </nav>
-    <!-- Hamburger Version of Nav Bar -->
-    <transition 
-            name="fade" 
-            @before-enter="beforeEnter" 
-            @enter="enter" 
-            @leave="leave">
-    <div :class="{'hidden': isMenuOpen, 'lg:hidden': true}">
-            <ul class="flex flex-col items-left space-y-4 pb-5 px-5">
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
-                        Suppliers</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
-                        href="#/order-history">Order History</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
-                        href="#/order-analytics">Order Analytics</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
-                        href="#/buyerDashboard">Dashboard</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
-                        href="#/supplier">Current Orders</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
-                        href="#/supplier">Inventory Management</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
-                        href="#/supplierDashboard">Dashboard</a></li>
-            </ul>
-        </div>
-    </transition>
+        </transition>
     </div>
-    
+
 </template>
 
 <script>
@@ -120,6 +118,7 @@ export default {
 
                                 this.isLoggedIn = false;
                                 this.userType = "restaurant";
+                                this.updateParentLoggedOut();
 
                             }).catch((error) => {
                                 alert("Error logging out: ", error);
@@ -131,6 +130,7 @@ export default {
                             getDoc(docRef).then((docSnap) => {
                                 if (docSnap.exists()) {
                                     this.userType = docSnap.data().userType;
+                                    this.updateParentLogIn();
                                 }
                             });
 
@@ -151,10 +151,24 @@ export default {
         handleLogOut() {
             signOut(auth).then(() => {
                 // Redirect the user to the login page or handle it appropriately
+                this.updateParentLoggedOut();
                 this.$router.push('/');
+
             }).catch((error) => {
                 alert("Error logging out: ", error);
             });
+        },
+        updateParentLogIn() {
+            this.$emit('userName', this.userName);
+            this.$emit('userType', this.userType);
+            this.$emit('isLoggedIn', this.isLoggedIn);
+            this.$emit('uid', uid);
+        },
+        updateParentLoggedOut() {
+            this.$emit('userName', "");
+            this.$emit('userType', "restaurant");
+            this.$emit('isLoggedIn', false);
+            this.$emit('uid', "");
         },
     },
     mounted() {
