@@ -6,6 +6,8 @@ import Home from './components/Home.vue';
 import Chat from './components/chat.vue';
 import BuyerDashboard from './components/buyerDashboard.vue';
 import FindListings from './components/Restaurant/FindListings.vue';
+import SupplierInventory from './components/Supplier/supplierInventory.vue';
+import addIngredientForm from './components/Supplier/addIngredientForm.vue';
 import './firebase.js';
 
 
@@ -24,6 +26,8 @@ const routes = [
 
     // Supplier
     { path: '/find', component: FindListings},
+    { path: '/supplierInventory', component: SupplierInventory, name: 'supplierInventory'},
+    { path: '/addIngredientForm', component: addIngredientForm, name: 'addIngredientForm'},
 ];
 
 // Create the router instance

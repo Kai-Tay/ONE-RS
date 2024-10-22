@@ -6,6 +6,7 @@ import { Button } from "./ui/button/index.js";
 import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 </script>
 
+
 <template>
     <div>
         <nav class="h-16 flex items-center justify-between shadow-lg">
@@ -32,7 +33,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                                 href="#/supplier">Current Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
-                                href="#/supplier">Inventory Management</a></li>
+                                href="#/supplierInventory">Inventory Management</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
                                 href="#/supplierDashboard">Dashboard</a></li>
                     </ul>
