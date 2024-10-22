@@ -25,7 +25,7 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
     <Card class="mx-auto max-w-sm" v-if="isLogin">
       <CardHeader>
         <CardTitle class="text-2xl">
-          Login
+          Login 🔒
         </CardTitle>
         <CardDescription>
           Enter your email below to login to your account
@@ -67,7 +67,7 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
       <TabsContent value="account">
         <Card>
           <CardHeader>
-            <CardTitle>Create Restaurant Account</CardTitle>
+            <CardTitle>Create Restaurant Account 🧑‍🍳</CardTitle>
             <CardDescription>
               Find Suppliers and Monitor your Orders
             </CardDescription>
@@ -100,7 +100,7 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
       <TabsContent value="supplier">
         <Card>
           <CardHeader>
-            <CardTitle>Create Supplier Account</CardTitle>
+            <CardTitle>Create Supplier Account 📦</CardTitle>
             <CardDescription>
               Find Restaurants and Manage your Inventory
             </CardDescription>
