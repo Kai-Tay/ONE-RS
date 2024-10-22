@@ -5,116 +5,139 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfi
 import { setDoc, doc } from 'firebase/firestore';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs'
 import AuthenticationDialog from './AuthenticationDialog.vue';
 </script>
 
 <!-- HTML STUFF -->
 <template>
   <Navbar />
-  <div>
-    <Card class="tw-w-[350px]">
+
+  <div class="mt-10">
+    <!-- Login -->
+    <Card class="mx-auto max-w-sm" v-if="isLogin">
       <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
+        <CardTitle class="text-2xl">
+          Login
+        </CardTitle>
+        <CardDescription>
+          Enter your email below to login to your account
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
-          <div class="tw-grid tw-items-center tw-w-full tw-gap-4">
-            <div class="tw-flex tw-flex-col tw-space-y-1.5">
-              <Label for="name">Name</Label>
-              <Input id="name" placeholder="Name of your project" />
-            </div>
-            <div class="tw-flex tw-flex-col tw-space-y-1.5">
-              <Label for="framework">Framework</Label>
-              <Select>
-                <SelectTrigger id="framework">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="nuxt">
-                    Nuxt
-                  </SelectItem>
-                  <SelectItem value="next">
-                    Next.js
-                  </SelectItem>
-                  <SelectItem value="sveltekit">
-                    SvelteKit
-                  </SelectItem>
-                  <SelectItem value="astro">
-                    Astro
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <div class="grid gap-4">
+          <div class="grid gap-2">
+            <Label for="email">Email</Label>
+            <Input id="email" type="email" placeholder="name@example.com" required  v-model="email"/>
           </div>
-        </form>
-      </CardContent>
-      <CardFooter class="tw-flex tw-justify-between tw-px-6 tw-pb-6">
-        <Button variant="outline">
-          Cancel
-        </Button>
-        <Button>Deploy</Button>
-      </CardFooter>
-    </Card>
-  </div>
-  <div class="login-container">
-    <form @submit.prevent="handleLogin" v-if="isLogin">
-      <h1 class="tw-text-4xl"> 🔒 Login</h1>
-      <div class="form-group">
-        <label for="email">Email </label>
-        <input type="email" id="email" v-model="email" class="form-control rounded-3" placeholder="Enter your email"
-          required />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password </label>
-        <input type="password" id="password" v-model="password" class="form-control rounded-3"
-          placeholder="Enter your password" required />
-      </div>
-      <button class="button-submit" type="submit">Log In</button>
-    </form>
-
-    <form @submit.prevent="handleSignUp" v-else>
-      <h1 class="tw-text-4xl"> 📋 Sign Up</h1>
-      <div class="form-group">
-        <label for="email">User Type </label>
-        <div class="btn-group w-100">
-          <button type="button" class="btn " :class="{ 'btn-primary': !isSupplier, 'btn-outline-primary': isSupplier }"
-            @click="isSupplier = false">Restaurant</button>
-          <button type="button" class="btn" :class="{ 'btn-primary': isSupplier, 'btn-outline-primary': !isSupplier }"
-            @click="isSupplier = true">Supplier</button>
+          <div class="grid gap-2">
+            <div class="flex items-center">
+              <Label for="password">Password</Label>
+            </div>
+            <Input id="password" type="password" required v-model="password"/>
+          </div>
+          <Button type="submit" class="w-full" @click="handleLogin">
+            Login
+          </Button>
+          <Button variant="outline" class="w-full" @click="toggleLogin">
+            Don't have an account? Sign up Now!
+          </Button>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="email">Name </label>
-        <input type="text" v-model="userName" class="form-control rounded-3" placeholder="Enter your username"
-          required />
-      </div>
+      </CardContent>
+    </Card>
 
-      <div class="form-group">
-        <label for="email">Email </label>
-        <input type="email" id="email" v-model="email" class="form-control rounded-3" placeholder="Enter your email"
-          required />
-      </div>
 
-      <div class="form-group">
-        <label for="password">Password </label>
-        <input type="password" id="password" class="form-control rounded-3" v-model="password"
-          placeholder="Enter your password" required />
-      </div>
-      <button class="button-submit" type="submit">Sign Up</button>
-    </form>
+    <!-- Sign Up -->
+    <Tabs default-value="account" class="mx-auto max-w-sm" v-else>
+      <TabsList class="grid w-full grid-cols-2">
+        <TabsTrigger value="account" @click="toggleSupplier">
+          Restaurant
+        </TabsTrigger>
+        <TabsTrigger value="supplier" @click="toggleSupplier">
+          Supplier
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="account">
+        <Card>
+          <CardHeader>
+            <CardTitle>Create Restaurant Account</CardTitle>
+            <CardDescription>
+              Find Suppliers and Monitor your Orders
+            </CardDescription>
+          </CardHeader>
+          <CardContent class="space-y-2">
+            <div class="space-y-1">
+              <Label for="name">Name</Label>
+              <Input id="name" placeholder="Name" v-model="userName"/>
+            </div>
+            <div class="space-y-1">
+              <Label for="email">Email</Label>
+              <Input id="email" placeholder="name@example.com" v-model="email"/>
+            </div>
+            <div class="space-y-1">
+              <Label for="password">Password</Label>
+              <Input id="password" type="password" v-model="password"/>
+            </div>
 
-    <button class="d-inline button-switch" @click="toggleLogin">{{ switchLabel }}</button>
+            <Button type="submit" class="w-full" @click="handleSignUp">
+              Sign Up
+            </Button>
+            <Button variant="outline" class="w-full" @click="toggleLogin">
+              Have an account? Log in Now!
+            </Button>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+
+      <TabsContent value="supplier">
+        <Card>
+          <CardHeader>
+            <CardTitle>Create Supplier Account</CardTitle>
+            <CardDescription>
+              Find Restaurants and Manage your Inventory
+            </CardDescription>
+          </CardHeader>
+          <CardContent class="space-y-2">
+            <div class="space-y-1">
+              <Label for="name">Name</Label>
+              <Input id="name" placeholder="Name" v-model="userName"/>
+            </div>
+            <div class="space-y-1">
+              <Label for="email">Email</Label>
+              <Input id="email" placeholder="name@example.com" v-model="email"/>
+            </div>
+            <div class="space-y-1">
+              <Label for="password">Password</Label>
+              <Input id="password" type="password" v-model="password"/>
+            </div>
+
+            <Button type="submit" class="w-full" @click="handleSignUp">
+              Sign Up
+            </Button>
+            <Button variant="outline" class="w-full" @click="toggleLogin">
+              Have an account? Log in Now!
+            </Button>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </Tabs>
   </div>
+
+
+
 
 
   <!-- Sign In Success Dialog -->
-  <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription" :success="statusSuccess" @update:showDialog="showAuthDialog = $event"/>
+  <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
+    :success="statusSuccess" @update:showDialog="showAuthDialog = $event" />
 
 
 </template>
@@ -130,7 +153,6 @@ export default {
       userName: '',
       isLogin: true,
       isSupplier: false,
-      switchLabel: "Don't have an account? Sign Up Instead",
 
       // Dialog
       showAuthDialog: false,
@@ -142,12 +164,9 @@ export default {
   methods: {
     toggleLogin() {
       this.isLogin = !this.isLogin;
-      if (this.isLogin) {
-        this.switchLabel = "Don't have an account? Sign Up Instead"
-      } else {
-        this.switchLabel = 'Already have an account? Log In Instead'
-      }
-
+    },
+    toggleSupplier() {
+      this.isSupplier = !this.isSupplier;
     },
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
@@ -167,7 +186,7 @@ export default {
             this.$router.push('/');
           }, 2000);
 
-          
+
         })
         .catch((error) => {
           // Wrong password
@@ -211,7 +230,7 @@ export default {
                 this.showAuthDialog = false;
                 this.$router.push('/');
               }, 2000);
-              
+
             })
             .catch((error) => {
               console.error("Error adding document: ", error);
