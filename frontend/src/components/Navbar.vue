@@ -4,12 +4,13 @@ import { auth, db } from '../firebase.js';
 import { doc, getDoc } from "firebase/firestore";
 import { Button } from "./ui/button/index.js";
 import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
+
 </script>
 
 
 <template>
     <div>
-        <nav class="h-16 flex items-center justify-between shadow-lg">
+        <nav class="h-16 flex items-center justify-between lg:shadow-lg">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
                 <div>🧑‍🍳 ONE.RS</div>
@@ -44,7 +45,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
             <!-- Login Button -->
             <div class="mx-5 flex flex-inline">
                 <!-- Hamburger Icon (Visible on small screens) -->
-                <Button @click="isMenuOpen = !isMenuOpen" class="ml-4 lg:hidden">
+                <Button @click="isMenuOpen = !isMenuOpen" class="ml-4 lg:hidden" variant="secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -63,8 +64,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
         </nav>
         <!-- Hamburger Version of Nav Bar -->
         <transition name="fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
-            <div :class="{ 'hidden': isMenuOpen, 'lg:hidden': true }">
-                <ul class="flex flex-col items-left space-y-4 pb-5 px-5">
+            <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
+                <ul class="flex flex-col items-left space-y-4">
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                             Suppliers</a></li>
@@ -81,6 +82,13 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
                             href="#/supplierDashboard">Dashboard</a></li>
                 </ul>
+                <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
+                    <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
+                </div>
+                <div v-else class="lg:hidden items-center space-x-5">
+                    <span>{{ userName }}</span>
+                    <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
+                </div>
             </div>
         </transition>
     </div>
