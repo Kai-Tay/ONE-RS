@@ -3,6 +3,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from '../firebase.js';
 import { doc, getDoc } from "firebase/firestore";
 import { Button } from "./ui/button/index.js";
+import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 </script>
 
 <template>
@@ -82,6 +83,10 @@ import { Button } from "./ui/button/index.js";
             </div>
         </transition>
     </div>
+    <!-- Sign Out Success Dialog -->
+    <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
+        :success="statusSuccess" @update:showDialog="showAuthDialog = $event" />
+
 
 </template>
 
@@ -94,6 +99,13 @@ export default {
             isLoggedIn: false,
             userName: "",
             userType: "restaurant",
+
+
+            // Dialog
+            showAuthDialog: false,
+            statusHeader: "",
+            statusDescription: "",
+            statusSuccess: true,
         };
     },
     methods: {
@@ -151,7 +163,15 @@ export default {
         handleLogOut() {
             signOut(auth).then(() => {
                 // Redirect the user to the login page or handle it appropriately
+
                 this.updateParentLoggedOut();
+                // Automatically close the dialog after 2 seconds
+                this.statusHeader = "Logged Out Successfully";
+                this.statusDescription = "See you again! Redirecting to the home page...";
+                this.showAuthDialog = true;
+                // setTimeout(() => {
+                //     this.showAuthDialog = false;
+                // }, 2000);
                 this.$router.push('/');
 
             }).catch((error) => {
