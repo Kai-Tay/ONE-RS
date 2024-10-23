@@ -1,180 +1,279 @@
-<script setup>
-// Import necessary Firebase functions and Vue tools
+<script setup lang="ts">
+import { Badge } from '@/components/ui/badge'
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
+import {
+  CircleUser,
+  File,
+  Home,
+  LineChart,
+  ListFilter,
+  MoreHorizontal,
+  Package,
+  Package2,
+  PanelLeft,
+  PlusCircle,
+  Search,
+  Settings,
+  ShoppingCart,
+  Users2,
+} from 'lucide-vue-next'
+
 import Navbar from '../Navbar.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router'; // Import the router
-import { useVueTable, FlexRender, getCoreRowModel } from '@tanstack/vue-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-// Initialize Firebase
+// Initialize Firebase Firestore
 const db = getFirestore();
 const router = useRouter(); // Initialize the router
 
-// Refs for holding the fetched data and the supplier name
-const inventoryData = ref([]);
-const supplierName = ref('');
-const supplierDocId = ref(''); // Hold supplier document ID for updates
+// Reactive variables to store fetched data
+const inventoryData = ref([]); // Holds the list of inventory items
+const supplierName = ref('');  // Holds the supplier name
+const supplierDocId = ref(''); // Holds supplier document ID for updates
 
 // Fetch supplier data from Firebase on component mount
 const fetchSuppliers = async () => {
-    const querySnapshot = await getDocs(collection(db, "supplierListing"));
-    const inventories = [];
+  const querySnapshot = await getDocs(collection(db, "supplierListing"));
+  const inventories = [];
 
-    // For now, assuming we're showing inventory of the first supplier
-    querySnapshot.forEach(docSnapshot => {
-        const supplier = docSnapshot.data();
-        supplierDocId.value = docSnapshot.id; // Capture the document ID
-        supplierName.value = supplier.supplierName;
-        supplier.inventory.forEach((item, index) => {
-            inventories.push({
-                index, // Store the index of the ingredient in the inventory array
-                productName: item.productName,
-                pricePerUnit: item.pricePerUnit,
-                quantity: item.quantity,
-                unit: item.unit
-            });
-        });
+  // Assuming we're showing inventory of the first supplier for now
+  querySnapshot.forEach(docSnapshot => {
+    const supplier = docSnapshot.data();
+    supplierDocId.value = docSnapshot.id; // Capture the document ID
+    supplierName.value = supplier.supplierName; // Get the supplier's name
+
+    supplier.inventory.forEach((item, index) => {
+      inventories.push({
+        index, // Index in the inventory array
+        productName: item.productName,
+        pricePerUnit: item.pricePerUnit,
+        quantity: item.quantity,
+        unit: item.unit
+      });
     });
+  });
 
-    inventoryData.value = inventories;
+  inventoryData.value = inventories; // Assign the fetched inventories
 };
 
-// Function to navigate to the form page when the button is clicked
+// Navigate to form page for adding products
 const navigateToFormPage = () => {
-    router.push({ name: 'addIngredientForm' }); // The name of the route for the form page
+  router.push({ name: 'addIngredientForm' }); // Route to add product form
 };
 
-// Edit function (stub)
+// Edit function (stub for future functionality)
 const editItem = (item) => {
-    console.log('Editing item:', item);
-    // Add your edit logic here, e.g., navigating to an edit page
+  console.log('Editing item:', item);
+  // Add your edit logic here
 };
 
-// Delete function to remove the ingredient from Firebase
+// Delete function to remove the item from Firebase
 const deleteItem = async (item) => {
+  try {
     console.log('Deleting item:', item);
 
-    // Get the supplier document
+    // Get the supplier document reference
     const supplierRef = doc(db, "supplierListing", supplierDocId.value);
 
-    // Fetch current inventory and filter out the deleted item
-    const newInventory = inventoryData.value.filter((_, idx) => idx !== item.index);
+    // Fetch current inventory and filter out the deleted item by matching index
+    const newInventory = inventoryData.value.filter((inventoryItem) => inventoryItem.index !== item.index);
 
-    // Update the document with the new inventory
+    // Update the document in Firestore with the new inventory
     await updateDoc(supplierRef, {
-        inventory: newInventory
+      inventory: newInventory.map((i) => ({
+        productName: i.productName,
+        pricePerUnit: i.pricePerUnit,
+        quantity: i.quantity,
+        unit: i.unit,
+      }))
     });
 
     // Update local inventoryData to reflect the deletion
     inventoryData.value = newInventory;
+    console.log('Item deleted successfully');
+  } catch (error) {
+    console.error('Error deleting item:', error);
+  }
 };
 
+
+// Fetch supplier data when the component is mounted
 onMounted(() => {
-    fetchSuppliers();
+  fetchSuppliers();
 });
 
-// Define columns for the table, with an added 'Actions' column for the dropdown
-const columnsInventory = [
-    { accessorKey: 'productName', header: 'Product Name' },
-    { accessorKey: 'quantity', header: 'Quantity' },
-    { accessorKey: 'unit', header: 'Unit' },
-    { accessorKey: 'pricePerUnit', header: 'Price Per Unit' },
-    {
-        accessorKey: 'actions',
-        header: ' ',
-        cell: ({ row }) => `
-            <DropdownMenu>
-                <DropdownMenuTrigger class="text-indigo-600 hover:text-indigo-900 focus:outline-none">
-                    Options
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem @click="editItem(row.original)">
-                        Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem @click="deleteItem(row.original)">
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        `
-    }
-];
 
-// Set up the table
-const table = useVueTable({
-    data: inventoryData.value,
-    columns: columnsInventory,
-    getCoreRowModel: getCoreRowModel(),
-});
 </script>
 
-
-
 <template>
-    <Navbar />
-    <div class="px-4 sm:px-6 lg:px-8">
-        <!-- Title dynamically set to the supplier's name -->
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-xl font-bold">{{ supplierName }} Inventory</h1>
-            <!-- Button to navigate to the form page -->
-            <button
-                @click="navigateToFormPage"
-                class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-            >
-                Add New Item
-            </button>
-        </div>
+  <Navbar />
+  <div class="flex min-h-screen w-full flex-col bg-muted/40">
+    <!-- Sidebar code here -->
 
-        <div class="mt-8 flow-root">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead>
-                            <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                                <th v-for="header in headerGroup.headers" :key="header.id" scope="col"
-                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <!-- Loop through inventoryData and display products -->
-                            <tr v-for="(item, index) in inventoryData" :key="index">
-                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900">
-                                    {{ item.productName }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">
-                                    {{ item.quantity }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">
-                                    {{ item.unit }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">
-                                    {{ item.pricePerUnit }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger class="text-indigo-600 hover:text-indigo-900 focus:outline-none">
-                                            Options
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuItem @click="editItem(item)">
-                                                Edit
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem @click="deleteItem(item)">
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <header
+        class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <!-- Wrapping Search Bar and Add Product Button in a div with flex layout -->
+        <div class="ml-auto flex flex-col items-end gap-2">
+          <!-- Search Bar -->
+          <div class="relative w-full md:w-[200px] lg:w-[320px]">
+            <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input type="search" placeholder="Search..." class="w-full rounded-lg bg-background pl-8" />
+          </div>
+
+          <!-- Add Product Button below the Search Bar -->
+          <Button @click="navigateToFormPage" size="sm" class="h-7 gap-1">
+            <PlusCircle class="h-3.5 w-3.5" />
+            <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Add Product
+            </span>
+          </Button>
+        </div>
+      </header>
+
+      <!-- Main content (Products table) -->
+      <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+        <Tabs default-value="all">
+          <div class="flex items-center">
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="draft">Draft</TabsTrigger>
+              <TabsTrigger value="archived" class="hidden sm:flex">
+                Archived
+              </TabsTrigger>
+            </TabsList>
+
+            <!-- Filter and Export buttons -->
+            <div class="ml-auto flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" size="sm" class="h-7 gap-1">
+                    <ListFilter class="h-3.5 w-3.5" />
+                    <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Filter
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem checked>Active</DropdownMenuItem>
+                  <DropdownMenuItem>Draft</DropdownMenuItem>
+                  <DropdownMenuItem>Archived</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button size="sm" variant="outline" class="h-7 gap-1">
+                <File class="h-3.5 w-3.5" />
+                <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Export
+                </span>
+              </Button>
             </div>
-        </div>
+          </div>
+
+          <TabsContent value="all">
+            <Card>
+              <CardHeader>
+                <CardTitle>Inventory</CardTitle>
+                <CardDescription>
+                  Manage your products.
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product Name</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Unit</TableHead>
+                      <TableHead>Price per Unit</TableHead>
+                      <TableHead>
+                        <span class="sr-only">Actions</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    <!-- Loop through inventoryData instead of suppliers -->
+                    <TableRow v-for="item in inventoryData" :key="item.index">
+                      <TableCell>{{ item.productName }}</TableCell>
+                      <TableCell>{{ item.quantity }}</TableCell>
+                      <TableCell>{{ item.unit }}</TableCell>
+                      <TableCell>{{ item.pricePerUnit }}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <!-- <DropdownMenuTrigger as-child>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal class="h-4 w-4" />
+                              <span class="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger> -->
+                          <DropdownMenuTrigger class="text-indigo-600 hover:text-indigo-900 focus:outline-none">
+                            Options
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem @click="editItem(item)">Edit</DropdownMenuItem>
+                            <DropdownMenuItem @click="deleteItem(item)">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+
+              <CardFooter>
+                <div class="text-xs text-muted-foreground">
+                  Showing all products
+                </div>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
     </div>
+  </div>
 </template>
-
-
