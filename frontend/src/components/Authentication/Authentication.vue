@@ -35,13 +35,13 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
         <div class="grid gap-4">
           <div class="grid gap-2">
             <Label for="email">Email</Label>
-            <Input id="email" type="email" placeholder="name@example.com" required  v-model="email"/>
+            <Input id="email" type="email" placeholder="name@example.com" required v-model="email" />
           </div>
           <div class="grid gap-2">
             <div class="flex items-center">
               <Label for="password">Password</Label>
             </div>
-            <Input id="password" type="password" required v-model="password"/>
+            <Input id="password" type="password" required v-model="password" />
           </div>
           <Button type="submit" class="w-full" @click="handleLogin">
             Login
@@ -75,15 +75,22 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
           <CardContent class="space-y-2">
             <div class="space-y-1">
               <Label for="name">Name</Label>
-              <Input id="name" placeholder="Name" v-model="userName"/>
+              <Input id="name" placeholder="Name" v-model="userName" />
             </div>
+
+            <!-- New Company Name Field -->
+            <div class="space-y-1">
+              <Label for="company-name">Company's Name</Label>
+              <Input id="company-name" placeholder="Company's Name" v-model="companyName" />
+            </div>
+
             <div class="space-y-1">
               <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email"/>
+              <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
             <div class="space-y-1">
               <Label for="password">Password</Label>
-              <Input id="password" type="password" v-model="password"/>
+              <Input id="password" type="password" v-model="password" />
             </div>
 
             <Button type="submit" class="w-full" @click="handleSignUp">
@@ -96,7 +103,6 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
         </Card>
       </TabsContent>
 
-
       <TabsContent value="supplier">
         <Card>
           <CardHeader>
@@ -108,15 +114,22 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
           <CardContent class="space-y-2">
             <div class="space-y-1">
               <Label for="name">Name</Label>
-              <Input id="name" placeholder="Name" v-model="userName"/>
+              <Input id="name" placeholder="Name" v-model="userName" />
             </div>
+
+            <!-- New Company Name Field for Supplier -->
+            <div class="space-y-1">
+              <Label for="company-name">Company's Name</Label>
+              <Input id="company-name" placeholder="Company's Name" v-model="companyName" />
+            </div>
+
             <div class="space-y-1">
               <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email"/>
+              <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
             <div class="space-y-1">
               <Label for="password">Password</Label>
-              <Input id="password" type="password" v-model="password"/>
+              <Input id="password" type="password" v-model="password" />
             </div>
 
             <Button type="submit" class="w-full" @click="handleSignUp">
@@ -151,6 +164,7 @@ export default {
       email: '',
       password: '',
       userName: '',
+      companyName: '', // New company's name field
       isLogin: true,
       isSupplier: false,
 
@@ -171,83 +185,64 @@ export default {
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          // alert("Signed In")
           this.statusHeader = "Logged In Successful!";
           this.statusDescription = "Redirecting to home page in 2 seconds...";
           this.statusSuccess = true;
           this.showAuthDialog = true;
 
-          console.log("Sign In Success");
-          // Automatically close the dialog after 2 seconds
           setTimeout(() => {
             this.showAuthDialog = false;
-            // Signed in -> Redirect to home page
-            const user = userCredential.user;
             this.$router.push('/');
           }, 2000);
-
-
         })
         .catch((error) => {
-          // Wrong password
-          // alert("Wrong Username/Password. Try Again!")
-
           this.statusHeader = "Log In Unsuccessful";
           this.statusDescription = "Wrong Username/Password. Try Again!";
           this.statusSuccess = false;
           this.showAuthDialog = true;
-          const errorCode = error.code;
-          const errorMessage = error.message;
         });
     },
     handleSignUp() {
-      // Check if userName is taken
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          // Signed up + Store UserName
           const user = userCredential.user;
           updateProfile(user, {
             displayName: this.userName
-          })
+          });
 
-          // Add user data into firebase DB (Username + Account Type + Points )
-          // Store additional data in Firestore
+          // Store user data in Firestore
           setDoc(doc(db, "users", user.uid), {
             userName: this.userName,
+            companyName: this.companyName, // Store company's name in the database
             userType: this.isSupplier ? "supplier" : "restaurant",
             points: this.isSupplier ? null : 0,
           })
             .then(() => {
-              // alert("User signed up");
               this.statusHeader = "Signed Up Successful!";
               this.statusDescription = "Redirecting to home page in 2 seconds...";
               this.statusSuccess = true;
               this.showAuthDialog = true;
 
-              console.log("Sign In Success");
-              // Automatically close the dialog after 2 seconds
               setTimeout(() => {
                 this.showAuthDialog = false;
                 this.$router.push('/');
               }, 2000);
-
             })
             .catch((error) => {
               console.error("Error adding document: ", error);
-            }
-            )
+            });
         })
         .catch((error) => {
-          console.error("Error in Signing Up, Please Try Again!", error)
+          console.error("Error in Signing Up, Please Try Again!", error);
           this.statusHeader = "Signed Up Unsuccessful";
           this.statusDescription = "Error in Signing Up, Please Try Again!";
           this.statusSuccess = false;
           this.showAuthDialog = true;
-          // ..
         });
     }
   }
 };
+
 </script>
 
 <!-- CSS STUFF -->

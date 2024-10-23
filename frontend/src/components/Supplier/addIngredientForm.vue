@@ -1,8 +1,9 @@
 <script setup>
 // Import necessary Firebase functions and Vue tools
 import { ref } from 'vue';
-import { getFirestore, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
+import { auth } from '../../firebase'; // Import the Firebase auth module
 
 // Initialize Firebase
 const db = getFirestore();
@@ -16,30 +17,58 @@ const unit = ref('');
 
 // Function to submit the new ingredient item to the Firebase database
 const addNewIngredient = async () => {
-    // Replace 'SUPPLIER_DOCUMENT_ID' with the actual document ID of the supplier
-    const supplierDocId = 'Dzy8ILt6qG4oHKWdRBqD'; // Make sure this is correct
-    const supplierRef = doc(db, "supplierListing", supplierDocId);
+    // Get the current logged-in user
+    const user = auth.currentUser;
 
-    if (productName.value && pricePerUnit.value && quantity.value && unit.value) {
-        try {
-            // Update Firestore by appending a new item to the 'inventory' array
-            await updateDoc(supplierRef, {
-                inventory: arrayUnion({
-                    productName: productName.value, 
-                    quantity: parseInt(quantity.value), 
-                    unit: unit.value,
-                    pricePerUnit: parseFloat(pricePerUnit.value)
-                })
-            });
+    if (user) {
+        const userDocRef = doc(db, "users", user.uid); // Get the user document reference
+        const userDoc = await getDoc(userDocRef); // Fetch the user document
 
-            // Redirect back to the inventory list after adding
-            router.push('/supplierInventory');
-        } catch (error) {
-            console.error("Error adding new ingredient: ", error);
-            alert("Failed to add ingredient.");
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const companyName = userData.companyName; // Get the user's company name
+
+            if (companyName) {
+                // Fetch the document in supplierListing matching the companyName
+                const supplierDocRef = doc(db, "supplierListing", companyName);
+                const supplierDoc = await getDoc(supplierDocRef);
+
+                if (supplierDoc.exists()) {
+                    // Add the new ingredient to the supplier's inventory
+                    if (productName.value && pricePerUnit.value && quantity.value && unit.value) {
+                        try {
+                            await updateDoc(supplierDocRef, {
+                                inventory: arrayUnion({
+                                    productName: productName.value,
+                                    quantity: parseInt(quantity.value),
+                                    unit: unit.value,
+                                    pricePerUnit: parseFloat(pricePerUnit.value)
+                                })
+                            });
+
+                            // Redirect back to the inventory list after adding
+                            router.push('/supplierInventory');
+                        } catch (error) {
+                            console.error("Error adding new ingredient: ", error);
+                            alert("Failed to add ingredient.");
+                        }
+                    } else {
+                        alert('Please fill in all fields');
+                    }
+                } else {
+                    console.error("Supplier document not found for company: ", companyName);
+                    alert('Supplier document not found.');
+                }
+            } else {
+                console.error("User does not have a companyName.");
+                alert('User does not have a company associated.');
+            }
+        } else {
+            console.error("User document not found.");
+            alert('User document not found.');
         }
     } else {
-        alert('Please fill in all fields');
+        alert('User not logged in');
     }
 };
 </script>
