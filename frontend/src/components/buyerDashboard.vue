@@ -1,5 +1,4 @@
 <script setup>
-import Navbar from './Navbar.vue';
 import { db } from '../firebase.js';
 import {collection, doc, getDoc, getDocs} from "firebase/firestore";
 import { AreaChart } from '@/components/ui/areaChart';
@@ -7,7 +6,6 @@ import { AreaChart } from '@/components/ui/areaChart';
 
 
 <template>
-    <Navbar />
 
     <div>
         <h1>Testing AreaChart Component</h1>

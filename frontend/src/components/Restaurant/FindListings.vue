@@ -1,5 +1,4 @@
 <script setup>
-import Navbar from '../Navbar.vue';
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
@@ -19,8 +18,6 @@ import { db } from '../../firebase.js';
 </script>
 
 <template>
-    <Navbar />
-    
     <header class="bg-gray-900 py-5 h-80 justify-center">
         <div class="px-5 row gx-5 justify-center">
             <div class="col-lg-6">
@@ -53,7 +50,7 @@ import { db } from '../../firebase.js';
 
     <!-- Filter Bar from Search -->
     <div class="mt-5 mb-5 mx-5">
-        <div class="text-4xl font-bold">Listings</div>
+        <div class="text-4xl font-bold">Suppliers</div>
         
         <FilterBar></FilterBar>
     </div>
@@ -102,9 +99,7 @@ const handleSwitchToggle = (newValue) => {
 
 export default {
     name: 'Home',
-    components: {
-        Navbar,
-    },
+    components: {},
     data() {
         return {
             searchQuery: '',
@@ -117,7 +112,7 @@ export default {
         this.filteredListings = this.listings;
     },
     mounted() {
-        // Obtain Database
+        // Obtain Database Suppliers
         this.fetchListings();
     },
     

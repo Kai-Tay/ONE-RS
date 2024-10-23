@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { CircleUser, File, Home, LineChart, ListFilter, MoreHorizontal, Package, Package2, PanelLeft, PlusCircle, Search, Settings, ShoppingCart, Users2 } from 'lucide-vue-next'
 
-import Navbar from '../Navbar.vue';
 import { ref, onMounted } from 'vue'
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router'; 
@@ -106,7 +105,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <Navbar />
   <div class="flex min-h-screen w-full flex-col bg-muted/40">
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <header

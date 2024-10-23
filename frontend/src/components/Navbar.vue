@@ -10,13 +10,13 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
 <template>
     <div>
-        <nav class="h-16 flex items-center justify-between lg:shadow-lg">
+        <nav class="h-16 flex items-center justify-between lg:shadow-lg text-gray-900">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
-                <div>🧑‍🍳 ONE.RS</div>
+                <div class="font-bold">🧑‍🍳 ONE.RS</div>
                 <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
                     <!-- Restaurant Tabs -->
-                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-if="userType == 'restaurant'">
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-if="userType == 'restaurant'">
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                                 Suppliers</a></li>
@@ -29,8 +29,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     </ul>
 
                     <!-- Supplier Tabs -->
-                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-else>
+                        <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                                 href="#/supplier">Current Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
@@ -63,7 +63,6 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
         </nav>
         <!-- Hamburger Version of Nav Bar -->
-        <transition name="fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
             <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
                 <ul class="flex flex-col items-left space-y-4">
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
@@ -90,7 +89,6 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
                 </div>
             </div>
-        </transition>
     </div>
     <!-- Sign Out Success Dialog -->
     <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
@@ -138,7 +136,7 @@ export default {
                                 console.log("Session expired. User logged out.");
 
                                 this.isLoggedIn = false;
-                                this.userType = "restaurant";
+                                this.userType = "";
                                 this.updateParentLoggedOut();
 
                             }).catch((error) => {
@@ -178,9 +176,9 @@ export default {
                 this.statusHeader = "Logged Out Successfully";
                 this.statusDescription = "See you again! Redirecting to the home page...";
                 this.showAuthDialog = true;
-                // setTimeout(() => {
-                //     this.showAuthDialog = false;
-                // }, 2000);
+                setTimeout(() => {
+                    this.showAuthDialog = false;
+                }, 2000);
                 this.$router.push('/');
 
             }).catch((error) => {
@@ -195,14 +193,15 @@ export default {
         },
         updateParentLoggedOut() {
             this.$emit('userName', "");
-            this.$emit('userType', "restaurant");
+            this.$emit('userType', "");
             this.$emit('isLoggedIn', false);
             this.$emit('uid', "");
         },
     },
     mounted() {
         this.checkAuthentication();
-    }
+    },
+
 };
 </script>
 
