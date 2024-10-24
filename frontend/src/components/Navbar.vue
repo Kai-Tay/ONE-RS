@@ -107,6 +107,9 @@ export default {
       
         // Check if user is logged in
         this.checkSessionStorage();
+
+        // Hide hamburger menu on route change
+        this.isMenuOpen = false;
     }
   },
     data() {

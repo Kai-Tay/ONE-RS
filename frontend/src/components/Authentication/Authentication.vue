@@ -11,7 +11,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/components/ui/tabs'
+} from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import AuthenticationDialog from './AuthenticationDialog.vue';
 </script>
 
@@ -75,16 +76,16 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Input id="name" placeholder="Name" v-model="userName" />
             </div>
 
-            <!-- New Company Name Field -->
             <div class="space-y-1">
-              <Label for="company-name">Company's Name</Label>
-              <Input id="company-name" placeholder="Company's Name" v-model="companyName" />
+              <Label for="companyName">Company's Name</Label>
+              <Input id="companyName" placeholder="Company Name" v-model="companyName" />
             </div>
-
+            
             <div class="space-y-1">
               <Label for="email">Email</Label>
               <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
+
             <div class="space-y-1">
               <Label for="password">Password</Label>
               <Input id="password" type="password" v-model="password" />
@@ -114,16 +115,22 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Input id="name" placeholder="Name" v-model="userName" />
             </div>
 
-            <!-- New Company Name Field for Supplier -->
             <div class="space-y-1">
-              <Label for="company-name">Company's Name</Label>
-              <Input id="company-name" placeholder="Company's Name" v-model="companyName" />
+              <Label for="companyName">Company's Name</Label>
+              <Input id="companyName" placeholder="Company Name" v-model="companyName" />
+            </div>
+
+            <div class="space-y-1">
+              <Label for="description">Company's Description</Label>
+              <Textarea placeholder="Give a brief description about your company." v-model="companyDescription"/>
             </div>
 
             <div class="space-y-1">
               <Label for="email">Email</Label>
               <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
+
+            
             <div class="space-y-1">
               <Label for="password">Password</Label>
               <Input id="password" type="password" v-model="password" />
@@ -162,9 +169,12 @@ export default {
       email: '',
       password: '',
       userName: '',
-      companyName: '', // New company's name field
       isLogin: true,
       isSupplier: false,
+
+      // Supplier Based
+      companyName: '',
+      companyDescription: '',
 
       // Dialog
       showAuthDialog: false,
@@ -246,6 +256,7 @@ export default {
             companyName: this.companyName, // Store company's name in the database
             userType: this.isSupplier ? "supplier" : "restaurant",
             points: this.isSupplier ? null : 0,
+            companyDescription: this.isSupplier ? this.companyDescription : null,
           })
             .then(() => {
               // Add session cookie

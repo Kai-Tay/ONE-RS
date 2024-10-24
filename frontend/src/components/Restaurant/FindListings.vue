@@ -5,15 +5,9 @@ import { Label } from '@/components/ui/label'
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button'
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
+    Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,} from '@/components/ui/card'
 import FilterBar from './filterBar.vue';
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from '../../firebase.js';
 </script>
 
@@ -51,10 +45,10 @@ import { db } from '../../firebase.js';
     <!-- Filter Bar from Search -->
     <div class="mt-5 mb-5 mx-5">
         <div class="text-4xl font-bold">Suppliers</div>
-        
+
         <FilterBar></FilterBar>
     </div>
-    
+
 
 
     <!-- Listings -->
@@ -62,19 +56,21 @@ import { db } from '../../firebase.js';
         <div class="mb-4" v-for="listing in listings" :key="listing.id">
             <Card>
                 <CardHeader>
-                    <CardTitle><div class="text-2xl">{{ listing.supplierName }}</div></CardTitle>
-                    <CardDescription>{{ listing.category }}</CardDescription>
+                    <CardTitle>
+                        <div class="text-2xl">{{ listing.supplierName }}</div>
+                    </CardTitle>
+                    <CardDescription>{{ listing.supplierDescription }}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div class="flex flex-inline justify-between">
                         <!-- Text -->
                         <div class="flex flex-col justify-center">
-                            <CardDescription class="text-xl">Data {{ listing }}</CardDescription>
+                            <CardDescription class="text-xl">{{ listing }}</CardDescription>
                             <CardDescription class="text-xl">{{ listing.price }}</CardDescription>
                             {{ listing.description }}
                         </div>
                         <div class="">
-                        <!-- <img class="w-40 h-40 mx-auto block object-cover my-4" :src="listing.image" alt="Listing Image" /> -->
+                            <!-- <img class="w-40 h-40 mx-auto block object-cover my-4" :src="listing.image" alt="Listing Image" /> -->
                         </div>
                     </div>
                 </CardContent>
@@ -105,6 +101,7 @@ export default {
             searchQuery: '',
             filteredListings: [],
             listings: [],
+            companyDetails: [],
         };
     },
     created() {
@@ -115,38 +112,55 @@ export default {
         // Obtain Database Suppliers
         this.fetchListings();
     },
-    
+
     methods: {
         async fetchListings() {
+            // Fetch all listings from the database
             try {
-                console.log(this.listings)
-                const querySnapshot = await getDocs(query(collection(db, "supplierListing"))) 
+                // Get supplierListings Collection
+                const supplierSnapshot = await getDocs(query(collection(db, "supplierListing")))
                 const listingsArray = []
-                querySnapshot.forEach((doc) => {
-                    listingsArray.push({ id: doc.id, ...doc.data() }) 
+                supplierSnapshot.forEach((doc) => {
+                    listingsArray.push({ id: doc.id, ...doc.data() })
                 })
-                this.listings = listingsArray; // Update the listings array with fetched data
+
+                // Get user details colleciton
+                const usersSnapshot = await getDocs(query(collection(db, "users"),where("userType", "==", "supplier")))
+                const usersArray = []
+                usersSnapshot.forEach((doc) => {
+                    usersArray.push({ id: doc.id, ...doc.data() })
+                })
+
+                // Merge the two arrays
+                const mergedArray = listingsArray.map(listing => {
+                    const company = usersArray.find(user => user.id === listing.id)
+
+                    return { ...listing, supplierDescription: company.companyDescription }
+                })
+
+                this.listings = mergedArray;
                 
             } catch (error) {
                 console.error('Error fetching listings:', error)
             }
         },
+
         filterListings() {
-            if (this.searchQuery) {
-                // Insert CHATGPT QUERY HERE
-                // Check if AI Search is enabled
-                if (isAiSearch.value) {
-                    const query = this.performAiSearch();
-                } else {
-                    const query = this.searchQuery.toLowerCase();
-                }
-                // this.filteredListings = this.listings.filter(listing =>
-                //     listing.title.toLowerCase().includes(query) ||
-                //     listing.description.toLowerCase().includes(query)
-                // );
-            } else {
-                this.filteredListings = this.listings;
-            }
+            // if (this.searchQuery) {
+            //     // Insert CHATGPT QUERY HERE
+            //     // Check if AI Search is enabled
+            //     if (isAiSearch.value) {
+            //         const query = this.performAiSearch();
+            //     } else {
+            //         const query = this.searchQuery.toLowerCase();
+            //     }
+            //     // this.filteredListings = this.listings.filter(listing =>
+            //     //     listing.title.toLowerCase().includes(query) ||
+            //     //     listing.description.toLowerCase().includes(query)
+            //     // );
+            // } else {
+            //     this.filteredListings = this.listings;
+            // }
         },
         performAiSearch() {
             // Perform AI search here by calling backend API (INSERT ACTUAL BACKEND SERVER URL)
