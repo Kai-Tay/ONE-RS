@@ -13,7 +13,7 @@ import { CircleUser, File, Home, LineChart, ListFilter, MoreHorizontal, Package,
 
 import Navbar from '../Navbar.vue';
 import { ref, onMounted } from 'vue'
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router'; 
 import { auth } from '../../firebase.js'; // Assuming you have auth initialized
 
@@ -23,7 +23,7 @@ const router = useRouter();
 
 // Reactive variables to store fetched data
 const inventoryData = ref([]); // Holds the list of inventory items
-const supplierName = ref('');  // Holds the supplier name (company name)
+const companyName = ref('');  // Holds the company name from the user collection
 const supplierDocId = ref(''); // Holds supplier document ID for updates
 const userId = ref(''); // Holds current user's ID
 
@@ -39,21 +39,19 @@ const fetchUserAndSuppliers = async () => {
     const userDoc = await getDoc(doc(db, "users", userId.value));
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      const companyName = userData.companyName;
+      companyName.value = userData.companyName; // Set the companyName to display in the UI
 
-      supplierName.value = companyName;
-
-      // Check if the company already exists in "supplierListing"
-      const supplierDocRef = doc(db, "supplierListing", companyName);
+      // Check if the user's document exists in "supplierListing" using userId as document ID
+      const supplierDocRef = doc(db, "supplierListing", userId.value);
       const supplierDoc = await getDoc(supplierDocRef);
 
       if (!supplierDoc.exists()) {
-        // Create a new supplier document if it doesn't exist
+        // Create a new supplier document using userId as document ID
         await setDoc(supplierDocRef, {
-          supplierName: companyName,
+          supplierName: companyName.value, // Store company name in the supplier document
           inventory: []
         });
-        console.log('Supplier document created for company:', companyName);
+        console.log('Supplier document created for user:', currentUser.uid);
       } else {
         // If it exists, fetch the supplier's inventory
         supplierDocId.value = supplierDoc.id; 
@@ -75,6 +73,7 @@ const navigateToFormPage = () => {
 const editItem = (item) => {
   console.log('Editing item:', item);
   
+
 };
 
 // Delete function to remove the item from Firebase
@@ -112,9 +111,9 @@ onMounted(() => {
       <header
         class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <div class="flex w-full items-center justify-between">
-          <!-- Supplier (Company) Name -->
+          <!-- Company Name from user collection -->
           <h2 class="text-xl font-semibold">
-            {{ supplierName }}
+            {{ companyName }}
           </h2>
 
           <!-- Search Bar and Add Product Button -->

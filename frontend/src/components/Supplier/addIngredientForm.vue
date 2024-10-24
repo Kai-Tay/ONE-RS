@@ -21,51 +21,34 @@ const addNewIngredient = async () => {
     const user = auth.currentUser;
 
     if (user) {
-        const userDocRef = doc(db, "users", user.uid); // Get the user document reference
-        const userDoc = await getDoc(userDocRef); // Fetch the user document
+        const supplierDocRef = doc(db, "supplierListing", user.uid); // Use user's UID as the document ID
+        const supplierDoc = await getDoc(supplierDocRef); // Fetch the supplier document
 
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-            const companyName = userData.companyName; // Get the user's company name
+        if (supplierDoc.exists()) {
+            // Add the new ingredient to the supplier's inventory
+            if (productName.value && pricePerUnit.value && quantity.value && unit.value) {
+                try {
+                    await updateDoc(supplierDocRef, {
+                        inventory: arrayUnion({
+                            productName: productName.value,
+                            quantity: parseInt(quantity.value),
+                            unit: unit.value,
+                            pricePerUnit: parseFloat(pricePerUnit.value)
+                        })
+                    });
 
-            if (companyName) {
-                // Fetch the document in supplierListing matching the companyName
-                const supplierDocRef = doc(db, "supplierListing", companyName);
-                const supplierDoc = await getDoc(supplierDocRef);
-
-                if (supplierDoc.exists()) {
-                    // Add the new ingredient to the supplier's inventory
-                    if (productName.value && pricePerUnit.value && quantity.value && unit.value) {
-                        try {
-                            await updateDoc(supplierDocRef, {
-                                inventory: arrayUnion({
-                                    productName: productName.value,
-                                    quantity: parseInt(quantity.value),
-                                    unit: unit.value,
-                                    pricePerUnit: parseFloat(pricePerUnit.value)
-                                })
-                            });
-
-                            // Redirect back to the inventory list after adding
-                            router.push('/supplierInventory');
-                        } catch (error) {
-                            console.error("Error adding new ingredient: ", error);
-                            alert("Failed to add ingredient.");
-                        }
-                    } else {
-                        alert('Please fill in all fields');
-                    }
-                } else {
-                    console.error("Supplier document not found for company: ", companyName);
-                    alert('Supplier document not found.');
+                    // Redirect back to the inventory list after adding
+                    router.push('/supplierInventory');
+                } catch (error) {
+                    console.error("Error adding new ingredient: ", error);
+                    alert("Failed to add ingredient.");
                 }
             } else {
-                console.error("User does not have a companyName.");
-                alert('User does not have a company associated.');
+                alert('Please fill in all fields');
             }
         } else {
-            console.error("User document not found.");
-            alert('User document not found.');
+            console.error("Supplier document not found for user ID:", user.uid);
+            alert('Supplier document not found.');
         }
     } else {
         alert('User not logged in');
