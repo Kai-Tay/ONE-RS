@@ -158,6 +158,7 @@ export default {
   name: 'Authentication',
   data() {
     return {
+      // For Inputs
       email: '',
       password: '',
       userName: '',
@@ -179,27 +180,34 @@ export default {
     toggleSupplier() {
       this.isSupplier = !this.isSupplier;
     },
+    addSessionCookie(uid,userName,userType) {
+      sessionStorage.setItem('userType', userType);
+      sessionStorage.setItem('userName', userName);
+      sessionStorage.setItem('uid', uid);
+      console.log("ADDED SESSION")
+    },
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           console.log(userCredential)
           // Set User Type
-          const uid = userCredential.user.accessToken
-          
-          console.log(uid)
+          const uid = userCredential.user.uid;
     
           // Enter database and find userType
           const docRef = doc(db, "users", uid);
           getDoc(docRef).then((docSnap) => {
-            console.log(docSnap)
+
             if (docSnap.exists()) {
-              this.userType = docSnap.data().userType;
-              this.updateParentLogIn();
+              const userName = docSnap.data().userName;
+              const userType = docSnap.data().userType;
+              
+
+              // Store user data in session storage
+              this.addSessionCookie(uid,userName,userType);
             }
           });
 
-
-
+          
           // alert("Signed In")
           this.statusHeader = "Logged In Successful!";
           this.statusDescription = "Redirecting to home page in 2 seconds...";
@@ -240,6 +248,9 @@ export default {
             points: this.isSupplier ? null : 0,
           })
             .then(() => {
+              // Add session cookie
+              this.addSessionCookie(user.uid,this.userName,this.isSupplier ? "supplier" : "restaurant");
+
               this.statusHeader = "Signed Up Successful!";
               this.statusDescription = "Redirecting to home page in 2 seconds...";
               this.statusSuccess = true;
@@ -249,6 +260,8 @@ export default {
                 this.showAuthDialog = false;
                 this.$router.push('/');
               }, 2000);
+
+              
             })
             .catch((error) => {
               console.error("Error adding document: ", error);

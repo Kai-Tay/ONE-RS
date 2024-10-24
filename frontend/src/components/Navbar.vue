@@ -100,8 +100,18 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 <script>
 export default {
     name: 'Navbar',
+    watch: {
+    // Watching for route changes
+    $route(to) {
+        this.currentRoute = to.path;
+      
+        // Check if user is logged in
+        this.checkSessionStorage();
+    }
+  },
     data() {
         return {
+            // Nav Bar Display
             isMenuOpen: false,
             isLoggedIn: false,
             userName: "",
@@ -117,65 +127,63 @@ export default {
     },
     methods: {
         // Check if user is already logged in and change the nav bar accordingly
+        checkSessionStorage(){
+            if (sessionStorage.getItem('uid') != null) {
+                console.log("User is logged in HEHEHARHAR");
+                this.isLoggedIn = true;
+                this.userName = sessionStorage.getItem('userName');
+                this.userType = sessionStorage.getItem('userType');
+            } else {
+                console.log("User is not logged in HEHEHARHAR");
+                this.isLoggedIn = false;
+            }
+
+        },
         checkAuthentication() {
+            // Check if session storage has the user's data
+           this.checkSessionStorage();
+    
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // User is signed in, see docs for a list of available properties
-                    const uid = user.uid;
-                    this.userName = user.displayName;
-                    this.isLoggedIn = true;
-
+                    // User is signed in
                     user.getIdTokenResult().then((idTokenResult) => {
                         // Retrieve expirationTime from the token result
                         const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
+                        const uid = idTokenResult.claims.user_id;
 
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
-                            signOut(auth).then(() => {
-                                console.log("Session expired. User logged out.");
-
-                                this.isLoggedIn = false;
-                                this.userType = "";
-                                this.updateParentLoggedOut();
-
-                            }).catch((error) => {
-                                alert("Error logging out: ", error);
-                            });
-
+                            this.handleLogOut();
                         } else {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
                             getDoc(docRef).then((docSnap) => {
                                 if (docSnap.exists()) {
                                     this.userType = docSnap.data().userType;
-                                    this.updateParentLogIn();
                                 }
                             });
-
-
                         }
                     });
-                } else {
-                    // User is signed out
-                    this.isLoggedIn = false;
-                    this.userType = "restaurant";
                 }
             });
-
         },
         handleLogin() {
             this.$router.push('/login');
         },
         handleLogOut() {
             signOut(auth).then(() => {
-                // Redirect the user to the login page or handle it appropriately
+                sessionStorage.clear();
 
-                this.updateParentLoggedOut();
-                // Automatically close the dialog after 2 seconds
-                this.statusHeader = "Logged Out Successfully";
+                // Redirect the user to the login page or handle it appropriately
+                this.statusHeader = "Logged Out";
                 this.statusDescription = "See you again! Redirecting to the home page...";
                 this.showAuthDialog = true;
+
+                // Update vue variables
+                this.checkSessionStorage();
+
+                // Automatically close the dialog after 2 seconds
                 setTimeout(() => {
                     this.showAuthDialog = false;
                 }, 2000);
@@ -184,18 +192,6 @@ export default {
             }).catch((error) => {
                 alert("Error logging out: ", error);
             });
-        },
-        updateParentLogIn() {
-            this.$emit('userName', this.userName);
-            this.$emit('userType', this.userType);
-            this.$emit('isLoggedIn', this.isLoggedIn);
-            this.$emit('uid', uid);
-        },
-        updateParentLoggedOut() {
-            this.$emit('userName', "");
-            this.$emit('userType', "");
-            this.$emit('isLoggedIn', false);
-            this.$emit('uid', "");
         },
     },
     mounted() {

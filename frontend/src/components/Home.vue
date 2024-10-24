@@ -4,7 +4,6 @@ import { Button } from './ui/button';
 </script>
 
 <template>
-    <Navbar @userName="handleUserName" @userType="handleUserType" @isLoggedIn="handleIsLoggedIn" @uid=""handleUid/>
     <!-- <div class="container">
         Search
         <div class="my-5">
@@ -219,18 +218,6 @@ export default {
         this.filteredListings = this.listings;
     },
     methods: {
-        handleUserName(name) {
-            this.userName = name;
-        },  
-        handleUserType(type) {
-            this.userType = type;
-        }, 
-        handleIsLoggedIn(status) {
-            this.isLoggedIn = status;
-        },
-        handleUid(uid) {
-            this.uid = uid;
-        },
     },
     computed: {
         // Computed property to dynamically set the placeholder
