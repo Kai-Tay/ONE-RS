@@ -1,8 +1,7 @@
 <script setup>
-import Navbar from '../Navbar.vue';
 import { auth, db } from '../../firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,8 +17,6 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
 
 <!-- HTML STUFF -->
 <template>
-  <Navbar />
-
   <div class="mt-10">
     <!-- Login -->
     <Card class="mx-auto max-w-sm" v-if="isLogin">
@@ -161,6 +158,7 @@ export default {
   name: 'Authentication',
   data() {
     return {
+      // For Inputs
       email: '',
       password: '',
       userName: '',
@@ -182,20 +180,52 @@ export default {
     toggleSupplier() {
       this.isSupplier = !this.isSupplier;
     },
+    addSessionCookie(uid,userName,userType) {
+      sessionStorage.setItem('userType', userType);
+      sessionStorage.setItem('userName', userName);
+      sessionStorage.setItem('uid', uid);
+      console.log("ADDED SESSION")
+    },
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
+          console.log(userCredential)
+          // Set User Type
+          const uid = userCredential.user.uid;
+    
+          // Enter database and find userType
+          const docRef = doc(db, "users", uid);
+          getDoc(docRef).then((docSnap) => {
+
+            if (docSnap.exists()) {
+              const userName = docSnap.data().userName;
+              const userType = docSnap.data().userType;
+              
+
+              // Store user data in session storage
+              this.addSessionCookie(uid,userName,userType);
+            }
+          });
+
+          
+          // alert("Signed In")
           this.statusHeader = "Logged In Successful!";
           this.statusDescription = "Redirecting to home page in 2 seconds...";
           this.statusSuccess = true;
           this.showAuthDialog = true;
 
+
+          // Automatically close the dialog after 2 seconds
           setTimeout(() => {
             this.showAuthDialog = false;
             this.$router.push('/');
           }, 2000);
         })
         .catch((error) => {
+          // Wrong password
+          // alert("Wrong Username/Password. Try Again!")
+          console.log(error)
+
           this.statusHeader = "Log In Unsuccessful";
           this.statusDescription = "Wrong Username/Password. Try Again!";
           this.statusSuccess = false;
@@ -218,6 +248,9 @@ export default {
             points: this.isSupplier ? null : 0,
           })
             .then(() => {
+              // Add session cookie
+              this.addSessionCookie(user.uid,this.userName,this.isSupplier ? "supplier" : "restaurant");
+
               this.statusHeader = "Signed Up Successful!";
               this.statusDescription = "Redirecting to home page in 2 seconds...";
               this.statusSuccess = true;
@@ -227,6 +260,8 @@ export default {
                 this.showAuthDialog = false;
                 this.$router.push('/');
               }, 2000);
+
+              
             })
             .catch((error) => {
               console.error("Error adding document: ", error);

@@ -10,13 +10,13 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
 <template>
     <div>
-        <nav class="h-16 flex items-center justify-between lg:shadow-lg">
+        <nav class="h-16 flex items-center justify-between lg:shadow-lg text-gray-900">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
-                <div>🧑‍🍳 ONE.RS</div>
+                <div class="font-bold">🧑‍🍳 ONE.RS</div>
                 <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
                     <!-- Restaurant Tabs -->
-                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-if="userType == 'restaurant'">
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-if="userType == 'restaurant'">
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                                 Suppliers</a></li>
@@ -29,8 +29,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     </ul>
 
                     <!-- Supplier Tabs -->
-                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-4" v-else>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-else>
+                        <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                                 href="#/supplier">Current Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
@@ -63,7 +63,6 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
         </nav>
         <!-- Hamburger Version of Nav Bar -->
-        <transition name="fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
             <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
                 <ul class="flex flex-col items-left space-y-4">
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
@@ -90,7 +89,6 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
                 </div>
             </div>
-        </transition>
     </div>
     <!-- Sign Out Success Dialog -->
     <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
@@ -102,8 +100,18 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 <script>
 export default {
     name: 'Navbar',
+    watch: {
+    // Watching for route changes
+    $route(to) {
+        this.currentRoute = to.path;
+      
+        // Check if user is logged in
+        this.checkSessionStorage();
+    }
+  },
     data() {
         return {
+            // Nav Bar Display
             isMenuOpen: false,
             isLoggedIn: false,
             userName: "",
@@ -119,90 +127,77 @@ export default {
     },
     methods: {
         // Check if user is already logged in and change the nav bar accordingly
+        checkSessionStorage(){
+            if (sessionStorage.getItem('uid') != null) {
+                console.log("User is logged in HEHEHARHAR");
+                this.isLoggedIn = true;
+                this.userName = sessionStorage.getItem('userName');
+                this.userType = sessionStorage.getItem('userType');
+            } else {
+                console.log("User is not logged in HEHEHARHAR");
+                this.isLoggedIn = false;
+            }
+
+        },
         checkAuthentication() {
+            // Check if session storage has the user's data
+           this.checkSessionStorage();
+    
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // User is signed in, see docs for a list of available properties
-                    const uid = user.uid;
-                    this.userName = user.displayName;
-                    this.isLoggedIn = true;
-
+                    // User is signed in
                     user.getIdTokenResult().then((idTokenResult) => {
                         // Retrieve expirationTime from the token result
                         const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
+                        const uid = idTokenResult.claims.user_id;
 
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
-                            signOut(auth).then(() => {
-                                console.log("Session expired. User logged out.");
-
-                                this.isLoggedIn = false;
-                                this.userType = "restaurant";
-                                this.updateParentLoggedOut();
-
-                            }).catch((error) => {
-                                alert("Error logging out: ", error);
-                            });
-
+                            this.handleLogOut();
                         } else {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
                             getDoc(docRef).then((docSnap) => {
                                 if (docSnap.exists()) {
                                     this.userType = docSnap.data().userType;
-                                    this.updateParentLogIn();
                                 }
                             });
-
-
                         }
                     });
-                } else {
-                    // User is signed out
-                    this.isLoggedIn = false;
-                    this.userType = "restaurant";
                 }
             });
-
         },
         handleLogin() {
             this.$router.push('/login');
         },
         handleLogOut() {
             signOut(auth).then(() => {
-                // Redirect the user to the login page or handle it appropriately
+                sessionStorage.clear();
 
-                this.updateParentLoggedOut();
-                // Automatically close the dialog after 2 seconds
-                this.statusHeader = "Logged Out Successfully";
+                // Redirect the user to the login page or handle it appropriately
+                this.statusHeader = "Logged Out";
                 this.statusDescription = "See you again! Redirecting to the home page...";
                 this.showAuthDialog = true;
-                // setTimeout(() => {
-                //     this.showAuthDialog = false;
-                // }, 2000);
+
+                // Update vue variables
+                this.checkSessionStorage();
+
+                // Automatically close the dialog after 2 seconds
+                setTimeout(() => {
+                    this.showAuthDialog = false;
+                }, 2000);
                 this.$router.push('/');
 
             }).catch((error) => {
                 alert("Error logging out: ", error);
             });
         },
-        updateParentLogIn() {
-            this.$emit('userName', this.userName);
-            this.$emit('userType', this.userType);
-            this.$emit('isLoggedIn', this.isLoggedIn);
-            this.$emit('uid', uid);
-        },
-        updateParentLoggedOut() {
-            this.$emit('userName', "");
-            this.$emit('userType', "restaurant");
-            this.$emit('isLoggedIn', false);
-            this.$emit('uid', "");
-        },
     },
     mounted() {
         this.checkAuthentication();
-    }
+    },
+
 };
 </script>
 
