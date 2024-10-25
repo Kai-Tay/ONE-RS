@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, defineComponent } from 'vue'
 import App from './App.vue'
 import Authentication from './components/Authentication/Authentication.vue'
 import {createRouter, createWebHashHistory} from 'vue-router'
@@ -8,8 +8,10 @@ import BuyerDashboard from './components/buyerDashboard.vue';
 import FindListings from './components/Restaurant/FindListings.vue';
 import SupplierInventory from './components/Supplier/supplierInventory.vue';
 import addIngredientForm from './components/Supplier/addIngredientForm.vue';
+import creditScore from './components/creditScore.vue';
 import Test from '@/components/Supplier/Test.vue'; //old table code 
 import './firebase.js';
+import { Component } from 'lucide-vue-next';
 
 
 
@@ -23,6 +25,7 @@ const routes = [
 
     // Restaurant
     { path: '/buyerDashboard', component: BuyerDashboard},
+    { path: '/creditScore', component: creditScore},
     // INCLUDE PATH TO OTHER PAGES HERE
 
     // Supplier
