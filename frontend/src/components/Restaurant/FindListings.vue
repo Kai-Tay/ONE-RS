@@ -5,10 +5,11 @@ import { Label } from '@/components/ui/label'
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button'
 import {
-    Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,} from '@/components/ui/card'
-import FilterBar from './filterBar.vue';
+    Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,
+} from '@/components/ui/card'
 import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from '../../firebase.js';
+import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags'
 </script>
 
 <template>
@@ -43,30 +44,36 @@ import { db } from '../../firebase.js';
     </header>
 
     <!-- Filter Bar from Search -->
+
     <div class="mt-5 mb-5 mx-5">
         <div class="text-4xl font-bold">Suppliers</div>
+        <TagsInput v-model="searchResult">
+            <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
+                <TagsInputItemText />
+                <TagsInputItemDelete @click="handleFilterBoxClose"/>
+            </TagsInputItem>
+        </TagsInput>
 
-        <FilterBar></FilterBar>
     </div>
 
 
 
     <!-- Listings -->
     <div class="grid grid-cols-1 gap-4 mx-5">
-        <div class="mb-4" v-for="listing in listings" :key="listing.id">
+        <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
                 <CardHeader>
                     <CardTitle>
                         <div class="text-2xl">{{ listing.supplierName }}</div>
                     </CardTitle>
-                    <CardDescription>{{ listing.supplierDescription }}</CardDescription>
+                    <CardDescription class="text-lg">{{ listing.supplierDescription }}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div class="flex flex-inline justify-between">
                         <!-- Text -->
                         <div class="flex flex-col justify-center">
-                            <CardDescription class="text-xl">{{ listing }}</CardDescription>
-                            <CardDescription class="text-xl">{{ listing.price }}</CardDescription>
+                            <CardDescription class="text-md">Available Ingredients:</CardDescription>
+                            <CardDescription class="text-md">{{ listing }}</CardDescription>
                             {{ listing.description }}
                         </div>
                         <div class="">
@@ -102,11 +109,10 @@ export default {
             filteredListings: [],
             listings: [],
             companyDetails: [],
+
+            // Filter Bar Variable
+            searchResult: [],
         };
-    },
-    created() {
-        // Initially set the filtered listings to all listings
-        this.filteredListings = this.listings;
     },
     mounted() {
         // Obtain Database Suppliers
@@ -114,6 +120,11 @@ export default {
     },
 
     methods: {
+        handleFilterBoxClose() {
+            // Clear text input and call the function to recheck the listings
+            this.searchQuery = '';
+            this.filterListings();
+        },
         async fetchListings() {
             // Fetch all listings from the database
             try {
@@ -125,7 +136,7 @@ export default {
                 })
 
                 // Get user details colleciton
-                const usersSnapshot = await getDocs(query(collection(db, "users"),where("userType", "==", "supplier")))
+                const usersSnapshot = await getDocs(query(collection(db, "users"), where("userType", "==", "supplier")))
                 const usersArray = []
                 usersSnapshot.forEach((doc) => {
                     usersArray.push({ id: doc.id, ...doc.data() })
@@ -139,28 +150,49 @@ export default {
                 })
 
                 this.listings = mergedArray;
-                
+                this.filteredListings = this.listings;
+
             } catch (error) {
                 console.error('Error fetching listings:', error)
             }
         },
 
         filterListings() {
-            // if (this.searchQuery) {
-            //     // Insert CHATGPT QUERY HERE
-            //     // Check if AI Search is enabled
-            //     if (isAiSearch.value) {
-            //         const query = this.performAiSearch();
-            //     } else {
-            //         const query = this.searchQuery.toLowerCase();
-            //     }
-            //     // this.filteredListings = this.listings.filter(listing =>
-            //     //     listing.title.toLowerCase().includes(query) ||
-            //     //     listing.description.toLowerCase().includes(query)
-            //     // );
-            // } else {
-            //     this.filteredListings = this.listings;
-            // }
+            if (this.searchQuery) {
+
+                // Insert CHATGPT QUERY HERE
+                // Check if AI Search is enabled
+                if (isAiSearch.value) {
+                    const query = this.performAiSearch();
+                } else {
+                    // Make search query lower case
+                    const query = this.searchQuery.toLowerCase();
+
+                    // Add search query to list of search results
+                    this.searchResult.push(query);
+
+                    // Filter out listings that have the search result in their title or ingredients
+                    this.filteredListings = this.listings.filter(listing =>
+                        // Check if any search term matches supplierName or any productName in inventory
+                        this.searchResult.some(query =>
+                            listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
+                            listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
+                        )
+                    );
+                    console.log(this.searchResult)
+                    // this.filteredListings = this.listings.filter(listing =>
+                    //     listing.supplierName.toLowerCase().includes(query) ||
+                    //     listing.inventory.some(item => item.productName.toLowerCase().includes(query))
+                    // );
+
+                }
+            } else {
+                // If search is empty, revert it back to all listings
+                this.filteredListings = this.listings;
+            }
+
+            // Clear the text input
+            this.searchQuery = '';
         },
         performAiSearch() {
             // Perform AI search here by calling backend API (INSERT ACTUAL BACKEND SERVER URL)
@@ -182,9 +214,9 @@ export default {
     computed: {
         // Computed property to dynamically set the placeholder
         searchPlaceholder() {
-            return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search...';
+            return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search for ingredients...';
         }
-    }
+    },
 };
 </script>
 
