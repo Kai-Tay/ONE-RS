@@ -165,11 +165,11 @@ export default {
                 if (isAiSearch.value) {
                     const query = this.performAiSearch();
                 } else {
+                    // Add search query to list of search results
+                    this.searchResult.push(this.searchQuery);
+
                     // Make search query lower case
                     const query = this.searchQuery.toLowerCase();
-
-                    // Add search query to list of search results
-                    this.searchResult.push(query);
 
                     // Filter out listings that have the search result in their title or ingredients
                     this.filteredListings = this.listings.filter(listing =>
