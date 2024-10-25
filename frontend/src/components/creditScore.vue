@@ -118,9 +118,11 @@ export default {
 </script>
 
 <style>
-body {
+
+/* Transparent nav bar type vibe */
+/* body {
     background-color: #FBF7F0;
-}
+} */
 
 path {
     transition: stroke-dashoffset 1s ease;
