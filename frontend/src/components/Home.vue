@@ -212,7 +212,7 @@ export default {
         return {
             isLoggedIn: false,
             userName: "",
-            userType: "restaurant",
+            userType: "",
         };
     },
     created() {
@@ -230,8 +230,8 @@ export default {
     mounted() {
         this.userName = sessionStorage.userName;
         this.userType = sessionStorage.userType;
-
-        if(this.userName != "" && this.userType != ""){
+        
+        if(this.userName != null){
             this.isLoggedIn = true;
         }
     }
