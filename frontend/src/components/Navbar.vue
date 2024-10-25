@@ -154,7 +154,8 @@ export default {
                         const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
                         const uid = idTokenResult.claims.user_id;
-
+                        console.log("Current time: ", currentTime);
+                        console.log("Auth Expiration time: ", expirationTime);
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
                             this.handleLogOut();
@@ -168,6 +169,9 @@ export default {
                             });
                         }
                     });
+                } else {
+                    // Clear cookies (Bug fix)
+                    sessionStorage.clear();
                 }
             });
         },

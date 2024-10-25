@@ -190,10 +190,11 @@ export default {
     toggleSupplier() {
       this.isSupplier = !this.isSupplier;
     },
-    addSessionCookie(uid,userName,userType) {
+    addSessionCookie(uid,userName,userType, points) {
       sessionStorage.setItem('userType', userType);
       sessionStorage.setItem('userName', userName);
       sessionStorage.setItem('uid', uid);
+      sessionStorage.setItem('points', points);
       console.log("ADDED SESSION")
     },
     handleLogin() {
@@ -210,10 +211,11 @@ export default {
             if (docSnap.exists()) {
               const userName = docSnap.data().userName;
               const userType = docSnap.data().userType;
+              const points = docSnap.data().points;
               
 
               // Store user data in session storage
-              this.addSessionCookie(uid,userName,userType);
+              this.addSessionCookie(uid,userName,userType,points);
             }
           });
 
@@ -260,7 +262,7 @@ export default {
           })
             .then(() => {
               // Add session cookie
-              this.addSessionCookie(user.uid,this.userName,this.isSupplier ? "supplier" : "restaurant");
+              this.addSessionCookie(user.uid,this.userName,this.isSupplier ? "supplier" : "restaurant", this.isSupplier ? null : 0);
 
               this.statusHeader = "Signed Up Successful!";
               this.statusDescription = "Redirecting to home page in 2 seconds...";
