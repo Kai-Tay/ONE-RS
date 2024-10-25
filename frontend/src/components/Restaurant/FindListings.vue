@@ -179,11 +179,6 @@ export default {
                             listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
                         )
                     );
-                    console.log(this.searchResult)
-                    // this.filteredListings = this.listings.filter(listing =>
-                    //     listing.supplierName.toLowerCase().includes(query) ||
-                    //     listing.inventory.some(item => item.productName.toLowerCase().includes(query))
-                    // );
 
                 }
             } else {
