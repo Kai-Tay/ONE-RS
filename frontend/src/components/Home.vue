@@ -50,7 +50,8 @@ import { Button } from './ui/button';
                     <!-- SUBHEADERR -->
                     <div class="text-gray-500 text-2xl">
                         <div v-if="isLoggedIn">
-                            <p class="lead text-white-50 mb-4" v-if="userType == 'supplier'">Start setting up your listings!</p>
+                            <p class="lead text-white-50 mb-4" v-if="userType == 'supplier'">Start setting up your
+                                listings!</p>
                             <p class="lead text-white-50 mb-4" v-else>Start finding your ingredients from suppliers!</p>
                         </div>
                         <p class="lead text-white-50 mb-4" v-else>The best place for restaurants and suppliers to
@@ -60,8 +61,9 @@ import { Button } from './ui/button';
 
                     <!-- Buttons for navigation -->
                     <div>
-                        <div class="justify-center flex flex-inline "  v-if="isLoggedIn">
-                            <a class="mx-5" href="#features" v-if="userType == 'supplier'"><Button>Find Suppliers!</Button></a>
+                        <div class="justify-center flex flex-inline " v-if="isLoggedIn">
+                            <a class="mx-5" href="#features" v-if="userType == 'supplier'"><Button>Find
+                                    Suppliers!</Button></a>
                             <a class="mx-5" href="#/find" v-else><Button>Find Suppliers!</Button></a>
                             <a class="mx-5" href="#!"><Button variant="secondary">Learn More</Button></a>
                         </div>
@@ -223,6 +225,14 @@ export default {
         // Computed property to dynamically set the placeholder
         searchPlaceholder() {
             return this.isAiSearch ? 'Tell me your dishes!' : 'Search...';
+        }
+    },
+    mounted() {
+        this.userName = sessionStorage.userName;
+        this.userType = sessionStorage.userType;
+
+        if(this.userName != "" && this.userType != ""){
+            this.isLoggedIn = true;
         }
     }
 };
