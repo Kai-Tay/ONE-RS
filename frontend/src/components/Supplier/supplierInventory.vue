@@ -10,21 +10,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { CircleUser, File, Home, LineChart, ListFilter, MoreHorizontal, Package, Package2, PanelLeft, PlusCircle, Search, Settings, ShoppingCart, Users2 } from 'lucide-vue-next'
-
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog' // Import Dialog components
 import { ref, onMounted } from 'vue'
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
 import { auth } from '../../firebase.js'; // Assuming you have auth initialized
 
 // Initialize Firebase Firestore
 const db = getFirestore();
-const router = useRouter(); 
+const router = useRouter();
 
 // Reactive variables to store fetched data
 const inventoryData = ref([]); // Holds the list of inventory items
 const companyName = ref('');  // Holds the company name from the user collection
 const supplierDocId = ref(''); // Holds supplier document ID for updates
 const userId = ref(''); // Holds current user's ID
+
+// Variables for editing
+const isEditing = ref(false); // Controls visibility of the edit form
+const selectedItem = ref(null); // Holds the selected item to edit
+const editedProductName = ref(''); // Holds the edited product name
+const editedQuantity = ref(''); // Holds the edited quantity
+const editedUnit = ref(''); // Holds the edited unit
+const editedPricePerUnit = ref(''); // Holds the edited price per unit
 
 // Fetch user and supplier data from Firebase on component mount
 const fetchUserAndSuppliers = async () => {
@@ -53,7 +61,7 @@ const fetchUserAndSuppliers = async () => {
         console.log('Supplier document created for user:', currentUser.uid);
       } else {
         // If it exists, fetch the supplier's inventory
-        supplierDocId.value = supplierDoc.id; 
+        supplierDocId.value = supplierDoc.id;
         const supplierData = supplierDoc.data();
         inventoryData.value = supplierData.inventory;
       }
@@ -65,31 +73,63 @@ const fetchUserAndSuppliers = async () => {
 
 // Navigate to form page for adding products
 const navigateToFormPage = () => {
-  router.push({ name: 'addIngredientForm' }); 
+  router.push({ name: 'addIngredientForm' });
 };
 
-// Edit function (stub for future functionality)
+// Open edit form for selected item
 const editItem = (item) => {
-  console.log('Editing item:', item);
-  
+  selectedItem.value = item; // Set the selected item
+  editedProductName.value = item.productName; // Prepopulate the fields
+  editedQuantity.value = item.quantity;
+  editedUnit.value = item.unit;
+  editedPricePerUnit.value = item.pricePerUnit;
+  isEditing.value = true; // Show the edit dialog
+};
 
+// Save the edited changes
+const saveChanges = async () => {
+  try {
+    const supplierRef = doc(db, "supplierListing", supplierDocId.value);
+
+    // Update the specific item within the inventory
+    const updatedInventory = inventoryData.value.map((inventoryItem) =>
+      inventoryItem.productName === selectedItem.value.productName
+        ? {
+            ...inventoryItem,
+            productName: editedProductName.value,
+            quantity: parseInt(editedQuantity.value),
+            unit: editedUnit.value,
+            pricePerUnit: parseFloat(editedPricePerUnit.value)
+          }
+        : inventoryItem
+    );
+
+    // Update Firestore with the new inventory data
+    await updateDoc(supplierRef, { inventory: updatedInventory });
+
+    // Update the local inventory to reflect the changes
+    inventoryData.value = updatedInventory;
+    isEditing.value = false; // Hide the edit dialog after saving
+    console.log('Item updated successfully');
+  } catch (error) {
+    console.error('Error updating item:', error);
+  }
 };
 
 // Delete function to remove the item from Firebase
 const deleteItem = async (item) => {
   try {
     const supplierRef = doc(db, "supplierListing", supplierDocId.value);
-    const newInventory = inventoryData.value.filter((inventoryItem) => inventoryItem.index !== item.index);
 
+    // Filter out the item to delete based on a unique identifier (like productName)
+    const newInventory = inventoryData.value.filter(inventoryItem => inventoryItem.productName !== item.productName);
+
+    // Update the Firestore document with the new inventory array
     await updateDoc(supplierRef, {
-      inventory: newInventory.map((i) => ({
-        productName: i.productName,
-        pricePerUnit: i.pricePerUnit,
-        quantity: i.quantity,
-        unit: i.unit,
-      }))
+      inventory: newInventory
     });
 
+    // Update local inventory data to reflect the changes
     inventoryData.value = newInventory;
     console.log('Item deleted successfully');
   } catch (error) {
@@ -106,8 +146,7 @@ onMounted(() => {
 <template>
   <div class="flex min-h-screen w-full flex-col bg-muted/40">
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-      <header
-        class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <div class="flex w-full items-center justify-between">
           <!-- Company Name from user collection -->
           <h2 class="text-xl font-semibold">
@@ -123,9 +162,7 @@ onMounted(() => {
 
             <Button @click="navigateToFormPage" size="sm" class="h-7 gap-1">
               <PlusCircle class="h-3.5 w-3.5" />
-              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Add Product
-              </span>
+              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Product</span>
             </Button>
           </div>
         </div>
@@ -137,32 +174,13 @@ onMounted(() => {
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
             </TabsList>
-
-            <div class="ml-auto flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <Button variant="outline" size="sm" class="h-7 gap-1">
-                    <ListFilter class="h-3.5 w-3.5" />
-                    <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Filter
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
           </div>
 
           <TabsContent value="all">
             <Card>
               <CardHeader>
                 <CardTitle>Inventory</CardTitle>
-                <CardDescription>
-                  Manage your products.
-                </CardDescription>
+                <CardDescription>Manage your products.</CardDescription>
               </CardHeader>
 
               <CardContent>
@@ -178,22 +196,36 @@ onMounted(() => {
                   </TableHeader>
 
                   <TableBody>
-                    <TableRow v-for="item in inventoryData" :key="item.index">
+                    <TableRow v-for="item in inventoryData" :key="item.productName">
                       <TableCell>{{ item.productName }}</TableCell>
                       <TableCell>{{ item.quantity }}</TableCell>
                       <TableCell>{{ item.unit }}</TableCell>
-                      <TableCell>{{ item.pricePerUnit }}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger class="text-indigo-600 hover:text-indigo-900 focus:outline-none">
-                            Options
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem @click="editItem(item)">Edit</DropdownMenuItem>
-                            <DropdownMenuItem @click="deleteItem(item)">Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                      <TableCell>{{ "$" + parseFloat(item.pricePerUnit).toFixed(2) }}</TableCell>
+                      <TableCell class="flex justify-end gap-2">
+                        <!-- Buttons aligned to the right using flex and justify-end -->
+                        <Dialog>
+                          <DialogTrigger as-child>
+                            <Button variant="secondary" @click="editItem(item)">Edit</Button>
+                          </DialogTrigger>
+                          <DialogContent class="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Edit Ingredient</DialogTitle>
+                              <DialogDescription>
+                                Make changes to the ingredient. Click save when you're done.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div class="space-y-4">
+                              <Input v-model="editedProductName" placeholder="Product Name" />
+                              <Input v-model="editedQuantity" type="number" placeholder="Quantity" />
+                              <Input v-model="editedUnit" placeholder="Unit" />
+                              <Input v-model="editedPricePerUnit" type="number" step="0.01" placeholder="Price per Unit" />
+                            </div>
+                            <DialogFooter>
+                              <Button type="submit" @click="saveChanges">Save Changes</Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                        <Button variant="secondary" @click="deleteItem(item)">Delete</Button>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -201,9 +233,7 @@ onMounted(() => {
               </CardContent>
 
               <CardFooter>
-                <div class="text-xs text-muted-foreground">
-                  Showing all products
-                </div>
+                <div class="text-xs text-muted-foreground">Showing all products</div>
               </CardFooter>
             </Card>
           </TabsContent>
@@ -212,3 +242,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+
+
