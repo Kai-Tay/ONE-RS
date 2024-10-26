@@ -95,12 +95,12 @@ const saveChanges = async () => {
     const updatedInventory = inventoryData.value.map((inventoryItem) =>
       inventoryItem.productName === selectedItem.value.productName
         ? {
-            ...inventoryItem,
-            productName: editedProductName.value,
-            quantity: parseInt(editedQuantity.value),
-            unit: editedUnit.value,
-            pricePerUnit: parseFloat(editedPricePerUnit.value)
-          }
+          ...inventoryItem,
+          productName: editedProductName.value,
+          quantity: parseInt(editedQuantity.value),
+          unit: editedUnit.value,
+          pricePerUnit: parseFloat(editedPricePerUnit.value)
+        }
         : inventoryItem
     );
 
@@ -146,7 +146,8 @@ onMounted(() => {
 <template>
   <div class="flex min-h-screen w-full flex-col bg-muted/40">
     <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-      <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <header
+        class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <div class="flex w-full items-center justify-between">
           <!-- Company Name from user collection -->
           <h2 class="text-xl font-semibold">
@@ -218,7 +219,8 @@ onMounted(() => {
                               <Input v-model="editedProductName" placeholder="Product Name" />
                               <Input v-model="editedQuantity" type="number" placeholder="Quantity" />
                               <Input v-model="editedUnit" placeholder="Unit" />
-                              <Input v-model="editedPricePerUnit" type="number" step="0.01" placeholder="Price per Unit" />
+                              <Input v-model="editedPricePerUnit" type="number" step="0.01"
+                                placeholder="Price per Unit" />
                             </div>
                             <DialogFooter>
                               <Button type="submit" @click="saveChanges">Save Changes</Button>
@@ -242,6 +244,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-
-
