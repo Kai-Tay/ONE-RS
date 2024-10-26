@@ -129,17 +129,9 @@ export default {
                 const listingRef = doc(db, "supplierListing", this.supplierId);
                 const listingSnap = await getDoc(listingRef);
 
-                if (listingSnap.exists()) {
-                    console.log(listingSnap.data());
-                }
-
                 // Fetch the user
                 const userRef = doc(db, "users", this.supplierId);
                 const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-                    console.log(userSnap.data());
-                }
 
                 // Combine the data
                 const mergedData = {
