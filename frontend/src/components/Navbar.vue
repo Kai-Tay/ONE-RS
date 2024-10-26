@@ -14,7 +14,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
                 <div class="font-bold">🧑‍🍳 ONE.RS</div>
-                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden">
+                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden" v-if="isLoggedIn == true">
                     <!-- Restaurant Tabs -->
                     <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-if="userType == 'restaurant'">
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
