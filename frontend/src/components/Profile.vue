@@ -32,7 +32,7 @@
                             />
                         </div>
 
-                        <div class="space-y-2">
+                        <div v-if="profileData.userType === 'supplier'" class="space-y-2">
                             <Label for="companyDescription">Company Description</Label>
                             <Textarea
                                 id="companyDescription"
