@@ -83,7 +83,7 @@ import axios from 'axios';
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button>View Supplier</Button>
+                    <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
                 </CardFooter>
             </Card>
         </div>
@@ -102,7 +102,7 @@ const handleSwitchToggle = (newValue) => {
 
 
 export default {
-    name: 'Home',
+    name: 'FindListings',
     components: {},
     data() {
         return {
@@ -122,6 +122,9 @@ export default {
     },
 
     methods: {
+        handleSupplierClick(id) {
+            this.$router.push({name: 'viewSupplier', params: { id: id }});
+        },
         handleFilterBoxClose() {
             if (this.searchResult.length > 0) {
                 // Filter out listings that have the search result in their title or ingredients

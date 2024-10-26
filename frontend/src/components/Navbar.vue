@@ -71,7 +71,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
         </nav>
         <!-- Hamburger Version of Nav Bar -->
             <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
-                <ul class="flex flex-col items-left space-y-4">
+                <ul class="flex flex-col items-left space-y-4" v-if="userType=='restaurant'">
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                             Suppliers</a></li>
@@ -81,6 +81,9 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                             href="#/order-analytics">Order Analytics</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
                             href="#/buyerDashboard">Dashboard</a></li>
+                </ul>
+                <ul class="flex flex-col items-left space-y-4" v-else>
+                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                             href="#/supplier">Current Orders</a></li>
                     <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
