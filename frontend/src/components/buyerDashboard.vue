@@ -233,5 +233,254 @@ async function main() {
 
 main(); // Call the main function
 
-</script>
+</script> -->
 
+
+<template>
+  <label for="categorySelect">Select Category:</label>
+  <select id="categorySelect" v-model="selectedCategory" @change="onCategoryChange" :disabled="!inventoryDataLoaded">
+    <option v-for="(items, category) in inventoryData" :key="category" :value="category">
+      {{ category }}
+    </option>
+  </select>
+
+  <label for="itemSelect">Select Item:</label>
+  <select id="itemSelect" v-model="selectedItem" :disabled="!selectedCategory">
+    <option v-for="(quantity, item) in filteredItems" :key="item" :value="item">
+      {{ item }}
+    </option>
+  </select>
+
+  <label for="serviceLevel">Service Level (%):</label>
+  <input 
+    type="number" 
+    id="serviceLevel" 
+    v-model="serviceLevel" 
+    min="0" 
+    max="100" 
+    @input="updateDependentValues"
+    placeholder="Enter service level (0-100)"
+  />
+  <div v-if="serviceLevelWarning" class="warning">{{ serviceLevelWarning }}</div>
+
+  <div v-if="chartData.length">
+    <AreaChart :key="updateCounter" :data="chartData" index="name" :categories="['Total', 'OUL', 'SafetyStock']" />
+  </div>
+  <div v-else>
+    loading
+  </div>
+</template>
+
+<script setup>
+import { db } from '../firebase.js';
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { AreaChart } from '@/components/ui/areaChart';
+import { ref, watch, computed, onMounted } from 'vue';
+
+const selectedCategory = ref(null);
+const selectedItem = ref(null);
+const serviceLevel = ref(96); // Initialize service level
+const serviceLevelWarning = ref('');
+let storedOULResults = {};
+const loading = ref(true);
+const inventoryDataLoaded = ref(false);
+const inventoryData = ref({});
+const chartData = ref([]);
+const updateCounter = ref(0);
+
+// Fetch inventory data and other calculations on mounted
+onMounted(async () => {
+  try {
+    await main(); // Call the main function to initialize
+    await fetchItemsInInventory("qpNHH54FfF9k1vXv8gNV");
+  } catch (error) {
+    console.error("Error during mounted lifecycle:", error);
+  }
+});
+
+// Fetch items in inventory
+async function fetchItemsInInventory(restaurantId) {
+  const restaurantCollection = doc(db, 'restaurant', restaurantId);
+  const restaurantSnapshot = await getDoc(restaurantCollection);
+
+  if (!restaurantSnapshot.exists()) {
+    console.log("Restaurant not found");
+    return;
+  }
+
+  const restaurantData = restaurantSnapshot.data();
+  inventoryData.value = restaurantData['Inventory Level'] || {};
+  inventoryDataLoaded.value = true;
+  loading.value = false;
+
+  const categories = Object.keys(inventoryData.value);
+  if (categories.length > 0) {
+    selectedCategory.value = categories[0];
+    onCategoryChange();
+  }
+}
+
+// Reactive computed property for filtered items based on selected category
+const filteredItems = computed(() => {
+  return selectedCategory.value ? inventoryData.value[selectedCategory.value] || {} : {};
+});
+
+// Change handler for category selection
+function onCategoryChange() {
+  selectedItem.value = null; // Reset selected item
+  const items = Object.keys(filteredItems.value);
+  
+  if (items.length > 0) {
+    selectedItem.value = items[0]; // Auto-select the first item
+  }
+}
+
+// Watch for changes in selectedItem and update chartData
+watch(selectedItem, (newItem) => {
+  if (newItem) {
+    updateChartData(newItem); // Update chart when item changes
+  }
+});
+
+// Function to update chart data based on selected item
+function updateChartData(item) {
+  if (item) {
+    console.log(`Updating chart for selected item: ${item}`);
+    
+    const oulValue = getOUL(item); // Fetch OUL for the selected item
+    const ssValue = getSS(item);   // Fetch Safety Stock for the selected item
+
+    chartData.value = [
+      { name: '2023-01', Total: 20, OUL: oulValue, SafetyStock: ssValue },
+      { name: '2023-02', Total: 30, OUL: oulValue, SafetyStock: ssValue },
+      { name: '2023-03', Total: 10, OUL: oulValue, SafetyStock: ssValue },
+    ];
+
+    updateCounter.value++;
+  }
+}
+
+// Calculate mean demand and standard deviation
+async function main() {
+  const restaurantId = "qpNHH54FfF9k1vXv8gNV"; // Replace with your actual restaurant ID
+  const results = await calculateMeanDemandAndSd(restaurantId);
+
+  if (results) {
+    storedOULResults = calculateOULForAllItems(results.itemMean, results.itemSD);
+  } else {
+    console.log("No results returned.");
+  }
+}
+
+// Fetch mean demand and standard deviation from Firestore
+async function calculateMeanDemandAndSd(restaurantId) {
+  const restaurantRef = doc(db, 'restaurant', restaurantId);
+  const restaurantDoc = await getDoc(restaurantRef);
+
+  if (!restaurantDoc.exists()) {
+    console.log("Restaurant not found");
+    return;
+  }
+
+  const restaurantData = restaurantDoc.data();
+  const actualDemand = restaurantData['Actual Demand'] || {};
+  const categoryMonthlySums = {};
+  const itemTotals = {};
+
+  for (const [month, categories] of Object.entries(actualDemand)) {
+    for (const [category, items] of Object.entries(categories)) {
+      const monthTotal = Object.values(items).reduce((sum, quantity) => sum + quantity, 0);
+      if (!categoryMonthlySums[category]) {
+        categoryMonthlySums[category] = [];
+      }
+      categoryMonthlySums[category].push(monthTotal);
+    }
+
+    for (const [category, items] of Object.entries(categories)) {
+      for (const [item, quantity] of Object.entries(items)) {
+        if (!itemTotals[item]) {
+          itemTotals[item] = { total: 0, count: 0, quantities: [] };
+        }
+        itemTotals[item].total += quantity;
+        itemTotals[item].count++;
+        itemTotals[item].quantities.push(quantity);
+      }
+    }
+  }
+
+  const categoryMean = {};
+  const categorySD = {};
+  for (const [category, monthlyTotals] of Object.entries(categoryMonthlySums)) {
+    const totalSum = monthlyTotals.reduce((acc, total) => acc + total, 0);
+    const monthCount = monthlyTotals.length;
+
+    categoryMean[category] = monthCount > 0 ? totalSum / monthCount : 0;
+    categorySD[category] = calculateStandardDeviation(monthlyTotals);
+  }
+
+  const itemMean = {};
+  const itemSD = {};
+  for (const [item, totals] of Object.entries(itemTotals)) {
+    itemMean[item] = totals.count > 0 ? totals.total / totals.count : 0;
+    itemSD[item] = calculateStandardDeviation(totals.quantities);
+  }
+
+  return {
+    categoryMean,
+    categorySD,
+    itemMean,
+    itemSD
+  };
+}
+
+// Calculate standard deviation
+function calculateStandardDeviation(values) {
+  const n = values.length;
+  if (n === 0) return 0;
+
+  const mean = values.reduce((acc, val) => acc + val, 0) / n;
+  const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+  return Math.sqrt(variance);
+}
+
+// Calculate OUL for all items
+function calculateOULForAllItems(itemMean, itemSD) {
+  const T = 1; // Review time in Months
+  const L = 7 / 30; // Lead time in Months
+  const Z = 1.75; // Z-score for 96% service level
+  const totalTime = T + L;
+  const OULResults = {};
+
+  for (const item of Object.keys(itemMean)) {
+    const meanDemand = itemMean[item] || 0;
+    const stdDev = itemSD[item] || 0;
+
+    const meanDemandTL = meanDemand * totalTime;
+    const stdDevTL = stdDev * Math.sqrt(totalTime);
+    const safetyStock = Z * stdDevTL;
+    const OUL = meanDemandTL + safetyStock;
+
+    OULResults[item] = {
+      meanDemandTL,
+      stdDevTL,
+      safetyStock,
+      OUL
+    };
+  }
+
+  return OULResults;
+}
+
+// Get OUL and Safety Stock values
+function getOUL(item) {
+  if (storedOULResults[item]) {
+    return storedOULResults[item]['OUL'] || null;
+  }
+}
+
+function getSS(item) {
+  if (storedOULResults[item]) {
+    return storedOULResults[item]['safetyStock'] || null;
+  }
+}
+</script>
