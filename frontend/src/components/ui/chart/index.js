@@ -3,6 +3,8 @@ export { default as ChartLegend } from './ChartLegend.vue';
 export { default as ChartSingleTooltip } from './ChartSingleTooltip.vue';
 export { default as ChartTooltip } from './ChartTooltip.vue';
 
+
+
 export function defaultColors(count = 3) {
   const quotient = Math.floor(count / 2);
   const remainder = count % 2;

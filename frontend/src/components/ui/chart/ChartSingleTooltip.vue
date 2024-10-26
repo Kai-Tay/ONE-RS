@@ -5,13 +5,17 @@ import { createApp } from 'vue';
 import { ChartTooltip } from '.';
 
 const props = defineProps({
-    selector: { type: String, required: true },
-    index: { type: String, required: true },
-    items: { type: Array, required: false },
-    valueFormatter: { type: Function, required: false, default: (tick: number) => `${tick}` },
-    customTooltip: { type: null, required: false }
-  }
-);
+  selector: { type: String, required: true },
+  index: { type: String, required: true },
+  items: { type: Array, required: false, default: () => [] },
+  valueFormatter: { 
+    type: Function, 
+    required: false, 
+    default: (tick) => `${tick}` 
+  },
+  customTooltip: { type: Object, required: false } // Change type as needed
+});
+  
 
 // Use weakmap to store reference to each datapoint for Tooltip
 const wm = new WeakMap();

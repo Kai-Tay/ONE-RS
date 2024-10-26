@@ -4,7 +4,7 @@ import Navbar from '../Navbar.vue';
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router'; // Import the router
-import { useVueTable, FlexRender, getCoreRowModel } from '@tanstack/vue-table';
+// import { useVueTable, FlexRender, getCoreRowModel } from '@tanstack/vue-table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 // Initialize Firebase

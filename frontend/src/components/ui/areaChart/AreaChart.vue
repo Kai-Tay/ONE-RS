@@ -21,19 +21,43 @@ const props = defineProps<{
 const chartCanvas = ref<HTMLCanvasElement | null>(null);
 let chartInstance: Chart | null = null;
 
+// Define a color mapping for categories
+const colorMapping: { [key: string]: { borderColor: string; backgroundColor: string } } = {
+  total: {
+    borderColor: 'blue',
+    // backgroundColor: 'rgba(0, 0, 255, 0.2)',
+  },
+  oul: {
+    borderColor: 'orange',
+    // backgroundColor: 'rgba(255, 165, 0, 0.2)',
+  },
+  safetystock: {
+    borderColor: 'green',
+    // backgroundColor: 'rgba(0, 255, 0, 0.2)',
+  },
+  // Add more categories as needed
+};
+
 onMounted(() => {
   console.log('Props Data:', props.data);
   console.log('Chart Categories:', props.categories);
 
   const chartData = {
     labels: props.data.map(item => item[props.index]),
-    datasets: props.categories.map(category => ({
-      label: category,
-      data: props.data.map(item => item[category]),
-      fill: true,
-      borderColor: category === 'total' ? 'blue' : 'orange',
-      backgroundColor: category === 'total' ? 'rgba(0, 0, 255, 0.2)' : 'rgba(255, 165, 0, 0.2)',
-    })),
+    datasets: props.categories.map(category => {
+      const colors = colorMapping[category.toLowerCase()] || {
+        borderColor: 'grey', // Default color if category not found
+        // backgroundColor: 'rgba(128, 128, 128, 0.2)',
+      };
+
+      return {
+        label: category,
+        data: props.data.map(item => item[category]),
+        fill: false,
+        borderColor: colors.borderColor,
+        backgroundColor: colors.backgroundColor,
+      };
+    }),
   };
 
   chartInstance = new Chart(chartCanvas.value!, {
@@ -47,7 +71,7 @@ onMounted(() => {
         },
         title: {
           display: true,
-          text: 'Area Chart Example',
+          text: 'Order Level based on Service Level',
         },
       },
     },
