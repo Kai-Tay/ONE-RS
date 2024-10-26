@@ -40,6 +40,13 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     </ul>
                 </div>
 
+                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden" v-else>
+                    <!-- Not Logged In Tabs -->
+                    <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6">
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                    </ul>
+                </div>
+
             </div>
 
             <!-- Login Button -->
