@@ -12,6 +12,8 @@ import creditScore from './components/creditScore.vue';
 import Test from '@/components/Supplier/Test.vue'; //old table code 
 import './firebase.js';
 import { Component } from 'lucide-vue-next';
+import Profile from './components/Profile.vue'
+
 
 
 
@@ -20,6 +22,7 @@ const routes = [
     { path: '/', component: Home },
     { path: '/login', component: Authentication },
     { path: '/chat', component: Chat},
+    { path: '/profile', component: Profile},
 
 
 
