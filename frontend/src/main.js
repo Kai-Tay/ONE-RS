@@ -11,7 +11,7 @@ import addIngredientForm from './components/Supplier/addIngredientForm.vue';
 import creditScore from './components/creditScore.vue';
 import Test from '@/components/Supplier/Test.vue'; //old table code 
 import './firebase.js';
-import { Component } from 'lucide-vue-next';
+import viewSupplier from './components/Restaurant/viewSupplier.vue';
 import Profile from './components/Profile.vue'
 
 
@@ -27,6 +27,7 @@ const routes = [
 
 
     // Restaurant
+    { path: '/viewSupplier/:id', name: "viewSupplier",component: viewSupplier},
     { path: '/buyerDashboard', component: BuyerDashboard},
     { path: '/creditScore', component: creditScore},
     // INCLUDE PATH TO OTHER PAGES HERE

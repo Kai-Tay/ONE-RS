@@ -10,6 +10,7 @@ import {
 import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from '../../firebase.js';
 import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags'
+import axios from 'axios';
 </script>
 
 <template>
@@ -50,7 +51,7 @@ import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from
         <TagsInput v-model="searchResult">
             <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
                 <TagsInputItemText />
-                <TagsInputItemDelete @click="handleFilterBoxClose"/>
+                <TagsInputItemDelete @click="handleFilterBoxClose" />
             </TagsInputItem>
         </TagsInput>
 
@@ -73,7 +74,7 @@ import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from
                         <!-- Text -->
                         <div class="flex flex-col justify-center">
                             <CardDescription class="text-md">Available Ingredients:</CardDescription>
-                            <CardDescription class="text-md">{{ listing }}</CardDescription>
+                            <CardDescription class="text-md">{{ listing.inventory }}</CardDescription>
                             {{ listing.description }}
                         </div>
                         <div class="">
@@ -82,7 +83,7 @@ import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button>View Supplier</Button>
+                    <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
                 </CardFooter>
             </Card>
         </div>
@@ -101,14 +102,15 @@ const handleSwitchToggle = (newValue) => {
 
 
 export default {
-    name: 'Home',
+    name: 'FindListings',
     components: {},
     data() {
         return {
             searchQuery: '',
+
+            // Firebase Variables
             filteredListings: [],
             listings: [],
-            companyDetails: [],
 
             // Filter Bar Variable
             searchResult: [],
@@ -120,10 +122,22 @@ export default {
     },
 
     methods: {
+        handleSupplierClick(id) {
+            this.$router.push({name: 'viewSupplier', params: { id: id }});
+        },
         handleFilterBoxClose() {
-            // Clear text input and call the function to recheck the listings
-            this.searchQuery = '';
-            this.filterListings();
+            if (this.searchResult.length > 0) {
+                // Filter out listings that have the search result in their title or ingredients
+                this.filteredListings = this.listings.filter(listing =>
+                    // Check if any search term matches supplierName or any productName in inventory
+                    this.searchResult.some(query =>
+                        listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
+                        listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
+                    )
+                );
+            } else {
+                this.filteredListings = this.listings;
+            }
         },
         async fetchListings() {
             // Fetch all listings from the database
@@ -159,11 +173,12 @@ export default {
 
         filterListings() {
             if (this.searchQuery) {
-
                 // Insert CHATGPT QUERY HERE
                 // Check if AI Search is enabled
                 if (isAiSearch.value) {
-                    const query = this.performAiSearch();
+                    // Perform AI Search
+                    this.performAiSearch();
+
                 } else {
                     // Add search query to list of search results
                     this.searchResult.push(this.searchQuery);
@@ -182,6 +197,7 @@ export default {
 
                 }
             } else {
+                console.log(this.searchResult)
                 // If search is empty, revert it back to all listings
                 this.filteredListings = this.listings;
             }
@@ -190,20 +206,33 @@ export default {
             this.searchQuery = '';
         },
         performAiSearch() {
+            let queryList = [];
+            console.log("Using AI Search now")
             // Perform AI search here by calling backend API (INSERT ACTUAL BACKEND SERVER URL)
-            url = "http://localhost:5001/search-ai";
+            const url = "http://localhost:5001/search-ai";
             axios.post(url, {
                 "data": this.searchQuery,
             })
-                .then(response => {
+                .then((response) => {
                     // process response.data object
+                    queryList = response.data[0].ingredients;
+                    for (const query of queryList) {
+                        this.searchResult.push(query);
+                    }
 
-
+                    // Filter out listings that have the search result in their title or ingredients
+                    this.filteredListings = this.listings.filter(listing =>
+                        // Check if any search term matches supplierName or any productName in inventory
+                        this.searchResult.some(query =>
+                            listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
+                            listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
+                        )
+                    );
                 })
                 .catch(error => {
                     // process error object
+                    console.log(error)
                 });
-
         },
     },
     computed: {
