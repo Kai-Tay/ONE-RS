@@ -24,32 +24,19 @@
 
                         <div class="space-y-2">
                             <Label for="companyName">Company Name</Label>
-                            <Input
-                                id="companyName"
-                                v-model="profileData.companyName"
-                                :disabled="saving"
-                                :placeholder="profileData.companyName || 'Enter company name...'"
-                            />
+                            <Input id="companyName" v-model="profileData.companyName" :disabled="saving"
+                                :placeholder="profileData.companyName || 'Enter company name...'" />
                         </div>
 
                         <div v-if="profileData.userType === 'supplier'" class="space-y-2">
                             <Label for="companyDescription">Company Description</Label>
-                            <Textarea
-                                id="companyDescription"
-                                v-model="profileData.companyDescription"
-                                rows="4"
+                            <Textarea id="companyDescription" v-model="profileData.companyDescription" rows="4"
                                 :disabled="saving"
-                                :placeholder="profileData.companyDescription || 'Describe your business...'"
-                            />
+                                :placeholder="profileData.companyDescription || 'Describe your business...'" />
                         </div>
                     </div>
 
-                    <Button 
-                        type="submit" 
-                        class="w-full"
-                        :disabled="saving"
-                        @click="handleSubmit"
-                    >
+                    <Button type="submit" class="w-full" :disabled="saving" @click="handleSubmit">
                         <template v-if="saving">
                             <Loader2 class="mr-2 h-4 w-4 animate-spin" />
                             Saving...
@@ -62,6 +49,17 @@
             </CardContent>
         </Card>
     </div>
+
+    <Dialog :open="showDialog">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle class="tw-text-xl">Profile Updated Successfully!</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+                Redirecting Back to Home Page...
+            </DialogDescription>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
@@ -69,10 +67,12 @@ import { ref, onMounted } from 'vue'
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { Loader2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router' // Import useRouter
 
 
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -81,20 +81,20 @@ import { Textarea } from '@/components/ui/textarea'
 const loading = ref(true)
 const saving = ref(false)
 const profileData = ref({
-    userType: 'supplier', 
+    userType: 'supplier',
     companyName: '',
     companyDescription: ''
 })
-
-
+const showDialog = ref(false);
 
 const auth = getAuth()
 const db = getFirestore()
+const router = useRouter()  // Initialize router
 
 
 const loadUserData = async (user) => {
     if (!user) return
-    
+
     try {
         const docRef = doc(db, 'users', user.uid)
         const docSnap = await getDoc(docRef)
@@ -122,12 +122,26 @@ const handleSubmit = async () => {
         const user = auth.currentUser
         if (!user) return
 
-        const docRef = doc(db, 'users', user.uid)
-        await updateDoc(docRef, {
-            companyName: profileData.value.companyName,
-            companyDescription: profileData.value.companyDescription,
-            updatedAt: new Date()
-        })
+        if (profileData.value.userType == "supplier") {
+            const docRef = doc(db, 'users', user.uid)
+            await updateDoc(docRef, {
+                companyName: profileData.value.companyName,
+                companyDescription: profileData.value.companyDescription,
+            })
+        } else {
+            const docRef = doc(db, 'users', user.uid)
+            await updateDoc(docRef, {
+                companyName: profileData.value.companyName,
+                companyDescription: null,
+            })
+        }
+        showDialog.value = true
+
+        setTimeout(() => {
+            showDialog.value = false
+            router.push('/');
+        }, 1000)
+
     } catch (err) {
         console.error('Failed to update profile:', err)
     } finally {
@@ -139,6 +153,7 @@ const handleSubmit = async () => {
 onMounted(() => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            console.log(user)
             loadUserData(user)
         } else {
             loading.value = false

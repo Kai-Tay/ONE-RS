@@ -3,18 +3,21 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from '../firebase.js';
 import { doc, getDoc } from "firebase/firestore";
 import { Button } from "./ui/button/index.js";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
+
 
 </script>
 
 
 <template>
     <div>
-        <nav class="h-16 flex items-center justify-between lg:shadow-lg text-gray-900">
+        <nav class="h-16 flex items-center justify-between  text-gray-900">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
                 <div class="font-bold">🧑‍🍳 ONE.RS</div>
-                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden" v-if="isLoggedIn == true">
+                <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden"
+                    v-if="isLoggedIn == true">
                     <!-- Restaurant Tabs -->
                     <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-if="userType == 'restaurant'">
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
@@ -30,7 +33,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
                     <!-- Supplier Tabs -->
                     <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-else>
-                        <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a></li>
+                        <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a>
+                        </li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
                                 href="#/supplier">Current Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
@@ -63,42 +67,58 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
                 </div>
                 <div v-else class="lg:flex items-center gap-4 hidden">
-                    <span>{{ userName }}</span>
+                    <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick" style="cursor: pointer">
+                        <span>
+                            <Avatar class="border-2 border-black">
+                                <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                                <AvatarFallback>{{ userName }}</AvatarFallback>
+                            </Avatar>
+                        </span>
+                        <div>{{ userName }}</div>
+                    </div>
                     <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
                 </div>
             </div>
 
         </nav>
         <!-- Hamburger Version of Nav Bar -->
-            <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
-                <ul class="flex flex-col items-left space-y-4" v-if="userType=='restaurant'">
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
-                            Suppliers</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
-                            href="#/order-history">Order History</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
-                            href="#/order-analytics">Order Analytics</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
-                            href="#/buyerDashboard">Dashboard</a></li>
-                </ul>
-                <ul class="flex flex-col items-left space-y-4" v-else>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
-                            href="#/supplier">Current Orders</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
-                            href="#/supplier">Inventory Management</a></li>
-                    <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
-                            href="#/supplierDashboard">Dashboard</a></li>
-                </ul>
-                <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
-                    <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
-                </div>
-                <div v-else class="lg:hidden items-center space-x-5">
-                    <span>{{ userName }}</span>
-                    <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
-                </div>
+        <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
+            <ul class="flex flex-col items-left space-y-4" v-if="userType == 'restaurant'">
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
+                        Suppliers</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
+                        href="#/order-history">Order History</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
+                        href="#/order-analytics">Order Analytics</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
+                        href="#/buyerDashboard">Dashboard</a></li>
+            </ul>
+            <ul class="flex flex-col items-left space-y-4" v-else>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
+                        href="#/supplier">Current Orders</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                        href="#/supplier">Inventory Management</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
+                        href="#/supplierDashboard">Dashboard</a></li>
+            </ul>
+            <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
+                <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
             </div>
+            <div v-else class="lg:hidden flex items-center space-x-5">
+                <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick" style="cursor: pointer">
+                    <span>
+                        <Avatar class="border-2 border-black">
+                            <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                            <AvatarFallback>{{ userName }}</AvatarFallback>
+                        </Avatar>
+                    </span>
+                    <div>{{ userName }}</div>
+                </div>
+                <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
+            </div>
+        </div>
     </div>
     <!-- Sign Out Success Dialog -->
     <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
@@ -111,17 +131,17 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 export default {
     name: 'Navbar',
     watch: {
-    // Watching for route changes
-    $route(to) {
-        this.currentRoute = to.path;
-      
-        // Check if user is logged in
-        this.checkSessionStorage();
+        // Watching for route changes
+        $route(to) {
+            this.currentRoute = to.path;
 
-        // Hide hamburger menu on route change
-        this.isMenuOpen = false;
-    }
-  },
+            // Check if user is logged in
+            this.checkSessionStorage();
+
+            // Hide hamburger menu on route change
+            this.isMenuOpen = false;
+        }
+    },
     data() {
         return {
             // Nav Bar Display
@@ -140,7 +160,7 @@ export default {
     },
     methods: {
         // Check if user is already logged in and change the nav bar accordingly
-        checkSessionStorage(){
+        checkSessionStorage() {
             if (sessionStorage.getItem('uid') != null) {
                 console.log("User is logged in HEHEHARHAR");
                 this.isLoggedIn = true;
@@ -154,8 +174,8 @@ export default {
         },
         checkAuthentication() {
             // Check if session storage has the user's data
-           this.checkSessionStorage();
-    
+            this.checkSessionStorage();
+
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     // User is signed in
@@ -187,6 +207,9 @@ export default {
         },
         handleLogin() {
             this.$router.push('/login');
+        },
+        handleProfileClick() {
+            this.$router.push('/profile');
         },
         handleLogOut() {
             signOut(auth).then(() => {
