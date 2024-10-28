@@ -12,8 +12,8 @@ import creditScore from './components/creditScore.vue';
 import Test from '@/components/Supplier/Test.vue'; //old table code 
 import './firebase.js';
 import viewSupplier from './components/Restaurant/viewSupplier.vue';
-import Profile from './components/Profile.vue'
-
+import Profile from './components/Profile.vue';
+import orderHistory from './components/orderHistory.vue';
 
 
 
@@ -23,6 +23,7 @@ const routes = [
     { path: '/login', component: Authentication },
     { path: '/chat', component: Chat},
     { path: '/profile', component: Profile},
+    { path: '/orderHistory', component: orderHistory},
 
 
 
