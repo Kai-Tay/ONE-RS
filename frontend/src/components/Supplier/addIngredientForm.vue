@@ -14,6 +14,10 @@ const productName = ref('');
 const pricePerUnit = ref('');
 const quantity = ref('');
 const unit = ref('');
+const category = ref(''); // New field for category
+
+// Predefined categories for the dropdown
+const categories = ['Meat', 'Fruits & Vegetables', 'Dairy', 'Carbohydrates'];
 
 // Function to submit the new ingredient item to the Firebase database
 const addNewIngredient = async () => {
@@ -26,14 +30,15 @@ const addNewIngredient = async () => {
 
         if (supplierDoc.exists()) {
             // Add the new ingredient to the supplier's inventory
-            if (productName.value && pricePerUnit.value && quantity.value && unit.value) {
+            if (productName.value && pricePerUnit.value && quantity.value && unit.value && category.value) {
                 try {
                     await updateDoc(supplierDocRef, {
                         inventory: arrayUnion({
                             productName: productName.value,
                             quantity: parseInt(quantity.value),
                             unit: unit.value,
-                            pricePerUnit: parseFloat(pricePerUnit.value)
+                            pricePerUnit: parseFloat(pricePerUnit.value),
+                            category: category.value // Add the selected category
                         })
                     });
 
@@ -55,6 +60,7 @@ const addNewIngredient = async () => {
     }
 };
 </script>
+
 
 <template>
     <div class="flex justify-center items-center min-h-screen bg-gray-100">
@@ -82,6 +88,14 @@ const addNewIngredient = async () => {
                     <input v-model="pricePerUnit" type="number" step="0.01" id="pricePerUnit" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
                 </div>
 
+                <div class="mb-4">
+                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <select v-model="category" id="category" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+                        <option value="" disabled>Select Category</option>
+                        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                     Add Ingredient
                 </button>
@@ -89,3 +103,4 @@ const addNewIngredient = async () => {
         </div>
     </div>
 </template>
+

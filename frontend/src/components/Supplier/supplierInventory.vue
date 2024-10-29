@@ -16,7 +16,7 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore
 import { useRouter } from 'vue-router';
 import { auth } from '../../firebase.js'; // Assuming you have auth initialized
 
-// Initialize Firebase Firestore
+
 const db = getFirestore();
 const router = useRouter();
 
@@ -33,6 +33,10 @@ const editedProductName = ref(''); // Holds the edited product name
 const editedQuantity = ref(''); // Holds the edited quantity
 const editedUnit = ref(''); // Holds the edited unit
 const editedPricePerUnit = ref(''); // Holds the edited price per unit
+const editedCategory = ref(''); // Holds the edited category
+
+// Predefined categories for dropdown
+const categories = ['Meat', 'Fruits & Vegetables', 'Dairy', 'Carbohydrates'];
 
 // Fetch user and supplier data from Firebase on component mount
 const fetchUserAndSuppliers = async () => {
@@ -83,6 +87,7 @@ const editItem = (item) => {
   editedQuantity.value = item.quantity;
   editedUnit.value = item.unit;
   editedPricePerUnit.value = item.pricePerUnit;
+  editedCategory.value = item.category; // Prepopulate the category
   isEditing.value = true; // Show the edit dialog
 };
 
@@ -99,7 +104,8 @@ const saveChanges = async () => {
           productName: editedProductName.value,
           quantity: parseInt(editedQuantity.value),
           unit: editedUnit.value,
-          pricePerUnit: parseFloat(editedPricePerUnit.value)
+          pricePerUnit: parseFloat(editedPricePerUnit.value),
+          category: editedCategory.value // Update the category
         }
         : inventoryItem
     );
@@ -192,6 +198,7 @@ onMounted(() => {
                       <TableHead>Quantity</TableHead>
                       <TableHead>Unit</TableHead>
                       <TableHead>Price per Unit</TableHead>
+                      <TableHead>Category</TableHead>
                       <TableHead><span class="sr-only">Actions</span></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -202,6 +209,7 @@ onMounted(() => {
                       <TableCell>{{ item.quantity }}</TableCell>
                       <TableCell>{{ item.unit }}</TableCell>
                       <TableCell>{{ "$" + parseFloat(item.pricePerUnit).toFixed(2) }}</TableCell>
+                      <TableCell>{{ item.category }}</TableCell>
                       <TableCell class="flex justify-end gap-2">
                         <!-- Buttons aligned to the right using flex and justify-end -->
                         <Dialog>
@@ -219,8 +227,12 @@ onMounted(() => {
                               <Input v-model="editedProductName" placeholder="Product Name" />
                               <Input v-model="editedQuantity" type="number" placeholder="Quantity" />
                               <Input v-model="editedUnit" placeholder="Unit" />
-                              <Input v-model="editedPricePerUnit" type="number" step="0.01"
-                                placeholder="Price per Unit" />
+                              <Input v-model="editedPricePerUnit" type="number" step="0.01" placeholder="Price per Unit" />
+                              <!-- Dropdown for editing category -->
+                              <select v-model="editedCategory" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="" disabled>Select Category</option>
+                                <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+                              </select>
                             </div>
                             <DialogFooter>
                               <Button type="submit" @click="saveChanges">Save Changes</Button>
@@ -244,3 +256,4 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
