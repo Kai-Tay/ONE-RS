@@ -97,7 +97,8 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
                                     <Label :for="`qty-${index}`" class="sr-only">
                                         Qty
                                     </Label>
-                                    <Input :id="`qty-${index}`" type="number" default-value="" min="1" :max="item.quantity" />
+                                    <Input :id="`qty-${index}`" type="number" default-value="" min="1"
+                                        :max="item.quantity" v-model="item.purchaseQuantity"/>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -107,7 +108,59 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
         </div>
     </div>
     <div v-else-if="activeStep === 2">
-        <p>Content for Step 2</p>
+        <!-- Checkout -->
+        <div class="grid grid-cols-1 gap-4 mx-5">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Checkout</CardTitle>
+                    <CardDescription>
+                        View Your Purchase
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>
+                                    Name
+                                </TableHead>
+                                <TableHead class="w-[200px]">Price Per Unit</TableHead>
+                                <TableHead class="w-[200px]">Qty Purchasing</TableHead>
+                                <TableHead class="">
+                                    Sub Total
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <!-- For Loop Here -->
+                        <TableBody v-for="(item, index) in orderCart" :key="item.id">
+                            <TableRow>
+                                <TableCell class="font-semibold">
+                                    {{ item.productName }}
+                                </TableCell>
+                                <TableCell>
+                                    <Label class="sr-only">
+                                        Price
+                                    </Label>
+                                    ${{ item.pricePerUnit }}
+                                </TableCell>
+                                <TableCell>
+                                    <Label class="sr-only">
+                                        Purchase Quantity
+                                    </Label>
+                                    {{ item.purchaseQuantity }}
+                                </TableCell>
+                                <TableCell>
+                                    <Label  class="sr-only">
+                                        Sub Total
+                                    </Label>
+                                    ${{ item.pricePerUnit * item.purchaseQuantity }}
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </div>
     </div>
     <div v-else-if="activeStep === 3">
         <p>Content for Step 3</p>
@@ -157,27 +210,33 @@ export default {
             supplierId: "",
             supplierListing: {},
 
-            orderCart: {},
         };
     },
-    mounted() {
-        // Get the supplier ID from the URL
-        const route = useRoute();
-        this.supplierId = route.params.id;
-
-        // Obtain Database Suppliers
-        this.fetchListing();
+    computed: {
+        // Get all the inventory listings with purchase Quantity more than 1 from supplierListing
+        orderCart() {
+            return this.supplierListing.inventory.filter(item => item.purchaseQuantity > 0);
+        }
     },
-
+    watch: {
+        // Watch each item’s purchaseQuantity in inventory
+        'supplierListing.inventory': {
+            handler(inventory) {
+                inventory.forEach(item => {
+                    if (item.purchaseQuantity > item.quantity) {
+                        item.purchaseQuantity = item.quantity; // Reset to max stock if exceeded
+                    }
+                });
+            },
+            deep: true 
+        }
+    },
     methods: {
         // Stepper Methods
         goToStep(index) {
             this.activeStep = index;
         },
         nextStep() {
-            if (this.activeStep == 1){
-                this.handleInventoryQuantity();
-            }
             if (this.activeStep < this.steps.length) {
                 this.activeStep++;
             }
@@ -205,8 +264,14 @@ export default {
                 // Combine the data (Add company description from user database to merged data)
                 const mergedData = {
                     ...listingSnap.data(),
-                    supplierDescription: userSnap.data().companyDescription
+                    supplierDescription: userSnap.data().companyDescription,
                 };
+
+                // Add quantity key to each inventory item
+                mergedData.inventory = mergedData.inventory.map(item => ({
+                    ...item,
+                    purchaseQuantity: 0
+                }));
 
                 this.supplierListing = mergedData;
 
@@ -214,14 +279,14 @@ export default {
                 console.error('Error fetching listings:', error)
             }
         },
+    },
+    mounted() {
+        // Get the supplier ID from the URL
+        const route = useRoute();
+        this.supplierId = route.params.id;
 
-
-        // On Qty Change
-        handleInventoryQuantity() {
-            // Get the qty values for each listing and update the orderCart
-            const qtyInputs = document.querySelectorAll('input[type="number"]');
-            console.log(qtyInputs);
-        }
+        // Obtain Database Suppliers
+        this.fetchListing();
     },
 };
 </script>
