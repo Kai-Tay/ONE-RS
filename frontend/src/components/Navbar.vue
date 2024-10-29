@@ -67,7 +67,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
                 </div>
                 <div v-else class="lg:flex items-center gap-4 hidden">
-                    <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick" style="cursor: pointer">
+                    <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
+                        style="cursor: pointer">
                         <span>
                             <Avatar class="border-2 border-black">
                                 <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
@@ -107,7 +108,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
             </div>
             <div v-else class="lg:hidden flex items-center space-x-5">
-                <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick" style="cursor: pointer">
+                <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
+                    style="cursor: pointer">
                     <span>
                         <Avatar class="border-2 border-black">
                             <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
@@ -188,7 +190,26 @@ export default {
                         console.log("Auth Expiration time: ", expirationTime);
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
-                            this.handleLogOut();
+                            signOut(auth).then(() => {
+                                sessionStorage.clear();
+
+                                // Redirect the user to the login page or handle it appropriately
+                                this.statusHeader = "Session Timed Out";
+                                this.statusDescription = "Please Login Again!";
+                                this.showAuthDialog = true;
+
+                                // Update vue variables
+                                this.checkSessionStorage();
+
+                                // Automatically close the dialog after 2 seconds
+                                setTimeout(() => {
+                                    this.showAuthDialog = false;
+                                }, 2000);
+                                this.$router.push('/');
+
+                            }).catch((error) => {
+                                alert("Error logging out: ", error);
+                            });
                         } else {
                             // Enter database and find userType
                             const docRef = doc(db, "users", uid);
