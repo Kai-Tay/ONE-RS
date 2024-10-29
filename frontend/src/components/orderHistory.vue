@@ -1,5 +1,6 @@
 <script setup>
 import Navbar from './Navbar.vue';
+import Chat from './chat.vue';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from './ui/table';
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
@@ -52,7 +53,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
                         <TableCell>{{ order.name }}</TableCell>
                         <TableCell class="text-end">
                             <Button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold border border-gray-400 shadow mr-2">View</Button>
-                            <Button class="bg-blue-500 text-white">Chat with Supplier</Button>
+                            <router-link :to="`/chat/${order.id}/${order.name}`">
+                                <Button class="bg-blue-500 text-white">Chat with Supplier</Button>
+                            </router-link>
                         </TableCell>
                     </TableRow>
                 </TableBody>
@@ -87,6 +90,8 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
     </div>
 </template>
 
+
+<!-- dummy orders -->
 <script>
 export default {
     name: 'orderHistory',
@@ -101,6 +106,17 @@ export default {
                 { id: 2, date: '27/10/2024', status: 'Pending', name: 'Bob' },
                 { id: 3, date: '27/10/2024', status: 'Paid', name: 'Charles' }
             ]
+        }
+    }, 
+    methods: {
+        navigateToChat(supplierId, supplierName) {
+            this.$router.push({
+                name: 'chat',
+                params: {
+                    supplierId: supplierId,
+                    supplierName: supplierName
+                }
+            });
         }
     }
 }

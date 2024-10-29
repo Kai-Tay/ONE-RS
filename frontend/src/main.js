@@ -21,7 +21,7 @@ import orderHistory from './components/orderHistory.vue';
 const routes = [
     { path: '/', component: Home },
     { path: '/login', component: Authentication },
-    { path: '/chat', component: Chat},
+    { path: '/chat/:supplierId/:supplierName', component: Chat},
     { path: '/profile', component: Profile},
     { path: '/orderHistory', component: orderHistory},
 
