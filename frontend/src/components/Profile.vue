@@ -191,6 +191,12 @@ onMounted(() => {
                                 :placeholder="profileData.companyName || 'Enter company name...'" />
                         </div>
 
+                        <div class="space-y-2">
+                            <Label for="companyAddress">Company Address</Label>
+                            <Input id="companyAddress" v-model="profileData.companyAddress" :disabled="saving"
+                                :placeholder="profileData.companyAddress || 'Enter company address...'" />
+                        </div>
+
                         <div v-if="profileData.userType === 'supplier'" class="space-y-2">
                             <Label for="companyDescription">Company Description</Label>
                             <Textarea id="companyDescription" v-model="profileData.companyDescription" rows="4"
@@ -273,9 +279,7 @@ import {
     DialogHeader,
     DialogContent,
     DialogTitle,
-    DialogDescription,
-    DialogClose,
-    DialogFooter
+    DialogDescription
 } from '@/components/ui/dialog'
 import {
     AlertDialog,
@@ -318,6 +322,7 @@ const loadUserData = async (user) => {
             profileData.value = {
                 userType: data.userType || 'supplier',
                 companyName: data.companyName || '',
+                companyAddress: data.companyAddress || '',
                 companyDescription: data.companyDescription || ''
             }
         }
@@ -339,12 +344,14 @@ const handleSubmit = async () => {
             const docRef = doc(db, 'users', user.uid)
             await updateDoc(docRef, {
                 companyName: profileData.value.companyName,
-                companyDescription: profileData.value.companyDescription,
+                companyAddress: profileData.value.companyAddress,
+                companyDescription: profileData.value.companyDescription
             })
         } else {
             const docRef = doc(db, 'users', user.uid)
             await updateDoc(docRef, {
                 companyName: profileData.value.companyName,
+                companyAddress : profileData.value.companyAddress,
                 companyDescription: null,
             })
         }
