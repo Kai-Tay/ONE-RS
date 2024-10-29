@@ -12,6 +12,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from '../../firebase.js';
 import { useRoute } from 'vue-router';
 import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSeparator, StepperTitle, StepperTrigger, } from '@/components/ui/stepper'
+import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogFooter } from '@/components/ui/dialog';
 </script>
 
 <template>
@@ -35,7 +36,11 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
             <StepperItem v-for="item in steps" :key="item.step" class="" :step="item.step">
                 <StepperTrigger @click="goToStep(item.step)">
                     <StepperIndicator>
-                        <component :is="item.icon" class="w-4 h-4" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" :d="item.iconValue" />
+                        </svg>
+
                     </StepperIndicator>
                     <div class="flex flex-col">
                         <StepperTitle>
@@ -98,7 +103,7 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
                                         Qty
                                     </Label>
                                     <Input :id="`qty-${index}`" type="number" default-value="" min="1"
-                                        :max="item.quantity" v-model="item.purchaseQuantity"/>
+                                        :max="item.quantity" v-model="item.purchaseQuantity" />
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -150,10 +155,24 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
                                     {{ item.purchaseQuantity }}
                                 </TableCell>
                                 <TableCell>
-                                    <Label  class="sr-only">
+                                    <Label class="sr-only">
                                         Sub Total
                                     </Label>
                                     ${{ item.pricePerUnit * item.purchaseQuantity }}
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                        <TableBody>
+                            <!-- Total Amount -->
+                            <TableRow>
+                                <TableCell class="font-semibold">
+                                    Total
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>
+                                    ${{ orderCart.reduce((acc, item) => acc + (item.pricePerUnit *
+                                        item.purchaseQuantity), 0) }}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -163,15 +182,51 @@ import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSepa
         </div>
     </div>
     <div v-else-if="activeStep === 3">
-        <p>Content for Step 3</p>
+        <!-- Confirm User Address -->
+        <div class="grid grid-cols-1 gap-4 mx-5">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Delivery Information</CardTitle>
+                    <CardDescription>
+                        Confirm your delivery address
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex flex-col space-y-4">
+                        <Label for="address" class="font-semibold">Address</Label>
+                        <Input id="address" type="text" v-model="restaurantAddress" />
+                        <Label for="phone" class="font-semibold">Phone Number</Label>
+                        <Input id="phone" type="text" placeholder="+6512345678" v-model="restaurantPhoneNumber"/>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     </div>
 
 
 
     <div class="flex flex-inline justify-center my-4 space-x-20">
         <Button @click="previousStep" variant="grey">Previous</Button>
-        <Button @click="nextStep" :disabled="activeStep === steps.length">Continue</Button>
+        <Button @click="nextStep">Continue</Button>
     </div>
+
+    <Dialog :open="showDialog">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle class="tw-text-xl">{{ status }}</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+                {{ description }}
+            </DialogDescription>
+            <DialogFooter class="sm:justify-start">
+                <DialogClose as-child>
+                    <Button type="button" variant="secondary" @click="closeDialog">
+                        Close
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 
 </template>
 
@@ -190,26 +245,35 @@ export default {
                 step: 1,
                 title: 'Add to Cart',
                 description: 'Select your items!',
-                icon: null,
+                iconValue: "M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z",
             }, {
                 step: 2,
                 title: 'Checkout',
                 description: 'Confirm your Order',
-                icon: null,
+                iconValue: "M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z",
             }, {
                 step: 3,
                 title: 'Delivery Information',
                 description: 'Provide delivery information',
-                icon: null,
+                iconValue: "M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12",
             }, {
                 step: 4,
                 title: 'Payment',
                 description: 'Pay for your order',
-                icon: null,
+                iconValue: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z",
             }],
+
             supplierId: "",
             supplierListing: {},
+            userInfo: {},
 
+            // Dialog stuff
+            showDialog: false,
+            status: "",
+            description: "",
+
+            restaurantPhoneNumber: "",
+            restaurantAddress: "",
         };
     },
     computed: {
@@ -228,15 +292,59 @@ export default {
                     }
                 });
             },
-            deep: true 
+            deep: true
         }
     },
     methods: {
         // Stepper Methods
         goToStep(index) {
-            this.activeStep = index;
+            if (this.activeStep == 2) {
+                // Check if there are items in the cart
+                if (this.orderCart.length > 0) {
+                    this.activeStep = index;
+                } else {
+                    this.status = "No Items Selected";
+                    this.description = "Please select at least one item to proceed";
+                    this.showDialog = true;
+                    this.activeStep = 1;
+                }
+            } else if (this.activeStep == 4){
+                // Check if address is filled
+                if (this.restaurantAddress == "" || this.restaurantPhoneNumber == "") {
+                    this.status = "No Address/Phone Number Provided";
+                    this.description = "Please provide an address/phone number to proceed";
+                    this.showDialog = true;
+                    this.activeStep = 3;
+                } else {
+                    this.activeStep = index;
+                }
+            }
+            else {
+                this.activeStep = index;
+            }
         },
         nextStep() {
+            
+            if (this.activeStep == 1) {
+                // Check if there are items in the cart
+                if (this.orderCart.length > 0) {
+                    this.activeStep++;
+                } else {
+                    this.status = "No Items Selected";
+                    this.description = "Please select at least one item to proceed";
+                    this.showDialog = true;
+                }
+            } else if (this.activeStep == 3){
+                // Check if address is filled
+                if (this.restaurantAddress == "" || this.restaurantPhoneNumber == "") {
+                    this.status = "No Address/Phone Number Provided";
+                    this.description = "Please provide an address/phone number to proceed";
+                    this.showDialog = true;
+                } else {
+                    this.activeStep++;
+                }
+            }
+            else 
             if (this.activeStep < this.steps.length) {
                 this.activeStep++;
             }
@@ -249,7 +357,13 @@ export default {
             }
         },
 
+        // Close Dialog
+        closeDialog() {
+            this.showDialog = false;
+        },
+
         // Database Methods
+        // Fetch the supplier listing from the database
         async fetchListing() {
             // Fetch listings from the database supplierListing and users
             try {
@@ -279,6 +393,20 @@ export default {
                 console.error('Error fetching listings:', error)
             }
         },
+
+        // Fetch User Data
+        async fetchUser() {
+            // Fetch the user
+            const userRef = doc(db, "users", sessionStorage.getItem("uid"));
+            const userSnap = await getDoc(userRef);
+
+            // User info
+            this.userInfo = userSnap.data();
+
+            // Add Address to restaurantAddress
+            this.restaurantAddress = this.userInfo.companyAddress;
+            console.log(this.userInfo);
+        },
     },
     mounted() {
         // Get the supplier ID from the URL
@@ -287,6 +415,9 @@ export default {
 
         // Obtain Database Suppliers
         this.fetchListing();
+
+        // Obtain User Info
+        this.fetchUser();
     },
 };
 </script>
