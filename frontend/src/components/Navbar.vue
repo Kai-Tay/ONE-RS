@@ -23,10 +23,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                                 Suppliers</a></li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/orderHistory' }"
-                                href="#/orderHistory">Order History</a></li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
-                                href="#/order-analytics">Order Analytics</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerOrder' }"
+                                href="#/orderHistory">Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
                                 href="#/buyerDashboard">Dashboard</a></li>
                     </ul>
@@ -35,8 +33,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     <ul class="flex flex-col lg:flex-row mb-4 lg:mb-0 space-x-6" v-else>
                         <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a>
                         </li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
-                                href="#/supplier">Current Orders</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierOrders' }"
+                                href="#/supplierOrders">Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
                                 href="#/supplierInventory">Inventory Management</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"

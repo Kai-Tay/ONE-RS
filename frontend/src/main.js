@@ -23,7 +23,7 @@ const routes = [
     { path: '/login', component: Authentication },
     { path: '/chat/:supplierId/:supplierName', component: Chat},
     { path: '/profile', component: Profile},
-    { path: '/orderHistory', component: orderHistory},
+    { path: '/supplierOrders', component: orderHistory},
 
 
 
