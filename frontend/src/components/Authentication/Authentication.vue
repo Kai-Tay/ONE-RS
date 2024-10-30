@@ -276,8 +276,7 @@ export default {
           // Create inventory document if user is a supplier
           if (!this.isSupplier) {
             return setDoc(doc(db, "inventoryLevels", user.uid), {
-              userId: user.uid
-            });
+          });
           }
           return Promise.resolve(); // Return resolved promise if not a supplier
         })
