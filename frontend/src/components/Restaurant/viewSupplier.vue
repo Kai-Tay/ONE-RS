@@ -72,9 +72,11 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                 <TableHead>
                                     Name
                                 </TableHead>
+                                <TableHead class="w-[200px]">Category</TableHead>
+                                <TableHead class="w-[200px]">Sub Category</TableHead>
                                 <TableHead class="w-[100px]">Stock</TableHead>
                                 <TableHead class="w-[200px]">Price Per Unit</TableHead>
-                                <TableHead class="">
+                                <TableHead class="w-[100px]">
                                     Quantity
                                 </TableHead>
                             </TableRow>
@@ -84,6 +86,12 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                             <TableRow>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
+                                </TableCell>
+                                <TableCell>
+                                    {{ item.category }}
+                                </TableCell>
+                                <TableCell>
+                                    {{ item.subcategory }}
                                 </TableCell>
                                 <TableCell>
                                     <Label :for="`stock-${index}`" class="sr-only">
@@ -373,7 +381,7 @@ export default {
                 this.$router.push("/find");
             }
         },
-
+        
         // Close Dialog
         closeDialog() {
             this.showDialog = false;
