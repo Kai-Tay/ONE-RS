@@ -1,6 +1,8 @@
 <script setup>
+import { Repeat } from 'lucide-vue-next';
 import Navbar from './Navbar.vue';
 import { Button } from './ui/button';
+import { animate, spring } from "motion";
 </script>
 
 <template>
@@ -113,49 +115,59 @@ import { Button } from './ui/button';
             </div>
         </section>
 
-        <!-- Buyer -->
+        <!-- Restaurant -->
         <section class="" id="features" v-else>
             <div class="grid grid-cols-3 h-screen">
                 <!-- Map Image of Restaurants Connecting -->
-                <div class="bg-black mb-lg-0 text-white px-5">
-                    <i class="bi bi-robot text-primary"></i>
+                <div class="flex flex-col justify-between bg-black text-white px-5">
                     <h2 class="fw-bolder text-3xl mt-3">AI Sourcing</h2>
-
-                    <div class="bg-black text-white content-end row-start-2">
+                    <div class="mb-5">
                         <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
                             All you need to do is to input your ingredients and let the AI do the rest.</p>
 
-                        <Button class="bg-transparent border border-white mb-5">
+                        <Button class="bg-transparent border border-white">
                             Move to AI Sourcing
                             <i class="bi bi-arrow-right"></i>
                         </Button>
                     </div>
                 </div>
 
-                <div class="mb-lg-0 px-5">
-                    <i class="bi bi-credit-card text-primary"></i>
+                <div class="flex flex-col justify-between px-5">
                     <h2 class="fw-bolder text-3xl mt-3">Credit Score</h2>
-                    <p>As a buyer, you have a credit score to maintain. These will increase for every payment made
-                        on time to the supplier. Check your score here!</p>
-                    <a class="text-decoration-none" href="#!">
-                        Move to Credit Score
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
+                    <div class="mb-5">
+                        <p class="mb-5">As a buyer, you have a credit score to maintain. These will increase for every
+                            payment
+                            made
+                            on time to the supplier. Check your score here!</p>
+                        <Button class="">
+                            Move to Credit Score
+                            <i class="bi bi-arrow-right"></i>
+                        </Button>
+                    </div>
                 </div>
 
-                <div class="mb-lg-0 px-5">
-                    <i class="bi bi-gear-wide-connected text-primary"></i>
+
+                <div class="flex flex-col justify-between px-5">
                     <h2 class="fw-bolder text-3xl mt-3">Order Optimisation</h2>
-                    <p>Are you overbuying ingredients for your business? Use our order optimiser to analyse your
-                        order history and plan out your next purchase!</p>
-                    <a class="text-decoration-none" href="#!">
-                        Move to Order Optimisation
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
+                    <div class="mb-5">
+                        <p class="mb-5">Are you overbuying ingredients for your business? Use our order optimiser to
+                            analyse your
+                            order history and plan out your next purchase!</p>
+                        <Button>
+                            Move to Order Optimisation
+                            <i class="bi bi-arrow-right"></i>
+                        </Button>
+                    </div>
                 </div>
+            </div>
+
+            <div class="h-screen">
+                <div class="box"></div>
             </div>
         </section>
     </div>
+
+
 
     <!-- When Not Logged In -->
     <section class="py-5 border-bottom" v-else>
@@ -204,6 +216,8 @@ import { Button } from './ui/button';
                 </div>
             </div>
         </div>
+
+
     </section>
 </template>
 
@@ -225,6 +239,16 @@ export default {
         this.filteredListings = this.listings;
     },
     methods: {
+        runAnimation() {
+            animate(".box", { scale: 1.1 },
+                {
+                    duration: 1,
+                    easing: spring(),
+                    repeat: Infinity,
+                    direction: "alternate"
+                }
+            );
+        }
     },
     computed: {
         // Computed property to dynamically set the placeholder
@@ -238,9 +262,19 @@ export default {
 
         if (this.userName != null) {
             this.isLoggedIn = true;
+            // Use $nextTick to wait for DOM to update (When the page changes from not logged in to logged in)
+            this.$nextTick(() => this.runAnimation());
         }
-    }
+    },
 };
 </script>
 
-<style></style>
+<style>
+.box {
+    margin: 100px;
+    width: 200px;
+    height: 200px;
+    background: blue;
+    border-radius: 5px;
+}
+</style>
