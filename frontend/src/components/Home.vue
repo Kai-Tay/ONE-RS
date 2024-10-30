@@ -38,7 +38,7 @@ import { Button } from './ui/button';
         </div>
     </div> -->
 
-    <header class="bg-gray-900 py-5 h-80 flex flex-col justify-center">
+    <header class="bg-gray-900 py-5 h-screen flex flex-col justify-center">
         <div class="px-5 row gx-5 justify-center">
             <div class="col-lg-6">
                 <div class="text-center my-5 ">
@@ -114,39 +114,44 @@ import { Button } from './ui/button';
         </section>
 
         <!-- Buyer -->
-        <section class="py-5 border-bottom" id="features" v-else>
-            <div class="container px-5 my-5">
-                <div class="row justify-content-center gx-5">
-                    <div class="col-lg-3 mb-5 mb-lg-0 text-center">
-                        <i class="bi bi-robot text-primary"></i>
-                        <h2 class="h4 fw-bolder">AI Sourcing</h2>
-                        <p>Find the ingredients needed for your restaurant using our AI Sourcing!
+        <section class="" id="features" v-else>
+            <div class="grid grid-cols-3 h-screen">
+                <!-- Map Image of Restaurants Connecting -->
+                <div class="bg-black mb-lg-0 text-white px-5">
+                    <i class="bi bi-robot text-primary"></i>
+                    <h2 class="fw-bolder text-3xl mt-3">AI Sourcing</h2>
+
+                    <div class="bg-black text-white content-end row-start-2">
+                        <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
                             All you need to do is to input your ingredients and let the AI do the rest.</p>
-                        <a class="text-decoration-none" href="#!">
+
+                        <Button class="bg-transparent border border-white mb-5">
                             Move to AI Sourcing
                             <i class="bi bi-arrow-right"></i>
-                        </a>
+                        </Button>
                     </div>
-                    <div class="col-lg-3 mb-5 mb-lg-0 text-center">
-                        <i class="bi bi-credit-card text-primary"></i>
-                        <h2 class="h4 fw-bolder">Credit Score</h2>
-                        <p>As a buyer, you have a credit score to maintain. These will increase for every payment made
-                            on time to the supplier. Check your score here!</p>
-                        <a class="text-decoration-none" href="#!">
-                            Move to Credit Score
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 text-center">
-                        <i class="bi bi-gear-wide-connected text-primary"></i>
-                        <h2 class="h4 fw-bolder">Order Optimisation</h2>
-                        <p>Are you overbuying ingredients for your business? Use our order optimiser to analyse your
-                            order history and plan out your next purchase!</p>
-                        <a class="text-decoration-none" href="#!">
-                            Move to Order Optimisation
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
+                </div>
+
+                <div class="mb-lg-0 px-5">
+                    <i class="bi bi-credit-card text-primary"></i>
+                    <h2 class="fw-bolder text-3xl mt-3">Credit Score</h2>
+                    <p>As a buyer, you have a credit score to maintain. These will increase for every payment made
+                        on time to the supplier. Check your score here!</p>
+                    <a class="text-decoration-none" href="#!">
+                        Move to Credit Score
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="mb-lg-0 px-5">
+                    <i class="bi bi-gear-wide-connected text-primary"></i>
+                    <h2 class="fw-bolder text-3xl mt-3">Order Optimisation</h2>
+                    <p>Are you overbuying ingredients for your business? Use our order optimiser to analyse your
+                        order history and plan out your next purchase!</p>
+                    <a class="text-decoration-none" href="#!">
+                        Move to Order Optimisation
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -230,8 +235,8 @@ export default {
     mounted() {
         this.userName = sessionStorage.userName;
         this.userType = sessionStorage.userType;
-        
-        if(this.userName != null){
+
+        if (this.userName != null) {
             this.isLoggedIn = true;
         }
     }
