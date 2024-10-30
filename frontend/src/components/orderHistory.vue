@@ -57,7 +57,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                 <TableCell class="w-[100px]">{{ order.orderID }}</TableCell>
                                 <TableCell>
                                     <div v-for="item in order.orderedItems">
-                                        <p>{{ item.productName }} x {{ item.quantity }}</p>
+                                        <p>{{ item.productName }} x {{ item.purchaseQuantity }}</p>
                                     </div>
                                 </TableCell>
                                 <TableCell>{{ order.totalPrice }}</TableCell>
@@ -156,7 +156,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                 <TableCell class="w-[100px]">{{ order.orderID }}</TableCell>
                                 <TableCell>
                                     <div v-for="item in order.orderedItems">
-                                        <p>{{ item.productName }} x{{ item.quantity }}</p>
+                                        <p>{{ item.productName }} x{{ item.purchaseQuantity }}</p>
                                     </div>
                                 </TableCell>
                                 <TableCell>{{ order.totalPrice }}</TableCell>
