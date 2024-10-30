@@ -80,6 +80,11 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Label for="companyName">Company's Name</Label>
               <Input id="companyName" placeholder="Company Name" v-model="companyName" />
             </div>
+
+            <div class="space-y-1">
+              <Label for="companyAddress">Company's Address</Label>
+              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" />
+            </div>
             
             <div class="space-y-1">
               <Label for="email">Email</Label>
@@ -118,6 +123,11 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
             <div class="space-y-1">
               <Label for="companyName">Company's Name</Label>
               <Input id="companyName" placeholder="Company Name" v-model="companyName" />
+            </div>
+
+            <div class="space-y-1">
+              <Label for="companyAddress">Company's Address</Label>
+              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" />
             </div>
 
             <div class="space-y-1">
@@ -175,6 +185,7 @@ export default {
       // Supplier Based
       companyName: '',
       companyDescription: '',
+      companyAddress: '',
 
       // Dialog
       showAuthDialog: false,
@@ -245,49 +256,66 @@ export default {
         });
     },
     handleSignUp() {
-      createUserWithEmailAndPassword(auth, this.email, this.password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          updateProfile(user, {
-            displayName: this.userName
-          });
+    createUserWithEmailAndPassword(auth, this.email, this.password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      updateProfile(user, {
+        displayName: this.userName
+      });
 
-          // Store user data in Firestore
-          setDoc(doc(db, "users", user.uid), {
-            userName: this.userName,
-            companyName: this.companyName, // Store company's name in the database
-            userType: this.isSupplier ? "supplier" : "restaurant",
-            points: this.isSupplier ? null : 0,
-            companyDescription: this.isSupplier ? this.companyDescription : null,
-          })
-            .then(() => {
-              // Add session cookie
-              this.addSessionCookie(user.uid,this.userName,this.isSupplier ? "supplier" : "restaurant", this.isSupplier ? null : 0);
-
-              this.statusHeader = "Signed Up Successful!";
-              this.statusDescription = "Redirecting to home page in 2 seconds...";
-              this.statusSuccess = true;
-              this.showAuthDialog = true;
-
-              setTimeout(() => {
-                this.showAuthDialog = false;
-                this.$router.push('/');
-              }, 2000);
-
-              
-            })
-            .catch((error) => {
-              console.error("Error adding document: ", error);
+      // Store user data in Firestore
+      setDoc(doc(db, "users", user.uid), {
+        userName: this.userName,
+        companyName: this.companyName,
+        companyAddress: this.companyAddress,
+        userType: this.isSupplier ? "supplier" : "restaurant",
+        points: this.isSupplier ? null : 0,
+        companyDescription: this.isSupplier ? this.companyDescription : null,
+      })
+        .then(() => {
+          // Create inventory document if user is a supplier
+          if (!this.isSupplier) {
+            return setDoc(doc(db, "inventoryLevels", user.uid), {
+              userId: user.uid
             });
+          }
+          return Promise.resolve(); // Return resolved promise if not a supplier
+        })
+        .then(() => {
+          // Add session cookie
+          this.addSessionCookie(
+            user.uid,
+            this.userName,
+            this.isSupplier ? "supplier" : "restaurant",
+            this.isSupplier ? null : 0
+          );
+
+          this.statusHeader = "Signed Up Successful!";
+          this.statusDescription = "Redirecting to home page in 2 seconds...";
+          this.statusSuccess = true;
+          this.showAuthDialog = true;
+
+          setTimeout(() => {
+            this.showAuthDialog = false;
+            this.$router.push('/');
+          }, 2000);
         })
         .catch((error) => {
-          console.error("Error in Signing Up, Please Try Again!", error);
-          this.statusHeader = "Signed Up Unsuccessful";
-          this.statusDescription = "Error in Signing Up, Please Try Again!";
+          console.error("Error adding document: ", error);
+          this.statusHeader = "Sign Up Error";
+          this.statusDescription = "Error creating account. Please try again.";
           this.statusSuccess = false;
           this.showAuthDialog = true;
         });
-    }
+    })
+    .catch((error) => {
+      console.error("Error in Signing Up, Please Try Again!", error);
+      this.statusHeader = "Signed Up Unsuccessful";
+      this.statusDescription = "Error in Signing Up, Please Try Again!";
+      this.statusSuccess = false;
+      this.showAuthDialog = true;
+    });
+}
   }
 };
 
