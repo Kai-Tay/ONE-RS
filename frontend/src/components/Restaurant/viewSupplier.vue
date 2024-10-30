@@ -57,6 +57,12 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                     </CardTitle>
                     <CardDescription class="text-lg mt-4">{{ supplierListing.supplierDescription }}</CardDescription>
                 </CardHeader>
+                <CardHeader>
+                    <CardTitle>
+                        <div class="text-2xl">Company Address</div>
+                    </CardTitle>
+                    <CardDescription class="text-lg mt-4">{{ supplierListing.supplierAddress }}</CardDescription>
+                </CardHeader>
             </Card>
             <Card>
                 <CardHeader>
@@ -72,10 +78,10 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                 <TableHead>
                                     Name
                                 </TableHead>
-                                <TableHead class="w-[200px]">Category</TableHead>
-                                <TableHead class="w-[200px]">Sub Category</TableHead>
+                                <TableHead class="w-[150px]">Category</TableHead>
+                                <TableHead class="w-[150px]">Sub Category</TableHead>
                                 <TableHead class="w-[100px]">Stock</TableHead>
-                                <TableHead class="w-[200px]">Price Per Unit</TableHead>
+                                <TableHead class="w-[150px]">Price Per Unit</TableHead>
                                 <TableHead class="w-[100px]">
                                     Quantity
                                 </TableHead>
@@ -407,6 +413,7 @@ export default {
                 const mergedData = {
                     ...listingSnap.data(),
                     supplierDescription: userSnap.data().companyDescription,
+                    supplierAddress: userSnap.data().companyAddress,
                 };
 
                 // Add quantity key to each inventory item
