@@ -63,6 +63,12 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                     </CardTitle>
                     <CardDescription class="text-lg mt-4">{{ supplierListing.supplierAddress }}</CardDescription>
                 </CardHeader>
+                <CardHeader>
+                    <CardTitle>
+                        <div class="text-2xl">Company Number</div>
+                    </CardTitle>
+                    <CardDescription class="text-lg mt-4">{{ supplierListing.supplierNumber }}</CardDescription>
+                </CardHeader>
             </Card>
             <Card>
                 <CardHeader>
@@ -414,6 +420,7 @@ export default {
                     ...listingSnap.data(),
                     supplierDescription: userSnap.data().companyDescription,
                     supplierAddress: userSnap.data().companyAddress,
+                    supplierNumber: userSnap.data().companyNumber,
                 };
 
                 // Add quantity key to each inventory item
@@ -461,8 +468,9 @@ export default {
                 buyerID: sessionStorage.getItem("uid"),
                 supplierID: this.supplierId,
                 orderedItems: this.orderCart,
+                totalPrice: this.orderCart.reduce((acc, item) => acc + (item.pricePerUnit * item.purchaseQuantity), 0),
                 address: this.restaurantAddress,
-                phoneNumber: this.restaurantAddress,
+                phoneNumber: this.restaurantPhoneNumber,
             };
 
             await setDoc(orderRef, orderData).then(()=> {
