@@ -37,8 +37,6 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                                 href="#/supplierOrders">Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
                                 href="#/supplierInventory">Inventory Management</a></li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
-                                href="#/supplierDashboard">Dashboard</a></li>
                     </ul>
                 </div>
 
@@ -86,21 +84,18 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                         Suppliers</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-history' }"
-                        href="#/order-history">Order History</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/order-analytics' }"
-                        href="#/order-analytics">Order Analytics</a></li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerOrders' }"
+                        href="#/buyerOrders">Orders</a></li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
                         href="#/buyerDashboard">Dashboard</a></li>
             </ul>
             <ul class="flex flex-col items-left space-y-4" v-else>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/current-orders' }"
-                        href="#/supplier">Current Orders</a></li>
+                <li><a class="nav-link" :class="{ 'font-extrabold': $route.path === '/' }" href="#">Home</a>
+                </li>
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierOrders' }"
+                        href="#/supplierOrders">Orders</a></li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
-                        href="#/supplier">Inventory Management</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierDashboard' }"
-                        href="#/supplierDashboard">Dashboard</a></li>
+                        href="#/supplierInventory">Inventory Management</a></li>
             </ul>
             <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
                 <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
