@@ -23,18 +23,20 @@ const routes = [
     { path: '/login', component: Authentication },
     { path: '/chat/:supplierId/:supplierName', component: Chat},
     { path: '/profile', component: Profile},
-    { path: '/supplierOrders', component: orderHistory},
+
 
 
 
     // Restaurant
+    { path: '/find', component: FindListings},
     { path: '/viewSupplier/:id', name: "viewSupplier",component: viewSupplier},
     { path: '/buyerDashboard', component: BuyerDashboard},
     { path: '/creditScore', component: creditScore},
+    { path: '/buyerOrders', component: orderHistory},
     // INCLUDE PATH TO OTHER PAGES HERE
 
     // Supplier
-    { path: '/find', component: FindListings},
+    { path: '/supplierOrders', component: orderHistory},
     { path: '/supplierInventory', component: SupplierInventory, name: 'supplierInventory'},
     { path: '/addIngredientForm', component: addIngredientForm, name: 'addIngredientForm'},
     { path: '/test', component: Test},//old table code

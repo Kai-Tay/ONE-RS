@@ -8,7 +8,7 @@ import {
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, setDoc } from "firebase/firestore";
 import { db } from '../../firebase.js';
 import { useRoute } from 'vue-router';
 import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSeparator, StepperTitle, StepperTrigger, } from '@/components/ui/stepper'
@@ -20,16 +20,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
 
     <div class="mt-5 mb-5 mx-5 space-y-10">
         <div class="text-4xl font-bold h-10">{{ supplierListing.supplierName }}</div>
-        <Card>
-            <CardHeader>
-                <CardTitle>
-                    <div class="text-2xl">Company Description</div>
-                </CardTitle>
-                <CardDescription class="text-lg mt-4">{{ supplierListing.supplierDescription }}</CardDescription>
-            </CardHeader>
-        </Card>
     </div>
-
 
     <div class="sm:flex justify-center my-10 hidden ">
         <Stepper v-model="activeStep">
@@ -59,6 +50,14 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
     <div v-if="activeStep === 1">
         <!-- Listings -->
         <div class="grid grid-cols-1 gap-4 mx-5">
+            <Card>
+                <CardHeader>
+                    <CardTitle>
+                        <div class="text-2xl">Company Description</div>
+                    </CardTitle>
+                    <CardDescription class="text-lg mt-4">{{ supplierListing.supplierDescription }}</CardDescription>
+                </CardHeader>
+            </Card>
             <Card>
                 <CardHeader>
                     <CardTitle>Inventory</CardTitle>
@@ -196,7 +195,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <Label for="address" class="font-semibold">Address</Label>
                         <Input id="address" type="text" v-model="restaurantAddress" />
                         <Label for="phone" class="font-semibold">Phone Number</Label>
-                        <Input id="phone" type="text" placeholder="+6512345678" v-model="restaurantPhoneNumber"/>
+                        <Input id="phone" type="number" placeholder="6512345678" v-model="restaurantPhoneNumber" />
                     </div>
                 </CardContent>
             </Card>
@@ -207,7 +206,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
 
     <div class="flex flex-inline justify-center my-4 space-x-20">
         <Button @click="previousStep" variant="grey">Previous</Button>
-        <Button @click="nextStep">Continue</Button>
+        <Button @click="nextStep">{{ buttonText }}</Button>
     </div>
 
     <Dialog :open="showDialog">
@@ -280,7 +279,22 @@ export default {
         // Get all the inventory listings with purchase Quantity more than 1 from supplierListing
         orderCart() {
             return this.supplierListing.inventory.filter(item => item.purchaseQuantity > 0);
-        }
+        },
+        buttonText() {
+            // Return different text based on the active step
+            switch (this.activeStep) {
+                case 1:
+                    return "Checkout";
+                case 2:
+                    return "Continue";
+                case 3:
+                    return "Make Payment";
+                case 4:
+                    return "Complete Order";
+                default:
+                    return "Next";
+            }
+        },
     },
     watch: {
         // Watch each item’s purchaseQuantity in inventory
@@ -308,7 +322,7 @@ export default {
                     this.showDialog = true;
                     this.activeStep = 1;
                 }
-            } else if (this.activeStep == 4){
+            } else if (this.activeStep == 4) {
                 // Check if address is filled
                 if (this.restaurantAddress == "" || this.restaurantPhoneNumber == "") {
                     this.status = "No Address/Phone Number Provided";
@@ -324,7 +338,7 @@ export default {
             }
         },
         nextStep() {
-            
+
             if (this.activeStep == 1) {
                 // Check if there are items in the cart
                 if (this.orderCart.length > 0) {
@@ -334,7 +348,7 @@ export default {
                     this.description = "Please select at least one item to proceed";
                     this.showDialog = true;
                 }
-            } else if (this.activeStep == 3){
+            } else if (this.activeStep == 3) {
                 // Check if address is filled
                 if (this.restaurantAddress == "" || this.restaurantPhoneNumber == "") {
                     this.status = "No Address/Phone Number Provided";
@@ -343,11 +357,14 @@ export default {
                 } else {
                     this.activeStep++;
                 }
+            } else if (this.activeStep == 4) {
+                // Call the payment function
+                this.handleConfirmedOrder();
             }
-            else 
-            if (this.activeStep < this.steps.length) {
-                this.activeStep++;
-            }
+            else
+                if (this.activeStep < this.steps.length) {
+                    this.activeStep++;
+                }
         },
         previousStep() {
             if (this.activeStep > 1) {
@@ -360,6 +377,9 @@ export default {
         // Close Dialog
         closeDialog() {
             this.showDialog = false;
+            if (this.status == "Order Confirmed"){
+                this.$router.push("/buyerOrders");
+            }
         },
 
         // Database Methods
@@ -406,6 +426,35 @@ export default {
             // Add Address to restaurantAddress
             this.restaurantAddress = this.userInfo.companyAddress;
             console.log(this.userInfo);
+        },
+
+        async handleConfirmedOrder() {
+            // Get length of orderHistory database
+            const querySnapshot = await getDocs(collection(db, "orderHistory"));
+            const length = querySnapshot.size;
+
+            // Updated orderHistory database and give a order id based on the number of items in the database
+            const orderRef = doc(db, "orderHistory", length.toString());
+            const orderSnapshot = await getDoc(orderRef);
+
+            // Create order data
+
+            const orderData = {
+                orderID: length.toString(),
+                date: new Date(),
+                paymentStatus: "Pending",
+                buyerID: sessionStorage.getItem("uid"),
+                supplierID: this.supplierId,
+                orderedItems: this.orderCart,
+                address: this.restaurantAddress,
+                phoneNumber: this.restaurantAddress,
+            };
+
+            await setDoc(orderRef, orderData).then(()=> {
+                this.status = "Order Confirmed";
+                this.description = "Your order has been confirmed. Please wait for the supplier to contact you.";
+                this.showDialog = true;
+            })
         },
     },
     mounted() {

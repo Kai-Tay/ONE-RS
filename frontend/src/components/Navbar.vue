@@ -23,8 +23,8 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
                                 Suppliers</a></li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerOrder' }"
-                                href="#/orderHistory">Orders</a></li>
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerOrders' }"
+                                href="#/buyerOrders">Orders</a></li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/buyerDashboard' }"
                                 href="#/buyerDashboard">Dashboard</a></li>
                     </ul>
