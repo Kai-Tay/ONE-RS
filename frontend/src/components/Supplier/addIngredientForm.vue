@@ -1,6 +1,6 @@
 <script setup>
 // Import necessary Firebase functions and Vue tools
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { auth } from '../../firebase'; // Import the Firebase auth module
@@ -14,10 +14,28 @@ const productName = ref('');
 const pricePerUnit = ref('');
 const quantity = ref('');
 const unit = ref('');
-const category = ref(''); // New field for category
+const category = ref(''); // Field for category
+const subcategory = ref(''); // Field for subcategory
 
-// Predefined categories for the dropdown
-const categories = ['Meat', 'Fruits & Vegetables', 'Dairy', 'Carbohydrates'];
+// Predefined categories and their subcategories
+const categories = [
+    { name: 'Meat', subcategories: ['Poultry', 'Beef', 'Pork', 'Lamb', 'Fish', 'Shellfish'] },
+    { name: 'Fruits & Vegetables', subcategories: ['Vegetables', 'Fruits'] },
+    { name: 'Dairy', subcategories: ['Eggs', 'Milk', 'Cheese'] },
+    { name: 'Carbohydrates', subcategories: ['Grains', 'Pasta', 'Bread'] }
+];
+
+// Reactive subcategories based on selected category
+const availableSubcategories = ref([]);
+
+// Watch the category change and update available subcategories
+watch(category, (newCategory) => {
+    const selectedCategory = categories.find(cat => cat.name === newCategory);
+    if (selectedCategory) {
+        availableSubcategories.value = selectedCategory.subcategories; // Update available subcategories
+        subcategory.value = ''; // Reset the subcategory when the category changes
+    }
+});
 
 // Function to submit the new ingredient item to the Firebase database
 const addNewIngredient = async () => {
@@ -30,7 +48,7 @@ const addNewIngredient = async () => {
 
         if (supplierDoc.exists()) {
             // Add the new ingredient to the supplier's inventory
-            if (productName.value && pricePerUnit.value && quantity.value && unit.value && category.value) {
+            if (productName.value && pricePerUnit.value && quantity.value && unit.value && category.value && subcategory.value) {
                 try {
                     await updateDoc(supplierDocRef, {
                         inventory: arrayUnion({
@@ -38,7 +56,8 @@ const addNewIngredient = async () => {
                             quantity: parseInt(quantity.value),
                             unit: unit.value,
                             pricePerUnit: parseFloat(pricePerUnit.value),
-                            category: category.value // Add the selected category
+                            category: category.value,
+                            subcategory: subcategory.value // Subcategory selected by the user
                         })
                     });
 
@@ -60,7 +79,6 @@ const addNewIngredient = async () => {
     }
 };
 </script>
-
 
 <template>
     <div class="flex justify-center items-center min-h-screen bg-gray-100">
@@ -92,7 +110,16 @@ const addNewIngredient = async () => {
                     <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                     <select v-model="category" id="category" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
                         <option value="" disabled>Select Category</option>
-                        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                        <option v-for="cat in categories" :key="cat.name" :value="cat.name">{{ cat.name }}</option>
+                    </select>
+                </div>
+
+                <!-- Subcategory is selected by user, and options are dynamically updated based on category -->
+                <div class="mb-4">
+                    <label for="subcategory" class="block text-sm font-medium text-gray-700">Subcategory</label>
+                    <select v-model="subcategory" id="subcategory" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+                        <option value="" disabled>Select Subcategory</option>
+                        <option v-for="sub in availableSubcategories" :key="sub" :value="sub">{{ sub }}</option>
                     </select>
                 </div>
 
@@ -103,4 +130,3 @@ const addNewIngredient = async () => {
         </div>
     </div>
 </template>
-
