@@ -8,7 +8,7 @@ import {
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
-import { doc, getDoc, getDocs, collection, setDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, setDoc, updateDoc } from "firebase/firestore";
 import { db } from '../../firebase.js';
 import { useRoute } from 'vue-router';
 import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSeparator, StepperTitle, StepperTrigger, } from '@/components/ui/stepper'
@@ -62,6 +62,12 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <div class="text-2xl">Company Address</div>
                     </CardTitle>
                     <CardDescription class="text-lg mt-4">{{ supplierListing.supplierAddress }}</CardDescription>
+                </CardHeader>
+                <CardHeader>
+                    <CardTitle>
+                        <div class="text-2xl">Company Number</div>
+                    </CardTitle>
+                    <CardDescription class="text-lg mt-4">{{ supplierListing.supplierNumber }}</CardDescription>
                 </CardHeader>
             </Card>
             <Card>
@@ -387,11 +393,11 @@ export default {
                 this.$router.push("/find");
             }
         },
-        
+
         // Close Dialog
         closeDialog() {
             this.showDialog = false;
-            if (this.status == "Order Confirmed"){
+            if (this.status == "Order Confirmed") {
                 this.$router.push("/buyerOrders");
             }
         },
@@ -414,6 +420,7 @@ export default {
                     ...listingSnap.data(),
                     supplierDescription: userSnap.data().companyDescription,
                     supplierAddress: userSnap.data().companyAddress,
+                    supplierNumber: userSnap.data().companyNumber,
                 };
 
                 // Add quantity key to each inventory item
@@ -423,6 +430,7 @@ export default {
                 }));
 
                 this.supplierListing = mergedData;
+                console.log(this.supplierListing);
 
             } catch (error) {
                 console.error('Error fetching listings:', error)
@@ -440,36 +448,70 @@ export default {
 
             // Add Address to restaurantAddress
             this.restaurantAddress = this.userInfo.companyAddress;
+
+            // Add Phone Number to restaurantPhoneNumber
+            this.restaurantPhoneNumber = this.userInfo.companyNumber;
             console.log(this.userInfo);
         },
 
         async handleConfirmedOrder() {
-            // Get length of orderHistory database
-            const querySnapshot = await getDocs(collection(db, "orderHistory"));
-            const length = querySnapshot.size;
+            try {
+                // UPDATE SUPPLIERLISTING DATABASE
+                // Fetch the supplier listing
+                const listingRef = doc(db, "supplierListing", this.supplierId);
 
-            // Updated orderHistory database and give a order id based on the number of items in the database
-            const orderRef = doc(db, "orderHistory", length.toString());
-            const orderSnapshot = await getDoc(orderRef);
+                const updateQuantity = this.supplierListing.inventory.map(listingItem => {
+                    
+                    this.orderCart.map(orderItem => {
+                        if (listingItem.productName == orderItem.productName) {
+                            listingItem.quantity -= orderItem.purchaseQuantity;
+                        }
+                    });
+                    console.log(listingItem)
+                    return listingItem;
+                });
 
-            // Create order data
+                console.log(updateQuantity);
+                // Send data to database
+                await updateDoc(listingRef, {
+                    inventory: updateQuantity,
+                });
 
-            const orderData = {
-                orderID: length.toString(),
-                date: new Date(),
-                paymentStatus: "Pending",
-                buyerID: sessionStorage.getItem("uid"),
-                supplierID: this.supplierId,
-                orderedItems: this.orderCart,
-                address: this.restaurantAddress,
-                phoneNumber: this.restaurantAddress,
-            };
 
-            await setDoc(orderRef, orderData).then(()=> {
-                this.status = "Order Confirmed";
-                this.description = "Your order has been confirmed. Please wait for the supplier to contact you.";
-                this.showDialog = true;
-            })
+                // UPDATE ORDERHISTORY DATABASE
+                // Get length of orderHistory database
+                const querySnapshot = await getDocs(collection(db, "orderHistory"));
+                const length = querySnapshot.size;
+
+                // Updated orderHistory database and give a order id based on the number of items in the database
+                const orderRef = doc(db, "orderHistory", length.toString());
+                const orderSnapshot = await getDoc(orderRef);
+
+                // Create order data
+
+                const orderData = {
+                    orderID: length.toString(),
+                    date: new Date(),
+                    paymentStatus: "Pending",
+                    buyerID: sessionStorage.getItem("uid"),
+                    supplierID: this.supplierId,
+                    orderedItems: this.orderCart,
+                    totalPrice: this.orderCart.reduce((acc, item) => acc + (item.pricePerUnit * item.purchaseQuantity), 0),
+                    address: this.restaurantAddress,
+                    phoneNumber: this.restaurantPhoneNumber,
+                };
+
+                await setDoc(orderRef, orderData).then(() => {
+                    this.status = "Order Confirmed";
+                    this.description = "Your order has been confirmed. Please wait for the supplier to contact you.";
+                    this.showDialog = true;
+                })
+
+                // UPDATE INVENTORYLISTING DATABASE
+            } catch (error) {
+                console.error('Error updating listings:', error)
+            } 
+
         },
     },
     mounted() {

@@ -216,10 +216,10 @@ onMounted(() => {
                             </template>
                         </Button>
 
-                        <Button type="button" variant="destructive" class="w-full" :disabled="saving"
+                        <!-- <Button type="button" variant="destructive" class="w-full" :disabled="saving"
                             @click="showDeleteDialog = true">
                             Delete Account
-                        </Button>
+                        </Button> -->
                     </div>
                 </div>
             </CardContent>
@@ -256,9 +256,9 @@ onMounted(() => {
                     <AlertDialogCancel @click="showDeleteDialog = false">
                         Cancel
                     </AlertDialogCancel>
-                    <AlertDialogAction class="bg-red-500 hover:bg-red-600" @click="handleDeleteAccount">
+                    <!-- <AlertDialogAction class="bg-red-500 hover:bg-red-600" @click="handleDeleteAccount">
                         Delete Account
-                    </AlertDialogAction>
+                    </AlertDialogAction> -->
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
