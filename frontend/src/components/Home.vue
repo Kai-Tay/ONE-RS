@@ -1,5 +1,4 @@
 <script setup>
-import { Repeat } from 'lucide-vue-next';
 import Navbar from './Navbar.vue';
 import { Button } from './ui/button';
 import { animate, spring, scroll, inView } from "motion";
@@ -54,7 +53,8 @@ const navigateTo = (route) => {
                     <!-- Welcome Text -->
                     <div class="text-4xl font-bold" ref="titleContainer">
                         <h1 class="display-5 fw-bolder text-white mb-2 " v-if="isLoggedIn">Welcome, {{ userName }}</h1>
-                        <h1 class="display-5 fw-bolder text-white mb-2 opacity-0" v-else ref="mainTitle">Welcome to ONE.RS</h1>
+                        <h1 class="display-5 fw-bolder text-white mb-2 opacity-0" v-else ref="mainTitle">Welcome to
+                            ONE.RS</h1>
                     </div>
                     <!-- SUBHEADERR -->
                     <div class="text-gray-500 text-2xl">
@@ -91,170 +91,189 @@ const navigateTo = (route) => {
         <!-- Supplier -->
         <section class="" id="features" v-if="userType == 'supplier'">
             <div class="grid grid-cols-3 h-screen" ref="featureGrid">
-                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90" 
-                        @click="navigateTo('/supplierInventory')"
-                        ref="listingsCard">
+                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    @click="navigateTo('/supplierInventory')" ref="listingsCard">
                     <div>
                         <i class="bi bi-camera text-primary text-3xl"></i>
                         <h2 class="text-3xl font-bold mt-4">Listings</h2>
                     </div>
                     <div class="mt-auto">
-                        <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick description, and set your price.</p>
+                        <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick
+                            description, and set your price.</p>
                     </div>
                 </div>
 
-                <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90" 
-                        @click="navigateTo('/supplierInventory')"
-                        ref="ordersCard">
+                <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    @click="navigateTo('/supplierInventory')" ref="ordersCard">
                     <div>
                         <i class="bi bi-credit-card text-primary text-3xl"></i>
                         <h2 class="text-3xl font-bold mt-4">Receive Orders</h2>
                     </div>
                     <div class="mt-auto">
-                        <p class="text-gray-600">As a supplier, you receive orders from buyers all over the world. You can accept or reject the order.</p>
+                        <p class="text-gray-600">As a supplier, you receive orders from buyers all over the world. You
+                            can accept or reject the order.</p>
                     </div>
                 </div>
 
                 <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                        ref="checkoutCard">
+                    ref="checkoutCard">
                     <div>
                         <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
                         <h2 class="text-3xl font-bold mt-4">Checkout</h2>
                     </div>
                     <div class="mt-auto">
-                        <p class="text-gray-600">We use Stripe to handle payments. You can set your payment preferences in your account settings.</p>
+                        <p class="text-gray-600">We use Stripe to handle payments. You can set your payment preferences
+                            in your account settings.</p>
                     </div>
                 </div>
             </div>
 
             <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-            <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     ref="inventoryCard">
-                <div>
-                <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
-                <h2 class="text-3xl font-bold mt-4">Inventory Management</h2>
-                </div>
-                <div class="mt-auto">
-                <p class="text-gray-600">Monitor your inventory levels in real-time. Get insights into your best-selling items and manage stock efficiently.</p>
-                </div>
-            </div>
-
-            <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    ref="paymentsCard">
-                <div>
-                <i class="bi bi-receipt text-primary text-3xl"></i>
-                <h2 class="text-3xl font-bold mt-4">Automated Payments</h2>
-                </div>
-                <div class="mt-auto">
-                <p class="mb-5">View and manage all your orders in one place. Track deliveries and maintain your reputation.</p>
-                </div>
-            </div>
-            </div>
-        </section>
-        
-
-        <!-- Restaurant -->
-        <section class="" id="features" v-else>
-            <div class="grid grid-cols-3 h-screen">
-                <!-- Map Image of Restaurants Connecting -->
-                <div class="flex flex-col justify-between bg-black text-white px-5">
-                    <h2 class="fw-bolder text-3xl mt-3">AI Sourcing</h2>
-                    <div class="mb-5">
-                        <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
-                            All you need to do is to input your ingredients and let the AI do the rest.</p>
-
-                        <Button class="bg-transparent border border-white">
-                            Move to AI Sourcing
-                            <i class="bi bi-arrow-right"></i>
-                        </Button>
+                    <div class="firstFade">
+                        <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
+                        <h2 class="hide text-3xl font-bold mt-4">Inventory Management</h2>
+                    </div>
+                    <div class="secondFade mt-auto">
+                        <p class="hide text-gray-600">Monitor your inventory levels in real-time. Get insights into your
+                            best-selling items and manage stock efficiently.</p>
                     </div>
                 </div>
 
-                <div class="flex flex-col justify-between px-5">
-                    <h2 class="fw-bolder text-3xl mt-3">Credit Score</h2>
+                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    ref="paymentsCard">
+                    <div class="firstFade">
+                        <i class="bi bi-receipt text-primary text-3xl"></i>
+                        <h2 class="hide text-3xl font-bold mt-4">Automated Payments</h2>
+                    </div>
+                    <div class="secondFade mt-auto">
+                        <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain your
+                            reputation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Restaurant -->
+        <section id="features" v-else>
+            <div class="grid grid-cols-3 h-screen">
+                <!-- Map Image of Restaurants Connecting -->
+                <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
+                    ref="findCard">
+                    <h2 class="fw-bolder text-3xl mt-3">Find Suppliers</h2>
+                    <div class="mb-5">
+                        <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
+                            All you need to do is to input your ingredients and let the AI do the rest.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-between px-5" ref="orderCard">
+                    <h2 class="fw-bolder text-3xl mt-3">Place Order</h2>
                     <div class="mb-5">
                         <p class="mb-5">As a buyer, you have a credit score to maintain. These will increase for every
                             payment
                             made
                             on time to the supplier. Check your score here!</p>
-                        <Button class="">
-                            Move to Credit Score
-                            <i class="bi bi-arrow-right"></i>
-                        </Button>
                     </div>
                 </div>
 
-
-                <div class="flex flex-col justify-between px-5">
-                    <h2 class="fw-bolder text-3xl mt-3">Order Optimisation</h2>
+                <div class="flex flex-col justify-between px-5" ref="paymentCard">
+                    <h2 class="fw-bolder text-3xl mt-3">Checkout</h2>
                     <div class="mb-5">
                         <p class="mb-5">Are you overbuying ingredients for your business? Use our order optimiser to
                             analyse your
                             order history and plan out your next purchase!</p>
-                        <Button>
-                            Move to Order Optimisation
-                            <i class="bi bi-arrow-right"></i>
-                        </Button>
                     </div>
                 </div>
             </div>
 
-            <div class="h-screen">
-                <div class="box"></div>
+            <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
+                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer" ref="aiCard">
+                    <div class="firstFade">
+                        <h2 class="hide text-3xl font-bold mt-4">AI Sourcing</h2>
+                    </div>
+                    <div class="secondFade mt-auto">
+                        <p class="hide text-gray-600">Find the ingredients needed for your restaurant using our AI
+                            Sourcing!
+                            All you need to do is to input your ingredients and let the AI do the rest.</p>
+                    </div>
+                </div>
+
+                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer" ref="dashboardCard">
+                    <div class="firstFade">
+                        <h2 class="hide text-3xl font-bold mt-4">Automated Payments</h2>
+                    </div>
+                    <div class="secondFade mt-auto">
+                        <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain
+                            your
+                            reputation.</p>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 
-
-
     <!-- When Not Logged In -->
-    <section class="py-5 border-bottom" id="features" v-else>
-    <div class="grid grid-cols-3 h-screen">
-        <!-- AI Sourcing Card -->
-        <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90">
-            <div>
-                <i class="bi bi-robot text-primary text-3xl"></i>
-                <h2 class="text-3xl font-bold mt-4">AI Sourcing for Buyers</h2>
+    <section class="border-bottom" id="features" v-else>
+        <div class="grid grid-cols-3 h-screen">
+            <!-- AI Sourcing Card -->
+            <div
+                class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90">
+                <div>
+                    <i class="bi bi-robot text-primary text-3xl"></i>
+                    <h2 class="text-3xl font-bold mt-4">AI Sourcing for Buyers</h2>
+                </div>
+                <div class="mt-auto">
+                    <p class="text-gray-400">Leverage the power of AI to source the finest ingredients with precision
+                        and efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to
+                        ensure that every ingredient meets your standards.</p>
+                </div>
+                <div class="col-lg-3">
+                    <!-- Picture Placeholder -->
+                    <i class="bi bi-robot text-primary fs-1"></i>
+                </div>
             </div>
-            <div class="mt-auto">
-                <p class="text-gray-400">Leverage the power of AI to source the finest ingredients with precision and efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to ensure that every ingredient meets your standards.</p>
-            </div>
-            <div class="col-lg-3">
-                <!-- Picture Placeholder -->
-                <i class="bi bi-robot text-primary fs-1"></i>
-            </div>
-        </div>
 
-        <!-- Real-time Database Card -->
-        <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90">
-            <div>
-                <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
-                <h2 class="text-3xl font-bold mt-4">Real-time Database for Suppliers</h2>
+            <!-- Real-time Database Card -->
+            <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90">
+                <div>
+                    <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
+                    <h2 class="text-3xl font-bold mt-4">Real-time Database for Suppliers</h2>
+                </div>
+                <div class="mt-auto">
+                    <p class="text-gray-600">Monitor and manage supplier data with ease using our real-time dashboard.
+                        Access up-to-date information on inventory, performance metrics, and compliance, all in one
+                        intuitive interface.</p>
+                </div>
+                <div class="col-lg-3">
+                    <i class="bi bi-robot text-primary fs-1"></i>
+                    <!-- Picture Placeholder -->
+                </div>
             </div>
-            <div class="mt-auto">
-                <p class="text-gray-600">Monitor and manage supplier data with ease using our real-time dashboard. Access up-to-date information on inventory, performance metrics, and compliance, all in one intuitive interface.</p>
-            </div>
-            <div class="col-lg-3">
-                <i class="bi bi-robot text-primary fs-1"></i>
-                <!-- Picture Placeholder -->
-            </div>
-        </div>
 
-        <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90" @click="navigateTo('/login')">
-            <div>
-                <i class="bi bi-camera text-primary text-3xl"></i>
-                <h2 class="text-3xl font-bold mt-4">Sign Up</h2>
-            </div>
-            <div class="mt-auto">
-                <p class="text-gray-600">Ready to transform your F&B business? Join one-rs today and tap into our growing network of trusted suppliers and innovative restaurants. Experience seamless ordering, real-time inventory updates, and AI-powered sourcing that saves you time and money. Whether you're a supplier looking to expand your reach or a restaurant seeking quality ingredients, one-rs connects you to opportunities that matter. Don't miss out on the digital revolution in F&B sourcing – sign up now and be part of a community that's reshaping the industry.</p>
-            </div>
-            <div class="col-lg-3">
-                <!-- Picture Placeholder -->
-                <i class="bi bi-robot text-primary fs-1"></i>
+            <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                @click="navigateTo('/login')">
+                <div>
+                    <i class="bi bi-camera text-primary text-3xl"></i>
+                    <h2 class="text-3xl font-bold mt-4">Sign Up</h2>
+                </div>
+                <div class="mt-auto">
+                    <p class="text-gray-600">Ready to transform your F&B business? Join one-rs today and tap into our
+                        growing network of trusted suppliers and innovative restaurants. Experience seamless ordering,
+                        real-time inventory updates, and AI-powered sourcing that saves you time and money. Whether
+                        you're a supplier looking to expand your reach or a restaurant seeking quality ingredients,
+                        one-rs connects you to opportunities that matter. Don't miss out on the digital revolution in
+                        F&B sourcing – sign up now and be part of a community that's reshaping the industry.</p>
+                </div>
+                <div class="col-lg-3">
+                    <!-- Picture Placeholder -->
+                    <i class="bi bi-robot text-primary fs-1"></i>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </template>
 
 <script>
@@ -275,29 +294,19 @@ export default {
         this.filteredListings = this.listings;
     },
     methods: {
-        runAnimation() {
-            animate(".box", { scale: 1.1 },
-                {
-                    duration: 1,
-                    easing: spring(),
-                    repeat: Infinity,
-                    direction: "alternate"
-                }
-            );
-        },
         scrollToFeatures() {
             const features = document.querySelector("#features");
 
             if (features) {
                 features.scrollIntoView({ behavior: 'smooth' });
-            
+
                 if (this.$refs.learnMoreButton) {
-                    animate(this.$refs.learnMoreButton, { 
+                    animate(this.$refs.learnMoreButton, {
                         scale: [1, 0.95, 1],
-                        opacity: [1, 0.7, 1] 
-                    }, { 
-                        duration: 0.3 
-                    }); 
+                        opacity: [1, 0.7, 1]
+                    }, {
+                        duration: 0.3
+                    });
                 }
             }
         }
@@ -309,61 +318,91 @@ export default {
         }
     },
     mounted() {
-    // Set login state first before any animations
-    this.userName = sessionStorage.userName;
-    this.userType = sessionStorage.userType;
-    this.isLoggedIn = this.userName != null;  // Set this immediately
+        // Set login state first before any animations
+        this.userName = sessionStorage.userName;
+        this.userType = sessionStorage.userType;
+        this.isLoggedIn = this.userName != null;  // Set this immediately
 
-    this.$nextTick(() => {
-        // Title animation
-        const titleElement = document.querySelector('.display-5');
-        if (titleElement) {
-            animate(titleElement, { 
-                opacity: [0, 1],
-                y: [50, 0]
-            }, { 
-                duration: 1,
-                easing: spring({ stiffness: 50, damping: 15 })
-            });
-        }
+        this.$nextTick(() => {
+            // Title animation
+            const titleElement = document.querySelector('.display-5');
+            if (titleElement) {
+                animate(titleElement, {
+                    opacity: [0, 1],
+                    y: [50, 0]
+                }, {
+                    duration: 1,
+                    easing: spring({ stiffness: 50, damping: 15 })
+                });
+            }
 
-        // Only run for supplier
-        if (this.userType === 'supplier') {
-            const cards = ['listingsCard', 'ordersCard', 'checkoutCard', 'inventoryCard', 'paymentsCard'];
-            
-            cards.forEach((card, index) => {
-                const element = this.$refs[card];
-                if(element) {
-                    scroll(
-                        animate(element, {
-                            y: [50, 0]
-                        }, {
-                            delay: index * 0.15,
-                            duration: 0.8
-                        }),
+            // Only run for supplier
+            if (this.userType === 'supplier') {
+                const cards = ['listingsCard', 'ordersCard', 'checkoutCard', 'inventoryCard', 'paymentsCard'];
+
+                cards.forEach((card, index) => {
+                    const element = this.$refs[card];
+                    if (element) {
+                        scroll(
+                            animate(element, {
+                                y: [50, 0]
+                            }, {
+                                delay: index * 0.15,
+                                duration: 0.8
+                            }),
+                            {
+                                target: element,
+                                offset: ["start end", "end start"]
+                            }
+                        );
+                    }
+                });
+            }
+
+            // Animation for Bottom Grid
+            const first = document.querySelectorAll('.firstFade');
+            const second = document.querySelectorAll('.secondFade');
+            if (first) {
+                inView(first, ({ target }) => {
+                    animate(
+                        target.querySelector("h2"),
                         {
-                            target: element,
-                            offset: ["start end", "end start"]
+                            opacity: 1,
+                            transform: "none"
+                        },
+                        {
+                            delay: 0.2,
+                            duration: 0.9,
+                            easing: [0.17, 0.55, 0.55, 1]
                         }
                     );
-                }
-            });
-        }
+                });
+            }
 
-        if (this.isLoggedIn) {
-            this.runAnimation();
-        }
-    });
-},
+            if (second) {
+                inView(second, ({ target }) => {
+                    animate(
+                        target.querySelector("p"),
+                        {
+                            opacity: 1,
+                            transform: "none"
+                        },
+                        {
+                            delay: 0.2,
+                            duration: 0.9,
+                            easing: [0.17, 0.55, 0.55, 1]
+                        }
+                    );
+                });
+            }
+        });
+    },
 };
 </script>
 
 <style>
-.box {
-    margin: 100px;
-    width: 200px;
-    height: 200px;
-    background: blue;
-    border-radius: 5px;
+.hide {
+    transform: translateX(-100px);
+    opacity: 0;
 }
 </style>
