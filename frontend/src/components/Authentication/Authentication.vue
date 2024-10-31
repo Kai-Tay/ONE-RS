@@ -92,6 +92,11 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
             </div>
 
             <div class="space-y-1">
+              <Label for="companyNumber">Company Number</Label>
+              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
+            </div>
+
+            <div class="space-y-1">
               <Label for="password">Password</Label>
               <Input id="password" type="password" v-model="password" />
             </div>
@@ -140,7 +145,11 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
 
-            
+            <div class="space-y-1">
+              <Label for="companyNumber">Company Number</Label>
+              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
+            </div>
+
             <div class="space-y-1">
               <Label for="password">Password</Label>
               <Input id="password" type="password" v-model="password" />
@@ -186,6 +195,7 @@ export default {
       companyName: '',
       companyDescription: '',
       companyAddress: '',
+      companyNumber: '',
 
       // Dialog
       showAuthDialog: false,
@@ -268,6 +278,7 @@ export default {
         userName: this.userName,
         companyName: this.companyName,
         companyAddress: this.companyAddress,
+        companyNumber: this.companyNumber,
         userType: this.isSupplier ? "supplier" : "restaurant",
         points: this.isSupplier ? null : 0,
         companyDescription: this.isSupplier ? this.companyDescription : null,
