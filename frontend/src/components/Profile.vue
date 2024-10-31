@@ -197,6 +197,12 @@ onMounted(() => {
                                 :placeholder="profileData.companyAddress || 'Enter company address...'" />
                         </div>
 
+                        <div class="space-y-2">
+                            <Label for="companyAddress">Company Number</Label>
+                            <Input id="companyAddress" v-model="profileData.companyNumber" :disabled="saving"
+                                :placeholder="profileData.companyNumber || 'Enter company number...'" />
+                        </div>
+
                         <div v-if="profileData.userType === 'supplier'" class="space-y-2">
                             <Label for="companyDescription">Company Description</Label>
                             <Textarea id="companyDescription" v-model="profileData.companyDescription" rows="4"
@@ -303,7 +309,8 @@ const showDeleteDialog = ref(false)
 const profileData = ref({
     userType: 'supplier',
     companyName: '',
-    companyDescription: ''
+    companyDescription: '',
+    companyNumber: ''
 })
 
 const auth = getAuth()
@@ -323,7 +330,8 @@ const loadUserData = async (user) => {
                 userType: data.userType || 'supplier',
                 companyName: data.companyName || '',
                 companyAddress: data.companyAddress || '',
-                companyDescription: data.companyDescription || ''
+                companyDescription: data.companyDescription || '',
+                companyNumber: data.companyNumber || ''
             }
         }
     } catch (err) {

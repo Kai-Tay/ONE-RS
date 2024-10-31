@@ -85,15 +85,15 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Label for="companyAddress">Company's Address</Label>
               <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" />
             </div>
-            
-            <div class="space-y-1">
-              <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email" />
-            </div>
 
             <div class="space-y-1">
               <Label for="companyNumber">Company Number</Label>
               <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
+            </div>
+            
+            <div class="space-y-1">
+              <Label for="email">Email</Label>
+              <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
 
             <div class="space-y-1">
@@ -141,13 +141,13 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
             </div>
 
             <div class="space-y-1">
-              <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email" />
+              <Label for="companyNumber">Company Number</Label>
+              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
             </div>
 
             <div class="space-y-1">
-              <Label for="companyNumber">Company Number</Label>
-              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
+              <Label for="email">Email</Label>
+              <Input id="email" placeholder="name@example.com" v-model="email" />
             </div>
 
             <div class="space-y-1">
