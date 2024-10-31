@@ -131,7 +131,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                     </Dialog>
 
                                     <!-- Chat with Supplier -->
-                                    <router-link :to="`/chat/${order.orderID}/${order.name}`">
+                                    <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`" v-if="order.supplierName">
                                         <Button class="bg-blue-500 text-white">Chat with Supplier</Button>
                                     </router-link>
                                 </TableCell>
@@ -182,7 +182,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                                     </div>
                                                     <div>
                                                         <p class="font-bold">Buyer Details:</p>
-                                                        <p>{{ order.buyerName }}</p>
+                                                        <p>{{ order.buyerID.companyName }}</p>
                                                         <p>{{ order.address }}</p>
                                                     </div>
                                                     <div>
@@ -228,8 +228,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>
+
                                     <!-- Chat with Buyer -->
-                                    <Button class="bg-blue-500 text-white">Chat with Buyer</Button>
+                                    <router-link 
+                                        :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
+                                        v-if="order.buyerCompanyName"
+                                    >
+                                        <Button class="bg-blue-500 text-white">Chat with Buyer</Button>
+                                    </router-link>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
@@ -256,65 +262,65 @@ export default {
         }
     },
     methods: {
-        navigateToChat(supplierId, supplierName) {
-            this.$router.push({
-                name: 'chat',
-                params: {
-                    supplierId: supplierId,
-                    supplierName: supplierName
-                }
-            });
-        },
-        async fetchOrderHistory() {
-            // fetch order history
+        async fetchUserDetails(userId) {
             try {
-                // Reference the orderHistory collection
+                const userRef = doc(db, "users", userId);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    return userSnap.data();
+                }
+                return null;
+            } catch (error) {
+                console.error("Error fetching user details:", error);
+                return null;
+            }
+        },
+        
+        async fetchOrderHistory() {
+            try {
                 const orderHistoryRef = collection(db, "orderHistory");
-
-                // Fetch the documents from the collection
                 const orderHistorySnapshot = await getDocs(orderHistoryRef);
+                const currentUserId = sessionStorage.getItem("uid");
+                
+                // Clear existing orders
+                this.orderHistory = [];
 
+                // Collect all orders that involve the current user
+                const orders = [];
                 orderHistorySnapshot.forEach(doc => {
                     const data = doc.data();
-
-                    // Check if the buyerID matches the provided userId
-                    if (data.buyerID === sessionStorage.getItem("uid") || data.supplierID === sessionStorage.getItem("uid")) {
-                        this.orderHistory.push(data);
+                    if (data.buyerID === currentUserId || data.supplierID === currentUserId) {
+                        orders.push(data);
                     }
                 });
 
-                // Fetch users details from users collection for restaurant and supplier
-                this.orderHistory.forEach(async (order) => {
-                    // Fetch restaurant details from database getDoc only fetches one document
-                    const supplierRef = doc(db, "users", order.supplierID);
-                    getDoc(supplierRef).then((docSnap) => {
-
-                        if (docSnap.exists()) {
-                            const data = docSnap.data();
-
-                            order.supplierName = data.companyName;
-                            order.supplierAddress = data.companyAddress;
-                            order.supplierNumber = data.companyNumber;
+                // Fetch user details for each order
+                for (const order of orders) {
+                    // For restaurants (buyers) viewing supplier details
+                    if (order.supplierID) {
+                        const supplierDetails = await this.fetchUserDetails(order.supplierID);
+                        if (supplierDetails) {
+                            order.supplierName = supplierDetails.companyName;
+                            order.supplierAddress = supplierDetails.companyAddress;
+                            order.supplierNumber = supplierDetails.companyNumber;
                         }
-                    });
-                    // Fetch supplier details from database getDoc only fetches one document
-                    const buyerRef = doc(db, "users", order.buyerID);
-                    getDoc(supplierRef).then((docSnap) => {
+                    }
 
-                        if (docSnap.exists()) {
-                            const data = docSnap.data();
-
-                            order.buyerName = data.companyName;
+                    // For suppliers viewing buyer details
+                    if (order.buyerID) {
+                        const buyerDetails = await this.fetchUserDetails(order.buyerID);
+                        if (buyerDetails) {
+                            order.buyerCompanyName = buyerDetails.companyName;
+                            order.buyerAddress = buyerDetails.companyAddress;
+                            order.buyerNumber = buyerDetails.companyNumber;
                         }
-                    });
+                    }
 
-                    console.log(order)
+                    this.orderHistory.push(order);
+                }
 
-                });
-
-                console.log("Order History:", this.orderHistory);
-
-                return this.orderHistory;
+                console.log("Order History with user details:", this.orderHistory);
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
