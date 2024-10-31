@@ -219,6 +219,10 @@ const navigateTo = (route) => {
             <div class="mt-auto">
                 <p class="text-gray-400">Leverage the power of AI to source the finest ingredients with precision and efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to ensure that every ingredient meets your standards.</p>
             </div>
+            <div class="col-lg-3">
+                <!-- Picture Placeholder -->
+                <i class="bi bi-robot text-primary fs-1"></i>
+            </div>
         </div>
 
         <!-- Real-time Database Card -->
@@ -230,9 +234,12 @@ const navigateTo = (route) => {
             <div class="mt-auto">
                 <p class="text-gray-600">Monitor and manage supplier data with ease using our real-time dashboard. Access up-to-date information on inventory, performance metrics, and compliance, all in one intuitive interface.</p>
             </div>
+            <div class="col-lg-3">
+                <i class="bi bi-robot text-primary fs-1"></i>
+                <!-- Picture Placeholder -->
+            </div>
         </div>
 
-        <!-- Listings Card -->
         <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90" @click="navigateTo('/login')">
             <div>
                 <i class="bi bi-camera text-primary text-3xl"></i>
@@ -241,56 +248,13 @@ const navigateTo = (route) => {
             <div class="mt-auto">
                 <p class="text-gray-600">Ready to transform your F&B business? Join one-rs today and tap into our growing network of trusted suppliers and innovative restaurants. Experience seamless ordering, real-time inventory updates, and AI-powered sourcing that saves you time and money. Whether you're a supplier looking to expand your reach or a restaurant seeking quality ingredients, one-rs connects you to opportunities that matter. Don't miss out on the digital revolution in F&B sourcing – sign up now and be part of a community that's reshaping the industry.</p>
             </div>
+            <div class="col-lg-3">
+                <!-- Picture Placeholder -->
+                <i class="bi bi-robot text-primary fs-1"></i>
+            </div>
         </div>
     </div>
 </section>
-    <!-- <section class="py-5 border-bottom" v-else>
-        <div class="container px-5 my-3">
-            <div class="text-center mb-5">
-                <h2 class="fw-bolder">Our Services</h2>
-                <p class="lead mb-0">Find out what our website can do for you</p>
-            </div>
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-6">
-                    <h4 class="fw-bolder">AI Sourcing for Buyers</h4>
-                    <p class="lead mb-0">Leverage the power of AI to source the finest ingredients with precision and
-                        efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to ensure
-                        that every ingredient meets your standards, streamlining the sourcing process for optimal
-                        results.</p>
-                </div>
-                <div class="col-lg-3"> -->
-                    <!-- Picture Placeholder -->
-                    <!-- <i class="bi bi-robot text-primary fs-1"></i>
-                </div>
-            </div>
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-3"> -->
-                    <!-- Picture Placeholder -->
-                    <!-- <i class="bi bi-robot text-primary fs-1"></i>
-                </div>
-                <div class="col-lg-6">
-                    <h4 class="fw-bolder">Real-time Database for Suppliers</h4>
-                    <p class="lead mb-0">Monitor and manage supplier data with ease using our real-time dashboard.
-                        Access up-to-date information on inventory, performance metrics, and compliance, all in one
-                        intuitive interface. Make data-driven decisions instantly to keep your supply chain running
-                        smoothly.</p>
-                </div>
-            </div>
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-6">
-                    <h4 class="fw-bolder">Listings</h4>
-                    <p class="lead mb-0">Leverage the power of AI to source the finest ingredients with precision and
-                        efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to ensure
-                        that every ingredient meets your standards, streamlining the sourcing process for optimal
-                        results.</p>
-                </div>
-                <div class="col-lg-3"> -->
-                    <!-- Picture Placeholder -->
-                    <!-- <i class="bi bi-robot text-primary fs-1"></i>
-                </div>
-            </div>
-        </div>
-    </section> -->
 </template>
 
 <script>
