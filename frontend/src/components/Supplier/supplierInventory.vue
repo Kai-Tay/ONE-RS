@@ -222,7 +222,7 @@ onMounted(() => {
                       </TableHead>
                       <TableHead>Product Name</TableHead>
                       <TableHead>Quantity</TableHead>
-                      <TableHead>Unit</TableHead>
+                      <TableHead>Unit (in Kg)</TableHead>
                       <TableHead>Price per Unit</TableHead>
                       <TableHead>Category</TableHead>
                       <TableHead><span class="sr-only">Actions</span></TableHead>
@@ -254,19 +254,36 @@ onMounted(() => {
                               </DialogDescription>
                             </DialogHeader>
                             <div class="space-y-4">
-                              <Input v-model="editedProductName" placeholder="Product Name" />
-                              <Input v-model="editedQuantity" type="number" placeholder="Quantity" />
-                              <Input v-model="editedUnit" placeholder="Unit" />
-                              <Input v-model="editedPricePerUnit" type="number" step="0.01"
+                              <label for="editedProductName" class="block text-sm font-medium text-gray-700">Product
+                                Name</label>
+                              <Input id="editedProductName" v-model="editedProductName" placeholder="Product Name" />
+
+                              <label for="editedQuantity"
+                                class="block text-sm font-medium text-gray-700">Quantity</label>
+                              <Input id="editedQuantity" v-model="editedQuantity" type="number"
+                                placeholder="Quantity" />
+
+                              <label for="editedUnit" class="block text-sm font-medium text-gray-700">Unit (in Kg)</label>
+                              <Input id="editedUnit" v-model="editedUnit" placeholder="Unit" />
+
+                              <label for="editedPricePerUnit" class="block text-sm font-medium text-gray-700">Price per
+                                Unit</label>
+                              <Input id="editedPricePerUnit" v-model="editedPricePerUnit" type="number" step="0.01"
                                 placeholder="Price per Unit" />
-                              <!-- Dropdown for editing category -->
-                              <select v-model="editedCategory" class="w-full p-2 border border-gray-300 rounded-md">
+
+                              <label for="editedCategory"
+                                class="block text-sm font-medium text-gray-700">Category</label>
+                              <select id="editedCategory" v-model="editedCategory"
+                                class="w-full p-2 border border-gray-300 rounded-md">
                                 <option value="" disabled>Select Category</option>
                                 <option v-for="category in categories" :key="category.name" :value="category.name">{{
                                   category.name }}</option>
                               </select>
-                              <!-- Dropdown for editing subcategory based on the selected category -->
-                              <select v-model="editedSubcategory" class="w-full p-2 border border-gray-300 rounded-md">
+
+                              <label for="editedSubcategory"
+                                class="block text-sm font-medium text-gray-700">Subcategory</label>
+                              <select id="editedSubcategory" v-model="editedSubcategory"
+                                class="w-full p-2 border border-gray-300 rounded-md">
                                 <option value="" disabled>Select Subcategory</option>
                                 <option v-for="sub in availableSubcategories" :key="sub" :value="sub">{{ sub }}</option>
                               </select>
@@ -275,6 +292,7 @@ onMounted(() => {
                               <Button type="submit" @click="saveChanges">Save Changes</Button>
                             </DialogFooter>
                           </DialogContent>
+
                         </Dialog>
                         <Button variant="secondary" @click="deleteItem(item)">Delete</Button>
                       </TableCell>
@@ -293,4 +311,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
