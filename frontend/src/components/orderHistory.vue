@@ -93,7 +93,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                                     <div>
                                                         <p class="font-bold">Items Purchased:</p>
                                                         <div v-for="item in order.orderedItems" :key="item.productName"
-                                                            class="my-2 p-2 border border-gray-300 rounded">
+                                                            class="my-2 p-2 border border-gray-300 rounded-lg">
                                                             <p><strong>Product Name:</strong> {{ item.productName }}</p>
                                                             <p><strong>Category:</strong> {{ item.category }}</p>
                                                             <p><strong>Subcategory:</strong> {{ item.subcategory }}</p>
@@ -108,7 +108,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
                                                     <div>
                                                         <p class="font-bold">Total Cost:</p>
-                                                        <p>{{ order.totalPrice }}</p>
+                                                        <p>${{ order.totalPrice }}</p>
                                                     </div>
                                                     <div>
                                                         <p class="font-bold">Payment Status:</p>
