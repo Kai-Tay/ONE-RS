@@ -108,7 +108,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
                                                     <div>
                                                         <p class="font-bold">Total Cost:</p>
-                                                        <p>${{ order.totalPrice }}</p>
+                                                        <p>{{ order.totalPrice }}</p>
                                                     </div>
                                                     <div>
                                                         <p class="font-bold">Payment Status:</p>

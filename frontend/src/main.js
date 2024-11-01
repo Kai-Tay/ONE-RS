@@ -9,7 +9,7 @@ import FindListings from './components/Restaurant/FindListings.vue';
 import SupplierInventory from './components/Supplier/supplierInventory.vue';
 import addIngredientForm from './components/Supplier/addIngredientForm.vue';
 import creditScore from './components/creditScore.vue';
-import Test from '@/components/Supplier/Test.vue'; //old table code 
+// import Test from '@/components/Supplier/Test.vue'; //old table code 
 import './firebase.js';
 import viewSupplier from './components/Restaurant/viewSupplier.vue';
 import Profile from './components/Profile.vue';
@@ -39,7 +39,7 @@ const routes = [
     { path: '/supplierOrders', component: orderHistory},
     { path: '/supplierInventory', component: SupplierInventory, name: 'supplierInventory'},
     { path: '/addIngredientForm', component: addIngredientForm, name: 'addIngredientForm'},
-    { path: '/test', component: Test},//old table code
+    // { path: '/test', component: Test},//old table code
 
 ];
 
