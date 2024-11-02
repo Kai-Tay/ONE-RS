@@ -40,7 +40,7 @@
                             <li v-for="message in group.messages" :key="message.timeStamp" 
                                 :class="{ 'bg-gray-200 ml-auto': message.senderId === currentUser.uid, 'bg-gray-100': message.senderId !== currentUser.uid }"
                                 class="mb-2 p-2 rounded-lg max-w-[70%] clear-both">
-                                <strong>{{ getUserName(message.senderId) }}</strong>: 
+                                <strong>{{ getCompanyName(message.senderId) }}</strong>: 
                                 {{ message.translatedText || message.text }}
                                 <small class="block text-xs text-gray-500">{{ formatTime(message.timeStamp) }}</small>
                             </li>
@@ -117,6 +117,7 @@ const newMessage = ref('');
 const error = ref(null);
 const messagesContainer = ref(null);
 const userNames = ref({});
+const companyNames = ref({});
 const route = useRoute();
 const supplierId = route.params.supplierId;
 const supplierName = route.params.supplierName;
@@ -241,6 +242,9 @@ const loadMessages = () => {
                 if (!userNames.value[message.senderId]) {
                     fetchUserName(message.senderId);
                 }
+                if (!companyNames.value[message.senderId]) {
+                    fetchCompanyName(message.senderId);
+                }
             });
         }
     }, (err) => {
@@ -249,21 +253,29 @@ const loadMessages = () => {
     });
 };
 
-const fetchUserName = async (userId) => {
-    if (userNames.value[userId]) return;
+const fetchCompanyName = async (userId) => {
+    if (companyNames.value[userId]) return;
 
     try {
         const userDoc = await getDoc(doc(db, 'users', userId));
         if (userDoc.exists()) {
             const userData = userDoc.data();
-            userNames.value[userId] = userData.userName || 'Unknown User';
+            companyNames.value[userId] = userData.companyName || 'Unknown Company';
         } else {
-            userNames.value[userId] = 'Unknown User';
+            companyNames.value[userId] = 'Unknown Company';
         }
     } catch (err) {
-        console.error("Error fetching username: ", err);
-        userNames.value[userId] = 'Unknown User';
+        console.error("Error fetching company name: ", err);
+        companyNames.value[userId] = 'Unknown Company';
     }
+};
+
+const getCompanyName = (userId) => {
+    if (!companyNames.value[userId]) {
+        fetchCompanyName(userId);
+        return 'Loading...';
+    }
+    return companyNames.value[userId];
 };
 
 const getUserName = (userId) => {
@@ -294,7 +306,8 @@ onMounted(() => {
                     currentUser.value = { 
                         uid: user.uid, 
                         userName: userDoc.data().userName,
-                        userType: userDoc.data().userType
+                        userType: userDoc.data().userType,
+                        companyName: userDoc.data().companyName
                     };
                     // Start loading messages immediately since we have the supplierId
                     loadMessages();
