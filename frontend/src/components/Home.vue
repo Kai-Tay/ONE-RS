@@ -163,7 +163,7 @@ const navigateTo = (route) => {
                 <!-- Map Image of Restaurants Connecting -->
                 <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
                     ref="findCard">
-                    <h2 class="fw-bolder text-3xl mt-3">Find Suppliers</h2>
+                    <h2 class="text-3xl font-bold mt-4">Find Suppliers</h2>
                     <div class="mb-5">
                         <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
                             All you need to do is to input your ingredients and let the AI do the rest.</p>
@@ -171,7 +171,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="flex flex-col justify-between px-5" ref="orderCard">
-                    <h2 class="fw-bolder text-3xl mt-3">Place Order</h2>
+                    <h2 class="text-3xl font-bold mt-4">Place Order</h2>
                     <div class="mb-5">
                         <p class="mb-5">As a buyer, you have a credit score to maintain. These will increase for every
                             payment
@@ -181,7 +181,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="flex flex-col justify-between px-5" ref="paymentCard">
-                    <h2 class="fw-bolder text-3xl mt-3">Checkout</h2>
+                    <h2 class="text-3xl font-bold mt-4">Checkout</h2>
                     <div class="mb-5">
                         <p class="mb-5">Are you overbuying ingredients for your business? Use our order optimiser to
                             analyse your
@@ -227,9 +227,7 @@ const navigateTo = (route) => {
                     <h2 class="text-3xl font-bold mt-4">AI Sourcing for Buyers</h2>
                 </div>
                 <div class="mt-auto">
-                    <p class="text-gray-400">Leverage the power of AI to source the finest ingredients with precision
-                        and efficiency. Our advanced algorithms analyze quality, sustainability, and supplier data to
-                        ensure that every ingredient meets your standards.</p>
+                    <p class="text-gray-400">AI-powered sourcing helps you find quality ingredients efficiently by analyzing supplier data and sustainability metrics.</p>
                 </div>
                 <div class="col-lg-3">
                     <!-- Picture Placeholder -->
@@ -244,9 +242,7 @@ const navigateTo = (route) => {
                     <h2 class="text-3xl font-bold mt-4">Real-time Database for Suppliers</h2>
                 </div>
                 <div class="mt-auto">
-                    <p class="text-gray-600">Monitor and manage supplier data with ease using our real-time dashboard.
-                        Access up-to-date information on inventory, performance metrics, and compliance, all in one
-                        intuitive interface.</p>
+                    <p class="text-gray-600">Track supplier inventory, metrics, and compliance in real-time through a single dashboard.</p>
                 </div>
                 <div class="col-lg-3">
                     <i class="bi bi-robot text-primary fs-1"></i>
