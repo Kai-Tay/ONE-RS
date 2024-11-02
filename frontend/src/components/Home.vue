@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { animate, spring, scroll, inView } from "motion";
 import { useRouter } from 'vue-router';
 
+
 const router = useRouter();
 
 const navigateTo = (route) => {
@@ -253,23 +254,61 @@ const navigateTo = (route) => {
                 </div>
             </div>
 
-            <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                @click="navigateTo('/login')">
+            <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90">
                 <div>
                     <i class="bi bi-camera text-primary text-3xl"></i>
-                    <h2 class="text-3xl font-bold mt-4">Sign Up</h2>
+                    <h2 class="text-3xl font-bold mt-4">Automated Payments</h2>
                 </div>
                 <div class="mt-auto">
-                    <p class="text-gray-600">Ready to transform your F&B business? Join one-rs today and tap into our
-                        growing network of trusted suppliers and innovative restaurants. Experience seamless ordering,
-                        real-time inventory updates, and AI-powered sourcing that saves you time and money. Whether
-                        you're a supplier looking to expand your reach or a restaurant seeking quality ingredients,
-                        one-rs connects you to opportunities that matter. Don't miss out on the digital revolution in
-                        F&B sourcing – sign up now and be part of a community that's reshaping the industry.</p>
+                    <p class="text-gray-600">We use Stripe to handle payments. You can set your payment preferences
+                        in your account settings.</p>
                 </div>
                 <div class="col-lg-3">
                     <!-- Picture Placeholder -->
                     <i class="bi bi-robot text-primary fs-1"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Section -->
+        <div class="h-screen bg-gray-50">
+            <div class="grid grid-cols-2 h-full">
+                <!-- Restaurant Signup Section (Left) -->
+                <div 
+                    class="flex flex-col justify-center items-center bg-white p-12 cursor-pointer transition-all hover:bg-gray-50"
+                    @click="navigateToSignup('restaurant')"
+                >
+                    <div class="text-center max-w-lg">
+                        <i class="bi bi-shop text-primary text-5xl mb-6"></i>
+                        <h3 class="text-3xl font-bold mb-4">Join as a Restaurant</h3>
+                        <p class="text-gray-600 mb-6">
+                            Access our platform to find the best suppliers and manage your inventory efficiently.
+                        </p>
+                        <button 
+                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                            Sign Up Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Supplier Signup Section (Right) -->
+                <div 
+                    class="flex flex-col justify-center items-center bg-black text-white p-12 cursor-pointer transition-all hover:bg-gray-900"
+                    @click="navigateToSignup('supplier')"
+                >
+                    <div class="text-center max-w-lg">
+                        <i class="bi bi-box-seam text-primary text-5xl mb-6"></i>
+                        <h3 class="text-3xl font-bold mb-4">Join as a Supplier</h3>
+                        <p class="text-gray-400 mb-6">
+                            Connect with restaurants and grow your business with our platform.
+                        </p>
+                        <button 
+                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                            Sign Up Now
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -309,6 +348,16 @@ export default {
                     });
                 }
             }
+        },
+        navigateToSignup(type) {
+            this.$router.push({
+                path: '/login',
+                query: { 
+                    type: type,
+                    signup: true,
+                    tab: type
+                }
+            });
         }
     },
     computed: {

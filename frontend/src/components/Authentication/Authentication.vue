@@ -53,7 +53,7 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
 
 
     <!-- Sign Up -->
-    <Tabs default-value="account" class="mx-auto max-w-sm" v-else>
+    <Tabs :default-value="isSupplier ? 'supplier' : 'account'" class="mx-auto max-w-sm" v-else>
       <TabsList class="grid w-full grid-cols-2">
         <TabsTrigger value="account" @click="toggleSupplier">
           Restaurant
@@ -204,6 +204,34 @@ export default {
       statusSuccess: true,
     };
   },
+  created() {
+    // Handle route query parameters
+    if (this.$route.query.signup === 'true') {
+        this.isLogin = false;
+        const type = this.$route.query.type;
+        
+        if (type === 'supplier') {
+            this.isSupplier = true;
+            // Need to wait for next tick to ensure tabs are mounted
+            this.$nextTick(() => {
+                // Find and click the supplier tab
+                const supplierTab = document.querySelector('[value="supplier"]');
+                if (supplierTab) {
+                    supplierTab.click();
+                }
+            });
+        } else {
+            this.isSupplier = false;
+            this.$nextTick(() => {
+                // Find and click the restaurant tab
+                const restaurantTab = document.querySelector('[value="account"]');
+                if (restaurantTab) {
+                    restaurantTab.click();
+                }
+            });
+        }
+      }
+    },
   methods: {
     toggleLogin() {
       this.isLogin = !this.isLogin;
@@ -324,8 +352,32 @@ export default {
       this.statusDescription = "Error in Signing Up, Please Try Again!";
       this.statusSuccess = false;
       this.showAuthDialog = true;
-    });
-}
+      });
+    }
+  },
+  watch: {
+    '$route.query': {
+        handler(newQuery) {
+            if (newQuery.type === 'supplier') {
+                this.isSupplier = true;
+                this.$nextTick(() => {
+                    const supplierTab = document.querySelector('[value="supplier"]');
+                    if (supplierTab) {
+                        supplierTab.click();
+                    }
+                });
+            } else if (newQuery.type === 'restaurant') {
+                this.isSupplier = false;
+                this.$nextTick(() => {
+                    const restaurantTab = document.querySelector('[value="account"]');
+                    if (restaurantTab) {
+                        restaurantTab.click();
+                    }
+                });
+            }
+        },
+        immediate: true
+    }
   }
 };
 
