@@ -317,7 +317,15 @@ export default {
             return setDoc(doc(db, "inventoryLevels", user.uid), {
           });
           }
-          return Promise.resolve(); // Return resolved promise if not a supplier
+          return Promise.resolve(); 
+        })
+        .then(() => {
+          // Create restaurant document if user is NOT a supplier
+          if (!this.isSupplier) {
+            return setDoc(doc(db, "restaurant", user.uid), {
+            });
+          }
+          return Promise.resolve(); 
         })
         .then(() => {
           // Add session cookie
