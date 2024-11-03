@@ -73,7 +73,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                         </DialogTrigger>
                                         <DialogContent class="sm:max-w-[425px]">
                                             <DialogHeader>
-                                                <DialogTitle>Order Details</DialogTitle>
+                                                <DialogTitle class="text-2xl font-bold">Order Details</DialogTitle>
                                             </DialogHeader>
                                             <div class="grid gap-4 py-4 overflow-y-auto ">
                                                 <div class="flex flex-col justify-between h-[50dvh] space-y-5">
@@ -172,7 +172,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                         </DialogTrigger>
                                         <DialogContent class="sm:max-w-[425px]">
                                             <DialogHeader>
-                                                <DialogTitle>Order Details</DialogTitle>
+                                                <DialogTitle class="text-2xl font-bold">Order Details</DialogTitle>
                                             </DialogHeader>
                                             <div class="grid gap-4 py-4 overflow-y-auto ">
                                                 <div class="flex flex-col justify-between h-[50dvh] space-y-5">
