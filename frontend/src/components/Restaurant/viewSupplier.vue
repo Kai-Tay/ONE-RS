@@ -519,12 +519,11 @@ export default {
                     this.showDialog = true;
                 })
 
-                // UPDATE INVENTORYLISTING DATABASE
-                this.updateInventoryLevels();
-
             } catch (error) {
                 alert('Error updating listings:', error)
             }
+            // UPDATE INVENTORYLISTING DATABASE
+            this.updateInventoryLevels();
 
         },
         async updateInventoryLevels() {
@@ -572,8 +571,8 @@ export default {
                 }, {});
 
                 // Merge the inventory levels by adding totalQty to beforeOrder (if totalqty keys not in beforeOrder, add it)
-                const beforeOrder = inventoryData[docTitle].beforeOrder;
-
+                const beforeOrder = JSON.parse(JSON.stringify(inventoryData[docTitle].beforeOrder));
+                console.log(inventoryData[docTitle].beforeOrder)
                 const mergedOrder = Object.keys(totalQty).reduce((acc, category) => {
                     // Initialize category if it doesn't exist
                     acc[category] = acc[category] || {};
@@ -585,12 +584,11 @@ export default {
 
                     return acc;
                 }, { ...beforeOrder });  // Start with a copy of beforeOrder
-
-
+                
                 // Update the inventory levels with afterOrder in inventoryData[docTitle]
                 const updatedInventoryData = {
                     [docTitle]: {
-                        beforeOrder: beforeOrder,
+                        beforeOrder: inventoryData[docTitle].beforeOrder,
                         afterOrder: mergedOrder,
                     }
                 };
@@ -599,9 +597,6 @@ export default {
                 await updateDoc(inventoryRef, {
                     currentInventoryLevel: updatedInventoryData,
                 });
-
-
-
 
             }
         }
@@ -616,6 +611,8 @@ export default {
 
         // Obtain User Info
         this.fetchUser();
+
+        this.updateInventoryLevels();
 
         
     },
