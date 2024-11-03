@@ -87,6 +87,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                 <TableHead class="w-[150px]">Category</TableHead>
                                 <TableHead class="w-[150px]">Sub Category</TableHead>
                                 <TableHead class="w-[100px]">Stock</TableHead>
+                                <TableHead class="w-[150px]">Qty /Kg</TableHead>
                                 <TableHead class="w-[150px]">Price Per Unit</TableHead>
                                 <TableHead class="w-[100px]">
                                     Quantity
@@ -110,6 +111,12 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                         Stock
                                     </Label>
                                     {{ item.quantity }}
+                                </TableCell>
+                                <TableCell>
+                                    <Label :for="`unit-${index}`" class="sr-only">
+                                        Unit
+                                    </Label>
+                                    {{ item.unit }} kg
                                 </TableCell>
                                 <TableCell>
                                     <Label :for="`price-${index}`" class="sr-only">
@@ -148,6 +155,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                 <TableHead>
                                     Name
                                 </TableHead>
+                                <TableHead class="w-[200px]">Qty /Kg</TableHead>
                                 <TableHead class="w-[200px]">Price Per Unit</TableHead>
                                 <TableHead class="w-[200px]">Qty Purchasing</TableHead>
                                 <TableHead class="">
@@ -160,6 +168,9 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                             <TableRow>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
+                                </TableCell>
+                                <TableCell class="font-semibold">
+                                    {{ item.unit }} kg
                                 </TableCell>
                                 <TableCell>
                                     <Label class="sr-only">
@@ -187,6 +198,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                                 <TableCell class="font-semibold">
                                     Total
                                 </TableCell>
+                                <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell>
@@ -461,7 +473,7 @@ export default {
                 const listingRef = doc(db, "supplierListing", this.supplierId);
 
                 const updateQuantity = this.supplierListing.inventory.map(listingItem => {
-                    
+
                     this.orderCart.map(orderItem => {
                         if (listingItem.productName == orderItem.productName) {
                             listingItem.quantity -= orderItem.purchaseQuantity;
@@ -508,11 +520,91 @@ export default {
                 })
 
                 // UPDATE INVENTORYLISTING DATABASE
+                this.updateInventoryLevels();
+
             } catch (error) {
-                console.error('Error updating listings:', error)
-            } 
+                alert('Error updating listings:', error)
+            }
 
         },
+        async updateInventoryLevels() {
+            // Fetch the inventory listing
+            const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
+
+            //Check if the latest document last number is a 4
+            const inventorySnapshot = await getDoc(inventoryRef);
+            const inventoryData = inventorySnapshot.data().currentInventoryLevel;
+            const docTitle = Object.keys(inventoryData)[0];
+            const month = docTitle.split("-")[1];
+
+            // Check if its the 5th interval
+            if (docTitle[docTitle.length - 1] === "5") {
+                console.log("The last character of the key is 5.");
+
+                // Consolidate orderHistory for past month
+                const orderHistoryRef = collection(db, "orderHistory");
+                const orderHistorySnapshot = await getDocs(orderHistoryRef);
+                const orderHistoryData = orderHistorySnapshot.docs.map(doc => doc.data());
+
+                // Filter out data from user for the month
+                const filteredOrderHistory = orderHistoryData.filter(order => {
+                    const orderMonth = order.date.toDate().getMonth() + 1;
+                    return orderMonth == month && order.buyerID == sessionStorage.getItem("uid");
+                });
+
+                // Calculate total qty based on {category: {subcategory:qty}}
+                const totalQty = filteredOrderHistory.reduce((acc, order) => {
+                    order.orderedItems.forEach(item => {
+                        //lower case all category and subcategory
+                        item.category = item.category.toLowerCase();
+                        item.subcategory = item.subcategory.toLowerCase();
+                        if (acc[item.category]) {
+                            if (acc[item.category][item.subcategory]) {
+                                acc[item.category][item.subcategory] += item.purchaseQuantity;
+                            } else {
+                                acc[item.category][item.subcategory] = item.purchaseQuantity;
+                            }
+                        } else {
+                            acc[item.category] = { [item.subcategory]: item.purchaseQuantity };
+                        }
+                    });
+                    return acc;
+                }, {});
+
+                // Merge the inventory levels by adding totalQty to beforeOrder (if totalqty keys not in beforeOrder, add it)
+                const beforeOrder = inventoryData[docTitle].beforeOrder;
+
+                const mergedOrder = Object.keys(totalQty).reduce((acc, category) => {
+                    // Initialize category if it doesn't exist
+                    acc[category] = acc[category] || {};
+
+                    Object.keys(totalQty[category]).forEach(subcategory => {
+                        // Initialize subcategory if it doesn't exist
+                        acc[category][subcategory] = (acc[category][subcategory] || 0) + totalQty[category][subcategory];
+                    });
+
+                    return acc;
+                }, { ...beforeOrder });  // Start with a copy of beforeOrder
+
+
+                // Update the inventory levels with afterOrder in inventoryData[docTitle]
+                const updatedInventoryData = {
+                    [docTitle]: {
+                        beforeOrder: beforeOrder,
+                        afterOrder: mergedOrder,
+                    }
+                };
+
+                // Send data to database
+                await updateDoc(inventoryRef, {
+                    currentInventoryLevel: updatedInventoryData,
+                });
+
+
+
+
+            }
+        }
     },
     mounted() {
         // Get the supplier ID from the URL
@@ -524,6 +616,8 @@ export default {
 
         // Obtain User Info
         this.fetchUser();
+
+        
     },
 };
 </script>
