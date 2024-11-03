@@ -73,7 +73,7 @@ import axios from 'axios';
                         <!-- Text -->
                         <div class="flex flex-col justify-center">
                             <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
-                            <CardDescription class="text-md" v-for="item in listing.inventory">{{ item.productName }} - {{ item.category }}</CardDescription>
+                            <CardDescription class="text-md" v-for="item in listing.inventory">{{ item.productName }} - {{ item.subcategory }}</CardDescription>
                         </div>
                         <div class="">
                             <!-- <img class="w-40 h-40 mx-auto block object-cover my-4" :src="listing.image" alt="Listing Image" /> -->
@@ -189,7 +189,9 @@ export default {
                         // Check if any search term matches supplierName or any productName in inventory
                         this.searchResult.some(query =>
                             listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
-                            listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
+                            listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()) ||
+                            listing.inventory.some(item => item.category.toLowerCase().includes(query.toLowerCase())) ||
+                            listing.inventory.some(item => item.subcategory.toLowerCase().includes(query.toLowerCase())) )
                         )
                     );
 
@@ -236,7 +238,7 @@ export default {
     computed: {
         // Computed property to dynamically set the placeholder
         searchPlaceholder() {
-            return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search for ingredients...';
+            return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search for Ingredients, Category or Suppliers';
         }
     },
 };
