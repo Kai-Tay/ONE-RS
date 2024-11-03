@@ -45,7 +45,6 @@ import axios from 'axios';
     </header>
 
     <!-- Filter Bar from Search -->
-
     <div class="mt-5 mb-5 mx-5">
         <div class="text-4xl font-bold">Suppliers</div>
         <TagsInput v-model="searchResult">
@@ -73,9 +72,8 @@ import axios from 'axios';
                     <div class="flex flex-inline justify-between">
                         <!-- Text -->
                         <div class="flex flex-col justify-center">
-                            <CardDescription class="text-md">Available Ingredients:</CardDescription>
-                            <CardDescription class="text-md">{{ listing.inventory }}</CardDescription>
-                            {{ listing.description }}
+                            <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
+                            <CardDescription class="text-md" v-for="item in listing.inventory">{{ item.productName }} - {{ item.category }}</CardDescription>
                         </div>
                         <div class="">
                             <!-- <img class="w-40 h-40 mx-auto block object-cover my-4" :src="listing.image" alt="Listing Image" /> -->
