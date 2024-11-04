@@ -11,8 +11,9 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
 
 <template>
-    <div>
-        <nav class="h-16 flex items-center justify-between text-gray-900" :class="navbarClasses">
+    <div class="w-full">
+        <!-- <nav class="h-16 flex items-center justify-between text-gray-900" :class="navbarClasses"> -->
+        <nav class="h-16 flex items-center justify-between transition-colors duration-300" :class="[navbarClasses, $route.path === '/' ? 'absolute top-0 left-0 right-0 z-50' : 'relative']">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
                 <div class="text-2xl font-bold ">ONE.RS 🧑‍🍳 </div>

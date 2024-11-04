@@ -45,356 +45,322 @@ const navigateTo = (route) => {
             </div>
         </div>
     </div> -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Navbar integrated directly in home page -->
+        <Navbar v-if="$route.path === '/'" class="absolute top-0 left-0 right-0 z-50" />
 
 
-    <header class="bg-gray-900 h-screen flex flex-col p-8" @click="scrollToFeatures">
-        <!-- Logo Section (Top Left) -->
-        <div class="flex-none">
-            <h2 class="text-white text-2xl font-bold">ONE.RS 🧑‍🍳</h2>
-        </div>
+        <header class="bg-gray-900 h-screen flex flex-col p-8" @click="scrollToFeatures">
+            <!-- Logo Section (Top Left) -->
+            <!-- <div class="flex-none">
+                <h2 class="text-white text-2xl font-bold">ONE.RS 🧑‍🍳</h2>
+            </div> -->
 
-        <!-- Main Welcome Text (Center Left) -->
-        <div class="flex-grow flex items-center">
-            <div class="max-w-2xl">
-                <div class="text-7xl font-bold" ref="titleContainer">
-                    <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
-                        Welcome, {{ userName }}
-                    </h1>
-                    <h1 class="text-left text-white mb-2" v-else ref="mainTitle">
-                        Welcome to
-                        <br />
-                        ONE.RS
-                    </h1>
+            <!-- Main Welcome Text (Center Left) -->
+            <div class="flex-grow flex items-center">
+                <div class="max-w-2xl">
+                    <div class="text-7xl font-bold" ref="titleContainer">
+                        <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
+                            Welcome, {{ userName }}
+                        </h1>
+                        <h1 class="text-left text-white mb-2" v-else ref="mainTitle">
+                            Welcome to
+                            <br />
+                            ONE.RS
+                        </h1>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Subheader (Bottom Left) -->
-        <div class="flex-none max-w-2xl">
-            <div class="text-gray-200 text-2xl">
-                <div v-if="isLoggedIn">
-                    <p class="text-left text-gray-400" v-if="userType == 'supplier'">
-                        Start setting up your listings!
-                    </p>
+            <!-- Subheader (Bottom Left) -->
+            <div class="flex-none max-w-2xl">
+                <div class="text-gray-200 text-2xl">
+                    <div v-if="isLoggedIn">
+                        <p class="text-left text-gray-400" v-if="userType == 'supplier'">
+                            Start setting up your listings!
+                        </p>
+                        <p class="text-left text-gray-400" v-else>
+                            Start finding your ingredients from suppliers!
+                        </p>
+                    </div>
                     <p class="text-left text-gray-400" v-else>
-                        Start finding your ingredients from suppliers!
+                        The best place for restaurants and
+                        <br />
+                        suppliers to connect!
                     </p>
                 </div>
-                <p class="text-left text-gray-400" v-else>
-                    The best place for restaurants and
-                    <br />
-                    suppliers to connect!
-                </p>
-            </div>
-        </div>
-
-        <!-- Right Side Image (INSERT IMAGE) -->
-        <div class="w-1/2 flex items-center justify-center">
-            <img src="" alt="" class="max-h-full object-cover rounded-lg" />
-        </div>
-    </header>
-
-    <!-- When Logged In -->
-    <div v-if="isLoggedIn">
-        <!-- Supplier -->
-        <section class="" id="features" v-if="userType == 'supplier'">
-            <div class="grid grid-cols-1 md:grid-cols-3 h-screen" ref="featureGrid">
-                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    @click="navigateTo('/supplierInventory')" ref="listingsCard" @mouseover="hoverAnimate($event)"
-                    @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
-                        <h2 class="text-4xl font-bold mt-4">Step 1:
-                            <br>Listings
-                        </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="mt-auto">
-                        <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick
-                            description, and set your price.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    @click="navigateTo('/supplierInventory')" ref="ordersCard" @mouseover="hoverAnimate($event)"
-                    @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
-                        <h2 class="text-4xl font-bold mt-4">Step 2:
-                            <br>Receive Orders
-                        </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="mt-auto">
-                        <p class="hide text-gray-600">As a supplier, you receive orders from buyers all over the world.
-                            You
-                            can accept or reject the order.</p>
-                    </div>
-                </div>
-
-                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    ref="checkoutCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
-                        <h2 class="text-4xl font-bold mt-4">Step 3:
-                            <br>Checkout
-                        </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="mt-auto">
-                        <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment
-                            preferences
-                            in your account settings.</p>
-                    </div>
-                </div>
             </div>
 
-            <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    ref="inventoryCard">
-                    <div class="firstFade">
-                        <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
-                        <h2 class="hide text-4xl font-bold mt-4">Inventory Management</h2>
-                    </div>
-                    <div class="secondFade mt-auto">
-                        <p class="hide text-gray-600">Monitor your inventory levels in real-time. Get insights into your
-                            best-selling items and manage stock efficiently.</p>
-                    </div>
-                </div>
-
-                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                    ref="paymentsCard">
-                    <div class="firstFade">
-                        <i class="bi bi-receipt text-primary text-3xl"></i>
-                        <h2 class="hide text-4xl font-bold mt-4">Automated Payments</h2>
-                    </div>
-                    <div class="secondFade mt-auto">
-                        <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain
-                            your
-                            reputation.</p>
-                    </div>
-                </div>
+            <!-- Right Side Image (INSERT IMAGE) -->
+            <div class="w-1/2 flex items-center justify-center">
+                <img src="" alt="" class="max-h-full object-cover rounded-lg" />
             </div>
-        </section>
+        </header>
+
+        <!-- When Logged In -->
+        <div v-if="isLoggedIn">
+            <!-- Supplier -->
+            <section class="" id="features" v-if="userType == 'supplier'">
+                <div class="grid grid-cols-1 md:grid-cols-3 h-screen" ref="featureGrid">
+                    <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                        @click="navigateTo('/supplierInventory')" ref="listingsCard" @mouseover="hoverAnimate($event)"
+                        @mouseout="hoverOffAnimate($event)">
+                        <div>
+                            <i class="bi bi-camera text-primary text-3xl"></i>
+                            <h2 class="text-4xl font-bold mt-4">Step 1:
+                                <br>Listings
+                            </h2>
+                        </div>
+                        <div class="mt-auto">
+                            <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick
+                                description, and set your price.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                        @click="navigateTo('/supplierInventory')" ref="ordersCard" @mouseover="hoverAnimate($event)"
+                        @mouseout="hoverOffAnimate($event)">
+                        <div>
+                            <h2 class="text-4xl font-bold mt-4">Step 2:
+                                <br>Receive Orders
+                            </h2>
+                        </div>
+                        <div class="mt-auto">
+                            <p class="hide text-gray-600">As a supplier, you receive orders from buyers all over the world.
+                                You
+                                can accept or reject the order.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                        ref="checkoutCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
+                        <div>
+                            <h2 class="text-4xl font-bold mt-4">Step 3:
+                                <br>Checkout
+                            </h2>
+                        </div>
+                        <div class="mt-auto">
+                            <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment
+                                preferences
+                                in your account settings.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
+                    <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                        ref="inventoryCard">
+                        <div class="firstFade">
+                            <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
+                            <h2 class="hide text-4xl font-bold mt-4">Inventory Management</h2>
+                        </div>
+                        <div class="secondFade mt-auto">
+                            <p class="hide text-gray-600">Monitor your inventory levels in real-time. Get insights into your
+                                best-selling items and manage stock efficiently.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                        ref="paymentsCard">
+                        <div class="firstFade">
+                            <i class="bi bi-receipt text-primary text-3xl"></i>
+                            <h2 class="hide text-4xl font-bold mt-4">Automated Payments</h2>
+                        </div>
+                        <div class="secondFade mt-auto">
+                            <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain
+                                your
+                                reputation.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
 
-        <!-- Restaurant -->
-        <section id="features" v-else>
-            <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
-                <!-- Map Image of Restaurants Connecting -->
-                <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
-                    ref="findCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
+            <!-- Restaurant -->
+            <section id="features" v-else>
+                <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
+                    <!-- Map Image of Restaurants Connecting -->
+                    <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
+                        ref="findCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 1:
                             <br>Find Suppliers
                         </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <div class="mb-5">
+                            <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
+                                All you need to do is to input your ingredients and let the AI do the rest.</p>
+                        </div>
                     </div>
 
-                    <div class="mb-5">
-                        <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
-                            All you need to do is to input your ingredients and let the AI do the rest.</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col justify-between px-5" ref="orderCard" @mouseover="hoverAnimate($event)"
-                    @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
+                    <div class="flex flex-col justify-between px-5" ref="orderCard" @mouseover="hoverAnimate($event)"
+                        @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 2:
                             <br>Place Order
                         </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <div class="mb-5">
+                            <p class="hide mb-5">As a buyer, you have a credit score to maintain. These will increase for
+                                every
+                                payment
+                                made
+                                on time to the supplier. Check your score here!</p>
+                        </div>
                     </div>
 
-                    <div class="mb-5">
-                        <p class="hide mb-5">As a buyer, you have a credit score to maintain. These will increase for
-                            every
-                            payment
-                            made
-                            on time to the supplier. Check your score here!</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col justify-between px-5" ref="paymentCard" @mouseover="hoverAnimate($event)"
-                    @mouseout="hoverOffAnimate($event)">
-                    <div class="flex items-center space-x-10">
+                    <div class="flex flex-col justify-between px-5" ref="paymentCard" @mouseover="hoverAnimate($event)"
+                        @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 3:
                             <br>Checkout
                         </h2>
-                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <div class="mb-5">
+                            <p class="hide mb-5">Are you overbuying ingredients for your business? Use our order optimiser
+                                to
+                                analyse your
+                                order history and plan out your next purchase!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-screen grid grid-rows-3 gap-4" ref="bottomGrid">
+                    <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer" ref="aiCard">
+                        <div class="firstFade">
+                            <h2 class="hide text-4xl font-bold mt-4">AI Sourcing</h2>
+                        </div>
+                        <div class="secondFade mt-auto">
+                            <p class="hide text-gray-600">Find the ingredients needed for your restaurant using our AI
+                                Sourcing!
+                                All you need to do is to input your ingredients and let the AI do the rest.</p>
+                        </div>
                     </div>
 
-                    <div class="mb-5">
-                        <p class="hide mb-5">Are you overbuying ingredients for your business? Use our order optimiser
-                            to
-                            analyse your
-                            order history and plan out your next purchase!</p>
+                    <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer" ref="paymentsCard">
+                        <div class="firstFade">
+                            <h2 class="hide text-4xl font-bold mt-4">Automated Payments</h2>
+                        </div>
+                        <div class="secondFade mt-auto">
+                            <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain
+                                your
+                                reputation.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer" ref="dashboardCard">
+                        <div class="firstFade">
+                            <h2 class="hide text-4xl font-bold mt-4">Predictive Dashboard</h2>
+                        </div>
+                        <div class="secondFade mt-auto">
+                            <p class="hide text-gray-600">A predictive dashboard that analyses your order history and
+                                inventory needs, helping you optimize your supply chain and reduce waste.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- When Not Logged In -->
+        <section class="border-bottom" id="features" v-else>
+            <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
+                <!-- AI Sourcing Card -->
+                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
+                    <div>
+                        <i class="bi bi-robot text-primary text-3xl"></i>
+                        <h2 class="text-4xl font-bold mt-4">AI Sourcing for Buyers</h2>
+                    </div>
+                    <div class="mt-auto">
+                        <p class="hide text-gray-400">AI-powered sourcing helps you find quality ingredients efficiently by
+                            analyzing supplier data and sustainability metrics.</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <!-- Picture Placeholder -->
+                        <i class="bi bi-robot text-primary fs-1"></i>
+                    </div>
+                </div>
+
+                <!-- Real-time Database Card -->
+                <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
+                    <div>
+                        <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
+                        <h2 class="text-4xl font-bold mt-4">Real-time Database for Suppliers</h2>
+                    </div>
+                    <div class="mt-auto">
+                        <p class="hide text-gray-600">Track supplier inventory, metrics, and compliance in real-time through
+                            a
+                            single dashboard.</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <i class="bi bi-robot text-primary fs-1"></i>
+                        <!-- Picture Placeholder -->
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
+                    @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
+                    <div>
+                        <h2 class="text-4xl font-bold mt-4">Automated Payments</h2>
+                    </div>
+                    <div class="mt-auto">
+                        <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment preferences
+                            in your account settings.</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <!-- Picture Placeholder -->
+                        <i class="bi bi-robot text-primary fs-1"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="h-screen grid grid-rows-3 gap-4" ref="bottomGrid">
-                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer" ref="aiCard">
-                    <div class="firstFade">
-                        <h2 class="hide text-4xl font-bold mt-4">AI Sourcing</h2>
-                    </div>
-                    <div class="secondFade mt-auto">
-                        <p class="hide text-gray-600">Find the ingredients needed for your restaurant using our AI
-                            Sourcing!
-                            All you need to do is to input your ingredients and let the AI do the rest.</p>
-                    </div>
-                </div>
+            <!-- Signup Section -->
+            <div class="h-screen bg-gray-50">
+                <div class="grid grid-cols-1 md:grid-cols-2 h-full">
+                    <!-- Restaurant Signup Section (Left) -->
+                    <div class="flex flex-col justify-center items-center bg-white p-12 cursor-pointer transition-all hover:bg-gray-50"
+                        @click="navigateToSignup('restaurant')">
+                        <div class="text-center max-w-lg">
+                            <div class="flex justify-center mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="w-20 h-20 text-black">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                                </svg>
+                            </div>
 
-                <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer" ref="paymentsCard">
-                    <div class="firstFade">
-                        <h2 class="hide text-4xl font-bold mt-4">Automated Payments</h2>
+                            <h3 class="text-4xl font-bold mb-4">Join as a Restaurant</h3>
+                            <p class="text-gray-600 mb-6">
+                                Access our platform to find the best suppliers and manage your inventory efficiently.
+                            </p>
+                            <button
+                                class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                                Sign Up Now
+                            </button>
+                        </div>
                     </div>
-                    <div class="secondFade mt-auto">
-                        <p class="hide mb-5">View and manage all your orders in one place. Track deliveries and maintain
-                            your
-                            reputation.</p>
-                    </div>
-                </div>
 
-                <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer" ref="dashboardCard">
-                    <div class="firstFade">
-                        <h2 class="hide text-4xl font-bold mt-4">Predictive Dashboard</h2>
-                    </div>
-                    <div class="secondFade mt-auto">
-                        <p class="hide text-gray-600">A predictive dashboard that analyses your order history and
-                            inventory needs, helping you optimize your supply chain and reduce waste.</p>
+                    <!-- Supplier Signup Section (Right) -->
+                    <div class="flex flex-col justify-center items-center bg-black text-white p-12 cursor-pointer transition-all hover:bg-gray-900"
+                        @click="navigateToSignup('supplier')">
+                        <div class="text-center max-w-lg">
+                            <div class="flex justify-center mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="w-20 h-20 text-white">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                                </svg>
+                            </div>
+
+                            <h3 class="text-4xl font-bold mb-4">Join as a Supplier</h3>
+                            <p class="text-gray-400 mb-6">
+                                Connect with restaurants and grow your business with our platform.
+                            </p>
+                            <button
+                                class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                                Sign Up Now
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
-
-    <!-- When Not Logged In -->
-    <section class="border-bottom" id="features" v-else>
-        <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
-            <!-- AI Sourcing Card -->
-            <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                <div>
-                    <i class="bi bi-robot text-primary text-3xl"></i>
-                    <h2 class="text-4xl font-bold mt-4">AI Sourcing for Buyers</h2>
-                </div>
-                <div class="mt-auto">
-                    <p class="hide text-gray-400">AI-powered sourcing helps you find quality ingredients efficiently by
-                        analyzing supplier data and sustainability metrics.</p>
-                </div>
-                <div class="col-lg-3">
-                    <!-- Picture Placeholder -->
-                    <i class="bi bi-robot text-primary fs-1"></i>
-                </div>
-            </div>
-
-            <!-- Real-time Database Card -->
-            <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                <div>
-                    <i class="bi bi-gear-wide-connected text-primary text-3xl"></i>
-                    <h2 class="text-4xl font-bold mt-4">Real-time Database for Suppliers</h2>
-                </div>
-                <div class="mt-auto">
-                    <p class="hide text-gray-600">Track supplier inventory, metrics, and compliance in real-time through
-                        a
-                        single dashboard.</p>
-                </div>
-                <div class="col-lg-3">
-                    <i class="bi bi-robot text-primary fs-1"></i>
-                    <!-- Picture Placeholder -->
-                </div>
-            </div>
-
-            <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
-                @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                <div>
-                    <h2 class="text-4xl font-bold mt-4">Automated Payments</h2>
-                </div>
-                <div class="mt-auto">
-                    <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment preferences
-                        in your account settings.</p>
-                </div>
-                <div class="col-lg-3">
-                    <!-- Picture Placeholder -->
-                    <i class="bi bi-robot text-primary fs-1"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Signup Section -->
-        <div class="h-screen bg-gray-50">
-            <div class="grid grid-cols-1 md:grid-cols-2 h-full">
-                <!-- Restaurant Signup Section (Left) -->
-                <div class="flex flex-col justify-center items-center bg-white p-12 cursor-pointer transition-all hover:bg-gray-50"
-                    @click="navigateToSignup('restaurant')">
-                    <div class="text-center max-w-lg">
-                        <div class="flex justify-center mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-20 h-20 text-black">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
-                            </svg>
-                        </div>
-
-                        <h3 class="text-4xl font-bold mb-4">Join as a Restaurant</h3>
-                        <p class="text-gray-600 mb-6">
-                            Access our platform to find the best suppliers and manage your inventory efficiently.
-                        </p>
-                        <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Supplier Signup Section (Right) -->
-                <div class="flex flex-col justify-center items-center bg-black text-white p-12 cursor-pointer transition-all hover:bg-gray-900"
-                    @click="navigateToSignup('supplier')">
-                    <div class="text-center max-w-lg">
-                        <div class="flex justify-center mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-20 h-20 text-white">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                            </svg>
-                        </div>
-
-                        <h3 class="text-4xl font-bold mb-4">Join as a Supplier</h3>
-                        <p class="text-gray-400 mb-6">
-                            Connect with restaurants and grow your business with our platform.
-                        </p>
-                        <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 </template>
 
 <script>
@@ -444,26 +410,10 @@ export default {
         hoverAnimate(event) {
             const target = event.currentTarget;
             const pElement = target.querySelector("p");
-            const svgElement = target.querySelector("svg");
 
             if (pElement) {
                 animate(
                     pElement,
-                    {
-                        opacity: 1,
-                        transform: "none"
-                    },
-                    {
-                        delay: 0.2,
-                        duration: 0.9,
-                        easing: [0.17, 0.55, 0.55, 1]
-                    }
-                );
-            }
-
-            if (svgElement) {
-                animate(
-                    svgElement,
                     {
                         opacity: 1,
                         transform: "none"
@@ -479,7 +429,6 @@ export default {
         hoverOffAnimate(event) {
             const target = event.currentTarget;
             const pElement = target.querySelector("p");
-            const svgElement = target.querySelector("svg");
 
             if (pElement) {
                 animate(
@@ -487,20 +436,6 @@ export default {
                     {
                         opacity: 0,
                         transform: "translateY(10px)"
-                    },
-                    {
-                        duration: 0.5,
-                        easing: [0.17, 0.55, 0.55, 1]
-                    }
-                );
-            }
-
-            if (svgElement) {
-                animate(
-                    svgElement,
-                    {
-                        opacity: 0,
-                        transform: "translateX(-10px)"
                     },
                     {
                         duration: 0.5,
@@ -602,5 +537,6 @@ export default {
 <style>
 .hide {
     opacity: 0;
+    transform: translateY(10px);
 }
 </style>
