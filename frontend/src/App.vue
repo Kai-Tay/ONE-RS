@@ -4,12 +4,8 @@ import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
-  <Navbar />
+  <div class="bg-slate-50 h-dvh">
+    <Navbar />
     <RouterView></RouterView>
+  </div>
 </template>
-
-<style>
-body{
-  background-color: whitesmoke;
-}
-</style>

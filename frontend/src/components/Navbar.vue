@@ -12,10 +12,10 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
 <template>
     <div>
-        <nav class="h-16 flex items-center justify-between  text-gray-900">
+        <nav class="h-16 flex items-center justify-between text-gray-900" :class="navbarClasses">
             <!-- Logo + Nav Bar-->
             <div class="mx-5 text-xl flex flex-inline">
-                <div class="font-bold">🧑‍🍳 ONE.RS</div>
+                <div class="text-2xl font-bold ">ONE.RS 🧑‍🍳 </div>
                 <div class="lg:flex flex-col lg:flex-row lg:items-center w-full lg:w-auto text-sm mx-5 hidden"
                     v-if="isLoggedIn == true">
                     <!-- Restaurant Tabs -->
@@ -251,6 +251,11 @@ export default {
     mounted() {
         this.checkAuthentication();
     },
+    computed: {
+    navbarClasses() {
+        return this.$route.path === '/' ? 'bg-gray-900 text-white' : 'bg-transparent text-gray-900';
+    }
+}
 
 };
 </script>
