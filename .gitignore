@@ -36,3 +36,4 @@ coverage
 
 # Ignore Backend Deployment file
 /backend/deployment
+/backend/serviceAccountKey.json
