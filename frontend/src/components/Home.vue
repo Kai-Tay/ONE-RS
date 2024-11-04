@@ -102,11 +102,15 @@ const navigateTo = (route) => {
                 <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     @click="navigateTo('/supplierInventory')" ref="listingsCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
-                    <div>
-                        <i class="bi bi-camera text-primary text-3xl"></i>
+                    <div class="flex items-center space-x-10">
                         <h2 class="text-4xl font-bold mt-4">Step 1:
                             <br>Listings
                         </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
                     </div>
                     <div class="mt-auto">
                         <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick
@@ -117,10 +121,15 @@ const navigateTo = (route) => {
                 <div class="bg-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     @click="navigateTo('/supplierInventory')" ref="ordersCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
-                    <div>
+                    <div class="flex items-center space-x-10">
                         <h2 class="text-4xl font-bold mt-4">Step 2:
                             <br>Receive Orders
                         </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
                     </div>
                     <div class="mt-auto">
                         <p class="hide text-gray-600">As a supplier, you receive orders from buyers all over the world.
@@ -131,10 +140,15 @@ const navigateTo = (route) => {
 
                 <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     ref="checkoutCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                    <div>
+                    <div class="flex items-center space-x-10">
                         <h2 class="text-4xl font-bold mt-4">Step 3:
                             <br>Checkout
                         </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
                     </div>
                     <div class="mt-auto">
                         <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment
@@ -179,9 +193,17 @@ const navigateTo = (route) => {
                 <!-- Map Image of Restaurants Connecting -->
                 <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
                     ref="findCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                    <h2 class="text-4xl font-bold mt-4">Step 1:
-                        <br>Find Suppliers
-                    </h2>
+                    <div class="flex items-center space-x-10">
+                        <h2 class="text-4xl font-bold mt-4">Step 1:
+                            <br>Find Suppliers
+                        </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
                     <div class="mb-5">
                         <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
                             All you need to do is to input your ingredients and let the AI do the rest.</p>
@@ -190,9 +212,17 @@ const navigateTo = (route) => {
 
                 <div class="flex flex-col justify-between px-5" ref="orderCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
-                    <h2 class="text-4xl font-bold mt-4">Step 2:
-                        <br>Place Order
-                    </h2>
+                    <div class="flex items-center space-x-10">
+                        <h2 class="text-4xl font-bold mt-4">Step 2:
+                            <br>Place Order
+                        </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
                     <div class="mb-5">
                         <p class="hide mb-5">As a buyer, you have a credit score to maintain. These will increase for
                             every
@@ -204,9 +234,17 @@ const navigateTo = (route) => {
 
                 <div class="flex flex-col justify-between px-5" ref="paymentCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
-                    <h2 class="text-4xl font-bold mt-4">Step 3:
-                        <br>Checkout
-                    </h2>
+                    <div class="flex items-center space-x-10">
+                        <h2 class="text-4xl font-bold mt-4">Step 3:
+                            <br>Checkout
+                        </h2>
+                        <svg class="hide size-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
                     <div class="mb-5">
                         <p class="hide mb-5">Are you overbuying ingredients for your business? Use our order optimiser
                             to
@@ -406,6 +444,7 @@ export default {
         hoverAnimate(event) {
             const target = event.currentTarget;
             const pElement = target.querySelector("p");
+            const svgElement = target.querySelector("svg");
 
             if (pElement) {
                 animate(
@@ -421,10 +460,26 @@ export default {
                     }
                 );
             }
+
+            if (svgElement) {
+                animate(
+                    svgElement,
+                    {
+                        opacity: 1,
+                        transform: "none"
+                    },
+                    {
+                        delay: 0.2,
+                        duration: 0.9,
+                        easing: [0.17, 0.55, 0.55, 1]
+                    }
+                );
+            }
         },
         hoverOffAnimate(event) {
             const target = event.currentTarget;
             const pElement = target.querySelector("p");
+            const svgElement = target.querySelector("svg");
 
             if (pElement) {
                 animate(
@@ -432,6 +487,20 @@ export default {
                     {
                         opacity: 0,
                         transform: "translateY(10px)"
+                    },
+                    {
+                        duration: 0.5,
+                        easing: [0.17, 0.55, 0.55, 1]
+                    }
+                );
+            }
+
+            if (svgElement) {
+                animate(
+                    svgElement,
+                    {
+                        opacity: 0,
+                        transform: "translateX(-10px)"
                     },
                     {
                         duration: 0.5,
