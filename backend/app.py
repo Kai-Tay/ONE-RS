@@ -41,7 +41,7 @@ def generate_ingredients():
     # System context or instruction - set the behavior for the model
     instruction = """You are required to find out what food item the user is referring to and provide a list of ingredients to make that food item.
 
-                    Keep the list to less than 20 ingredients and are relevant for suppliers.
+                    Keep the list to less than 5 ingredients and are relevant for suppliers.
                     Use ONLY these categories: {Poultry, Beef, Pork, Lamb, Fish, Shellfish, Vegetables, Fruits, Eggs, Milk, Cheese, Grains, Bread, Pasta}
 
                     Provide a generalised results of those ingredients and categories as short as possible. 
