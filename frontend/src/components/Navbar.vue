@@ -80,7 +80,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
         </nav>
         <!-- Hamburger Version of Nav Bar -->
-        <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4">
+        <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4" v-if="isLoggedIn == true">
             <ul class="flex flex-col items-left space-y-4" v-if="userType == 'restaurant'">
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
@@ -98,9 +98,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierInventory' }"
                         href="#/supplierInventory">Inventory Management</a></li>
             </ul>
-            <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
-                <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
-            </div>
+            
             <div v-else class="lg:hidden flex items-center space-x-5">
                 <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
                     style="cursor: pointer">
@@ -115,7 +113,17 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
             </div>
         </div>
+        <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4" v-else>
+            <ul class="flex flex-col items-left space-y-4">
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
+            </ul>
+            <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">
+                <Button class="" @click="handleLogin" variant="green">Login / Sign Up</Button>
+            </div>
+        </div>
+        
     </div>
+    
     <!-- Sign Out Success Dialog -->
     <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
         :success="statusSuccess" @update:showDialog="showAuthDialog = $event" />
