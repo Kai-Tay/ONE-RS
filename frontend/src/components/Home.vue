@@ -47,7 +47,7 @@ const navigateTo = (route) => {
     </div> -->
     <div class="min-h-screen flex flex-col">
         <!-- Navbar integrated directly in home page -->
-        <Navbar v-if="$route.path === '/'" class="absolute top-0 left-0 right-0 z-50" />
+        <Navbar v-if="$route.path === '/'" />
 
 
         <header class="bg-gray-900 h-screen flex flex-col p-8" @click="scrollToFeatures">

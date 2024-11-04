@@ -80,7 +80,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
 
         </nav>
         <!-- Hamburger Version of Nav Bar -->
-        <div :class="{ 'hidden': !isMenuOpen, 'lg:hidden': true }" class="px-5 pb-5 space-y-4">
+        <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4">
             <ul class="flex flex-col items-left space-y-4" v-if="userType == 'restaurant'">
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/find' }" href="#/find">Find
