@@ -122,37 +122,37 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
           <CardContent class="space-y-2">
             <div class="space-y-1">
               <Label for="name">Name</Label>
-              <Input id="name" placeholder="Name" v-model="userName" />
+              <Input id="name" placeholder="Name" v-model="userName" required :class="{'border-red-500': submitted && !userName}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="companyName">Company's Name</Label>
-              <Input id="companyName" placeholder="Company Name" v-model="companyName" />
+              <Input id="companyName" placeholder="Company Name" v-model="companyName" required :class="{'border-red-500': submitted && !companyName}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="companyAddress">Company's Address</Label>
-              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" />
+              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" required :class="{'border-red-500': submitted && !companyAddress}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="description">Company's Description</Label>
-              <Textarea placeholder="Give a brief description about your company." v-model="companyDescription"/>
+              <Textarea placeholder="Give a brief description about your company." v-model="companyDescription" required :class="{'border-red-500': submitted && !companyDescription}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="companyNumber">Company Number</Label>
-              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
+              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" required :class="{'border-red-500': submitted && !companyNumber}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email" />
+              <Input id="email" placeholder="name@example.com" v-model="email" required :class="{'border-red-500': submitted && !email}"/>
             </div>
 
             <div class="space-y-1">
               <Label for="password">Password</Label>
-              <Input id="password" type="password" v-model="password" />
+              <Input id="password" type="password" v-model="password" required :class="{'border-red-500': submitted && !password}"/>
             </div>
 
             <Button type="submit" class="w-full" @click="handleSignUp">
@@ -202,6 +202,8 @@ export default {
       statusHeader: "",
       statusDescription: "",
       statusSuccess: true,
+
+      submitted: false,
     };
   },
   created() {
@@ -294,12 +296,32 @@ export default {
         });
     },
     handleSignUp() {
-    createUserWithEmailAndPassword(auth, this.email, this.password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      updateProfile(user, {
-        displayName: this.userName
-      });
+      if (!this.validateFields()) {
+        return; // Stop if validation fails
+      }
+
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+        const user = userCredential.user;
+        updateProfile(user, {
+          displayName: this.userName
+        })
+        .catch((error) => {
+          // Handle specific Firebase auth errors
+          let errorMessage = "Error in Signing Up, Please Try Again!";
+          if (error.code === 'auth/email-already-in-use') {
+            errorMessage = "This email is already registered. Please use a different email or login.";
+          } else if (error.code === 'auth/invalid-email') {
+            errorMessage = "Invalid email format. Please check your email address.";
+          } else if (error.code === 'auth/weak-password') {
+            errorMessage = "Password is too weak. Please use a stronger password.";
+          }
+
+          this.statusHeader = "Signed Up Unsuccessful";
+          this.statusDescription = errorMessage;
+          this.statusSuccess = false;
+          this.showAuthDialog = true;
+        });
 
       // Store user data in Firestore
       setDoc(doc(db, "users", user.uid), {
@@ -361,7 +383,53 @@ export default {
       this.statusSuccess = false;
       this.showAuthDialog = true;
       });
+    }, 
+    // Add this validation method
+  validateFields() {
+    const commonFields = {
+      'Name': this.userName,
+      'Email': this.email,
+      'Password': this.password,
+      "Company's Name": this.companyName,
+      "Company's Address": this.companyAddress,
+      "Company Number": this.companyNumber
+    };
+
+    // Add company description for supplier
+    if (this.isSupplier) {
+      commonFields["Company's Description"] = this.companyDescription;
     }
+
+    // Check each field
+    for (const [fieldName, value] of Object.entries(commonFields)) {
+      if (!value || value.trim() === '') {
+        this.showValidationError(fieldName);
+        return false;
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.showValidationError('Email', 'Please enter a valid email address');
+      return false;
+    }
+
+    // Validate password length
+    if (this.password.length < 6) {
+      this.showValidationError('Password', 'Password must be at least 6 characters long');
+      return false;
+    }
+
+      return true;
+    },
+    showValidationError(fieldName, customMessage = null) {
+      this.statusHeader = "Validation Error";
+      this.statusDescription = customMessage || `${fieldName} is required`;
+      this.statusSuccess = false;
+      this.showAuthDialog = true;
+    },
+
   },
   watch: {
     '$route.query': {
