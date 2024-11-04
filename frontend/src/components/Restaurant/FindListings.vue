@@ -14,32 +14,23 @@ import axios from 'axios';
 </script>
 
 <template>
-    <header class="bg-gray-900 py-5 h-80 justify-center">
-        <div class="px-5 row gx-5 justify-center">
-            <div class="col-lg-6">
-                <div class="text-center my-10 ">
-                    <!-- Welcome Text -->
-                    <div class="text-4xl font-bold">
-                        <h1 class="display-5 fw-bolder text-white mb-2">Find Suppliers</h1>
-                    </div>
-                    <!-- SUBHEADERR -->
-                    <div class="text-gray-500 mt-5">
-                        <!-- Search Component -->
-                        <div class="search-container ">
-                            <Input class="searchInput" :placeholder="searchPlaceholder" v-model="searchQuery" />
-                        </div>
-                        <div class="my-4 mx-2 flex items-center align-middle justify-center">
-                            <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
-                            <Label for="aiSearch" class="text-white ml-2 text-lg">Use AI Search {{ isAiSearch ?
-                                'Enabled' : 'Disabled' }}</Label>
-                        </div>
-                        <div class="flex items-center align-middle justify-center mt-8">
-                            <Button class="rounded-full px-5 py-5 text-xl" @click.native="filterListings">🔎 &nbsp;
-                                Search</Button>
-                        </div>
-                    </div>
-
-                </div>
+    <!-- Header Section -->
+    <header class="py-4 flex flex-col items-center">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-gray-900">Find Suppliers</h1>
+        </div>
+        <!-- Search Bar Section -->
+        <div class="w-full max-w-md mt-4 px-4">
+            <div class="search-container">
+                <Input class="searchInput" :placeholder="searchPlaceholder" v-model="searchQuery" />
+            </div>
+            <div class="my-4 mx-2 flex items-center justify-center">
+                <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
+                <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' : 'Disabled' }}</Label>
+            </div>
+            <!-- Search Button -->
+            <div class="flex items-center justify-center mt-4">
+                <Button class="rounded-full px-5 py-2 text-lg" @click="filterListings">🔎 Search</Button>
             </div>
         </div>
     </header>
@@ -53,42 +44,66 @@ import axios from 'axios';
                 <TagsInputItemDelete @click="handleFilterBoxClose" />
             </TagsInputItem>
         </TagsInput>
-
     </div>
 
-
-
-    <!-- Listings -->
+    <!-- Listings Section -->
     <div class="grid grid-cols-1 gap-4 mx-5">
         <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
-                <CardHeader>
-                    <CardTitle>
-                        <div class="text-2xl">{{ listing.supplierName }}</div>
-                    </CardTitle>
-                    <CardDescription class="text-lg">{{ listing.supplierDescription }}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="flex flex-inline justify-between">
-                        <!-- Text -->
-                        <div class="flex flex-col justify-center">
-                            <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
-                            <CardDescription class="text-md" v-for="item in listing.inventory">{{ item.productName }} - {{ item.subcategory }}</CardDescription>
-                        </div>
-                        <div class="">
-                            <!-- <img class="w-40 h-40 mx-auto block object-cover my-4" :src="listing.image" alt="Listing Image" /> -->
-                        </div>
+                <CardContent class="flex items-center">
+                    <!-- Centered Placeholder Image on the Left -->
+                    <div class="w-1/4 flex items-center justify-center">
+                        <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-20 h-20 object-cover rounded-md">
+                    </div>
+                    
+                    <!-- Supplier Content on the Right -->
+                    <div class="ml-4 w-3/4">
+                        <CardHeader>
+                            <CardTitle>
+                                <div class="text-2xl">{{ listing.supplierName }}</div>
+                            </CardTitle>
+                            <CardDescription class="text-lg">{{ listing.supplierDescription }}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div class="flex flex-col">
+                                <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
+                                <CardDescription class="text-md" v-for="item in listing.inventory" :key="item.productName">
+                                    {{ item.productName }} - {{ item.subcategory }}
+                                </CardDescription>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
+                        </CardFooter>
                     </div>
                 </CardContent>
-                <CardFooter>
-                    <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
-                </CardFooter>
             </Card>
         </div>
     </div>
-
-
 </template>
+
+<style scoped>
+.searchInput {
+    width: 100%;
+    height: 50px;
+    border-radius: 20px;
+    border: 1px solid #000;
+    padding: 0 20px;
+    font-size: 16px;
+    outline: none;
+}
+.w-20 {
+    width: 200px;
+}
+.h-20 {
+    height: 200px;
+}
+</style>
+
+
+
+
+
 
 <script>
 const isAiSearch = ref(false);

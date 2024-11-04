@@ -81,6 +81,10 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead class="w-[100px]">
+                                    <!-- Placeholder Image Header -->
+                                    <span class="sr-only">Image</span>
+                                </TableHead>
                                 <TableHead>
                                     Name
                                 </TableHead>
@@ -97,6 +101,9 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <!-- For Loop Here -->
                         <TableBody v-for="(item, index) in supplierListing.inventory" :key="item.id">
                             <TableRow>
+                                <TableCell class="flex items-center justify-center">
+                                    <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-12 h-12 object-cover rounded-md">
+                                </TableCell>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
                                 </TableCell>
@@ -152,6 +159,10 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead class="w-[100px]">
+                                    <!-- Placeholder Image Header -->
+                                    <span class="sr-only">Image</span>
+                                </TableHead>
                                 <TableHead>
                                     Name
                                 </TableHead>
@@ -166,6 +177,9 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <!-- For Loop Here -->
                         <TableBody v-for="(item, index) in orderCart" :key="item.id">
                             <TableRow>
+                                <TableCell class="flex items-center justify-center">
+                                    <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-12 h-12 object-cover rounded-md">
+                                </TableCell>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
                                 </TableCell>
