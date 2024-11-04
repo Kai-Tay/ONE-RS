@@ -14,30 +14,21 @@ import axios from 'axios';
 </script>
 
 <template>
-    <!-- Header Section -->
-    <header class="py-4 flex flex-col items-center">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold text-gray-900">Find Suppliers</h1>
-        </div>
+    <!-- Filter Bar from Search -->
+    <div class="mt-5 mb-5 mx-5">
+        <div class="text-4xl font-bold">Suppliers</div>
         <!-- Search Bar Section -->
-        <div class="w-full max-w-md mt-4 px-4">
-            <div class="search-container">
-                <Input class="searchInput" :placeholder="searchPlaceholder" v-model="searchQuery" />
+        <div class="mt-4">
+            <div class="flex items-center space-x-5">
+                <Input class="" :placeholder="searchPlaceholder" v-model="searchQuery" />
+                <Button class="rounded-full px-5 py-2 text-md" @click="filterListings">🔎 Search</Button>
             </div>
             <div class="my-4 mx-2 flex items-center justify-center">
                 <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
                 <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' : 'Disabled' }}</Label>
             </div>
-            <!-- Search Button -->
-            <div class="flex items-center justify-center mt-4">
-                <Button class="rounded-full px-5 py-2 text-lg" @click="filterListings">🔎 Search</Button>
-            </div>
+            
         </div>
-    </header>
-
-    <!-- Filter Bar from Search -->
-    <div class="mt-5 mb-5 mx-5">
-        <div class="text-4xl font-bold">Suppliers</div>
         <TagsInput v-model="searchResult">
             <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
                 <TagsInputItemText />
@@ -83,15 +74,6 @@ import axios from 'axios';
 </template>
 
 <style scoped>
-.searchInput {
-    width: 100%;
-    height: 50px;
-    border-radius: 20px;
-    border: 1px solid #000;
-    padding: 0 20px;
-    font-size: 16px;
-    outline: none;
-}
 .w-20 {
     width: 200px;
 }
@@ -258,16 +240,3 @@ export default {
     },
 };
 </script>
-
-<style>
-.searchInput {
-    width: 100%;
-    height: 50px;
-    border-radius: 20px;
-    border: 1px solid #000;
-    padding: 0 20px;
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s;
-}
-</style>
