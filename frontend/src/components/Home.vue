@@ -98,14 +98,15 @@ const navigateTo = (route) => {
     <div v-if="isLoggedIn">
         <!-- Supplier -->
         <section class="" id="features" v-if="userType == 'supplier'">
-            <div class="grid grid-cols-3 h-screen" ref="featureGrid">
+            <div class="grid grid-cols-1 md:grid-cols-3 h-screen" ref="featureGrid">
                 <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     @click="navigateTo('/supplierInventory')" ref="listingsCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
                     <div>
                         <i class="bi bi-camera text-primary text-3xl"></i>
-                        <h2 class="text-4xl font-bold mt-4">Step 1: 
-                            <br>Listings</h2>
+                        <h2 class="text-4xl font-bold mt-4">Step 1:
+                            <br>Listings
+                        </h2>
                     </div>
                     <div class="mt-auto">
                         <p class="text-gray-400">Creating a listing is a breeze! Just snap a photo, write a quick
@@ -117,11 +118,13 @@ const navigateTo = (route) => {
                     @click="navigateTo('/supplierInventory')" ref="ordersCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
                     <div>
-                        <h2 class="text-4xl font-bold mt-4">Step 2: 
-                            <br>Receive Orders</h2>
+                        <h2 class="text-4xl font-bold mt-4">Step 2:
+                            <br>Receive Orders
+                        </h2>
                     </div>
                     <div class="mt-auto">
-                        <p class="hide text-gray-600">As a supplier, you receive orders from buyers all over the world. You
+                        <p class="hide text-gray-600">As a supplier, you receive orders from buyers all over the world.
+                            You
                             can accept or reject the order.</p>
                     </div>
                 </div>
@@ -129,8 +132,9 @@ const navigateTo = (route) => {
                 <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                     ref="checkoutCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
                     <div>
-                        <h2 class="text-4xl font-bold mt-4">Step 3: 
-                            <br>Checkout</h2>
+                        <h2 class="text-4xl font-bold mt-4">Step 3:
+                            <br>Checkout
+                        </h2>
                     </div>
                     <div class="mt-auto">
                         <p class="hide text-gray-600">We use Stripe to handle payments. You can set your payment
@@ -171,12 +175,13 @@ const navigateTo = (route) => {
 
         <!-- Restaurant -->
         <section id="features" v-else>
-            <div class="grid grid-cols-3 h-screen">
+            <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
                 <!-- Map Image of Restaurants Connecting -->
                 <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
                     ref="findCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
-                    <h2 class="text-4xl font-bold mt-4">Step 1: 
-                        <br>Find Suppliers</h2>
+                    <h2 class="text-4xl font-bold mt-4">Step 1:
+                        <br>Find Suppliers
+                    </h2>
                     <div class="mb-5">
                         <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
                             All you need to do is to input your ingredients and let the AI do the rest.</p>
@@ -185,8 +190,9 @@ const navigateTo = (route) => {
 
                 <div class="flex flex-col justify-between px-5" ref="orderCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
-                    <h2 class="text-4xl font-bold mt-4">Step 2: 
-                        <br>Place Order</h2>
+                    <h2 class="text-4xl font-bold mt-4">Step 2:
+                        <br>Place Order
+                    </h2>
                     <div class="mb-5">
                         <p class="hide mb-5">As a buyer, you have a credit score to maintain. These will increase for
                             every
@@ -199,7 +205,8 @@ const navigateTo = (route) => {
                 <div class="flex flex-col justify-between px-5" ref="paymentCard" @mouseover="hoverAnimate($event)"
                     @mouseout="hoverOffAnimate($event)">
                     <h2 class="text-4xl font-bold mt-4">Step 3:
-                        <br>Checkout</h2>
+                        <br>Checkout
+                    </h2>
                     <div class="mb-5">
                         <p class="hide mb-5">Are you overbuying ingredients for your business? Use our order optimiser
                             to
@@ -247,7 +254,7 @@ const navigateTo = (route) => {
 
     <!-- When Not Logged In -->
     <section class="border-bottom" id="features" v-else>
-        <div class="grid grid-cols-3 h-screen">
+        <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
             <!-- AI Sourcing Card -->
             <div class="bg-black text-white px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                 @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
@@ -286,7 +293,6 @@ const navigateTo = (route) => {
             <div class="bg-gray-100 px-8 py-12 flex flex-col cursor-pointer transition-opacity hover:opacity-90"
                 @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
                 <div>
-                    <i class="bi bi-camera text-primary text-3xl"></i>
                     <h2 class="text-4xl font-bold mt-4">Automated Payments</h2>
                 </div>
                 <div class="mt-auto">
@@ -302,19 +308,17 @@ const navigateTo = (route) => {
 
         <!-- Signup Section -->
         <div class="h-screen bg-gray-50">
-            <div class="grid grid-cols-2 h-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 h-full">
                 <!-- Restaurant Signup Section (Left) -->
                 <div class="flex flex-col justify-center items-center bg-white p-12 cursor-pointer transition-all hover:bg-gray-50"
                     @click="navigateToSignup('restaurant')">
                     <div class="text-center max-w-lg">
                         <div class="flex justify-center mb-6">
-                            <i class="bi bi-shop text-primary text-5xl mb-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-20 h-20 text-black">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
-                                </svg>
-                            </i>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-20 h-20 text-black">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                            </svg>
                         </div>
 
                         <h3 class="text-4xl font-bold mb-4">Join as a Restaurant</h3>
@@ -333,13 +337,11 @@ const navigateTo = (route) => {
                     @click="navigateToSignup('supplier')">
                     <div class="text-center max-w-lg">
                         <div class="flex justify-center mb-6">
-                            <i class="bi bi-box-seam text-primary text-5xl mb-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-20 h-20 text-white">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                                </svg>
-                            </i>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-20 h-20 text-white">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                            </svg>
                         </div>
 
                         <h3 class="text-4xl font-bold mb-4">Join as a Supplier</h3>
@@ -530,7 +532,6 @@ export default {
 
 <style>
 .hide {
-    transform: translateX(-100px);
     opacity: 0;
 }
 </style>
