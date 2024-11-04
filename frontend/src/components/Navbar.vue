@@ -35,7 +35,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                         </li>
                         <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierOrders' }"
                                 href="#/supplierOrders">Orders</a></li>
-                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                        <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierInventory' }"
                                 href="#/supplierInventory">Inventory Management</a></li>
                     </ul>
                 </div>
@@ -94,7 +94,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 </li>
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierOrders' }"
                         href="#/supplierOrders">Orders</a></li>
-                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/inventory-management' }"
+                <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierInventory' }"
                         href="#/supplierInventory">Inventory Management</a></li>
             </ul>
             <div v-if="!isLoggedIn" class="lg:hidden items-center gap-4">

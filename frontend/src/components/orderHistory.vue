@@ -19,19 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                 <p class="text-sm">Manage your recent orders</p>
             </div>
             <div class="flex">
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Button>Filter</Button>
-                        <!-- Add icon in span -->
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem>By ID</DropdownMenuItem>
-                        <DropdownMenuItem>By Date</DropdownMenuItem>
-                        <DropdownMenuItem>By Name</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
-                <span></span>
+                        <Button>HUH</Button>
             </div>
         </div>
 

@@ -170,31 +170,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen w-full flex-col bg-muted/40">
-    <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-      <header
-        class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-        <div class="flex w-full items-center justify-between">
-          <h2 class="text-xl font-semibold">{{ companyName }}</h2>
-          <div class="flex items-center gap-2">
-            <div class="relative w-full md:w-[200px] lg:w-[320px]">
-              <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search..." class="w-full rounded-lg bg-background pl-8" />
-            </div>
-            <Button @click="navigateToFormPage" size="sm" class="h-7 gap-1">
-              <PlusCircle class="h-3.5 w-3.5" />
-              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Product</span>
-            </Button>
-          </div>
-        </div>
-      </header>
 
-      <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+  <div class="flex min-h-screen w-full flex-col bg-muted/40">
+      <div class="container mx-auto px-8 my-5">
+      <div class="flex items-center justify-between ">
+        <div>
+          <h2 class="text-2xl font-bold">{{ companyName }}</h2>
+          <p class="text-sm">Manage your Inventory</p>
+        </div>
+        <div class="flex">
+          <Button @click="navigateToFormPage">Add</Button>
+        </div>
+      </div>
+      <main>
         <Tabs default-value="all">
           <div class="flex items-center justify-between">
-            <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-            </TabsList>
             <div class="flex items-center justify-end w-full">
               <div class="mb-4 flex">
                 <select id="categoryFilter" v-model="selectedCategory" class="p-2 border border-gray-300 rounded-md">
@@ -263,7 +253,8 @@ onMounted(() => {
                               <Input id="editedQuantity" v-model="editedQuantity" type="number"
                                 placeholder="Quantity" />
 
-                              <label for="editedUnit" class="block text-sm font-medium text-gray-700">Unit (in Kg)</label>
+                              <label for="editedUnit" class="block text-sm font-medium text-gray-700">Unit (in
+                                Kg)</label>
                               <Input id="editedUnit" v-model="editedUnit" placeholder="Unit" />
 
                               <label for="editedPricePerUnit" class="block text-sm font-medium text-gray-700">Price per
