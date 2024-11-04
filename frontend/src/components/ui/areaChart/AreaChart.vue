@@ -35,7 +35,14 @@ const colorMapping: { [key: string]: { borderColor: string; backgroundColor: str
     borderColor: 'green',
     // backgroundColor: 'rgba(0, 255, 0, 0.2)',
   },
-  // Add more categories as needed
+  // Add more categories as neede
+  
+  inventorylevel: {
+    borderColor: 'pink',
+  },
+    
+  
+
 };
 
 onMounted(() => {

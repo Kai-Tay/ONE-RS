@@ -425,6 +425,11 @@ async function calculateMeanDemandAndSd(restaurantId) {
     itemSD[item] = calculateStandardDeviation(totals.quantities);
   }
 
+  console.log(categoryMean,
+    categorySD,
+    itemMean,
+    itemSD)
+
   return {
     categoryMean,
     categorySD,
@@ -446,7 +451,7 @@ function calculateStandardDeviation(values) {
 // Calculate OUL for all items
 function calculateOULForAllItems(itemMean, itemSD) {
   const T = 1; // Review time in Months
-  const L = 7 / 30; // Lead time in Months
+  const L = 6 / 30; // Lead time in Months
   const Z = 1.75; // Z-score for 96% service level
   const totalTime = T + L;
   const OULResults = {};
@@ -466,6 +471,8 @@ function calculateOULForAllItems(itemMean, itemSD) {
       safetyStock,
       OUL
     };
+
+    console.log(OULResults);
   }
 
   return OULResults;

@@ -5,6 +5,7 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 import Home from './components/Home.vue';
 import Chat from './components/chat.vue';
 import BuyerDashboard from './components/buyerDashboard.vue';
+import BuyerInventory from './components/buyerInvLevel.vue';
 import FindListings from './components/Restaurant/FindListings.vue';
 import SupplierInventory from './components/Supplier/supplierInventory.vue';
 import addIngredientForm from './components/Supplier/addIngredientForm.vue';
@@ -25,10 +26,15 @@ const routes = [
     { path: '/profile', component: Profile},
 
 
+<<<<<<< Updated upstream
 
 
     // Restaurant
     { path: '/find', component: FindListings},
+=======
+    // Restaurant
+    { path: '/buyerInvLevel', component: BuyerInventory },
+>>>>>>> Stashed changes
     { path: '/viewSupplier/:id', name: "viewSupplier",component: viewSupplier},
     { path: '/buyerDashboard', component: BuyerDashboard},
     { path: '/creditScore', component: creditScore},
