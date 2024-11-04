@@ -26,15 +26,12 @@ const routes = [
     { path: '/profile', component: Profile},
 
 
-<<<<<<< Updated upstream
 
 
     // Restaurant
     { path: '/find', component: FindListings},
-=======
     // Restaurant
     { path: '/buyerInvLevel', component: BuyerInventory },
->>>>>>> Stashed changes
     { path: '/viewSupplier/:id', name: "viewSupplier",component: viewSupplier},
     { path: '/buyerDashboard', component: BuyerDashboard},
     { path: '/creditScore', component: creditScore},
