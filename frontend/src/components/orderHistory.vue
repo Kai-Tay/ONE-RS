@@ -18,9 +18,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                 <h2 class="text-2xl font-bold">Order History</h2>
                 <p class="text-sm">Manage your recent orders</p>
             </div>
-            <div class="flex">
-                        <Button>HUH</Button>
-            </div>
         </div>
 
 
