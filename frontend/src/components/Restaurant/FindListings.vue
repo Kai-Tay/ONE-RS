@@ -25,9 +25,10 @@ import axios from 'axios';
             </div>
             <div class="my-4 mx-2 flex items-center justify-center">
                 <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
-                <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' : 'Disabled' }}</Label>
+                <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' :
+                    'Disabled' }}</Label>
             </div>
-            
+
         </div>
         <TagsInput v-model="searchResult">
             <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
@@ -38,27 +39,33 @@ import axios from 'axios';
     </div>
 
     <!-- Listings Section -->
-    <div class="grid grid-cols-1 gap-4 mx-5">
+    <div class="grid grid-cols-1 gap-4 mx-8 md:mx-28">
         <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
                 <CardContent class="flex items-center">
                     <!-- Centered Placeholder Image on the Left -->
                     <div class="w-1/4 flex items-center justify-center">
-                        <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-20 h-20 object-cover rounded-md">
+                        <img src="./images/placeholder.svg" alt="Placeholder Image"
+                            class="w-20 h-20 object-cover rounded-md">
                     </div>
-                    
+
                     <!-- Supplier Content on the Right -->
                     <div class="ml-4 w-3/4">
                         <CardHeader>
                             <CardTitle>
                                 <div class="text-2xl">{{ listing.supplierName }}</div>
                             </CardTitle>
-                            <CardDescription class="text-lg">{{ listing.supplierDescription }}</CardDescription>
+                            <CardDescription class="text-lg">
+                                {{
+                                    Array.from(new Set(listing.inventory.map(item => item.category))).join(", ")
+                                }}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div class="flex flex-col">
                                 <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
-                                <CardDescription class="text-md" v-for="item in listing.inventory" :key="item.productName">
+                                <CardDescription class="text-md" v-for="item in listing.inventory"
+                                    :key="item.productName">
                                     {{ item.productName }} - {{ item.subcategory }}
                                 </CardDescription>
                             </div>
@@ -77,6 +84,7 @@ import axios from 'axios';
 .w-20 {
     width: 200px;
 }
+
 .h-20 {
     height: 200px;
 }
@@ -118,7 +126,7 @@ export default {
 
     methods: {
         handleSupplierClick(id) {
-            this.$router.push({name: 'viewSupplier', params: { id: id }});
+            this.$router.push({ name: 'viewSupplier', params: { id: id } });
         },
         handleFilterBoxClose() {
             if (this.searchResult.length > 0) {
@@ -187,8 +195,8 @@ export default {
                         this.searchResult.some(query =>
                             listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
                             listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()) ||
-                            listing.inventory.some(item => item.category.toLowerCase().includes(query.toLowerCase())) ||
-                            listing.inventory.some(item => item.subcategory.toLowerCase().includes(query.toLowerCase())) )
+                                listing.inventory.some(item => item.category.toLowerCase().includes(query.toLowerCase())) ||
+                                listing.inventory.some(item => item.subcategory.toLowerCase().includes(query.toLowerCase())))
                         )
                     );
 
@@ -236,7 +244,7 @@ export default {
         // Computed property to dynamically set the placeholder
         searchPlaceholder() {
             return isAiSearch.value ? 'Tell me your menu and we will find all your ingredients!' : 'Search for Ingredients, Category or Suppliers';
-        }
+        },
     },
 };
 </script>
