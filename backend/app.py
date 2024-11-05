@@ -1,6 +1,8 @@
 import json
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from dotenv import load_dotenv
 
 # VERTEX AI
 import vertexai
@@ -14,12 +16,12 @@ CORS(app, origins="http://localhost:5173")
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World'
+    return jsonify({"working!": "hello world"}), 200
 
 
 # START FROM HERE!!!!!!!
 
-app = Flask(__name__)
+gcloud_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 # Initialize Vertex AI with service account credentials
 credentials = service_account.Credentials.from_service_account_file("./serviceAccountKey.json")
@@ -101,6 +103,6 @@ def generate_ingredients():
 
 # Initialise server
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
 
 
