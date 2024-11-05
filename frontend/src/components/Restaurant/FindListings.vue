@@ -206,7 +206,7 @@ export default {
             let queryList = [];
             console.log("Using AI Search now")
             // Perform AI search here by calling backend API (INSERT ACTUAL BACKEND SERVER URL)
-            const url = "http://localhost:5001/search-ai";
+            const url = "http://54.169.182.213/search-ai";
             axios.post(url, {
                 "data": this.searchQuery,
             })
