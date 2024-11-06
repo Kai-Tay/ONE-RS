@@ -544,7 +544,7 @@ export default {
                 const amountInCents = this.orderCart.reduce((acc, item) => acc + (item.pricePerUnit * item.purchaseQuantity * 100), 0);
 
                 // Make Axios POST request to backend to create PaymentIntent
-                const response = await axios.post("http://localhost:5000/create-checkout", {
+                const response = await axios.post("http://54.169.182.213//create-checkout", {
                     amount: amountInCents
                 });
 
