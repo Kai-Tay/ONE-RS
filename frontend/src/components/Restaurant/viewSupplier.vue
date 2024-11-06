@@ -259,7 +259,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                     <CardTitle class="text-2xl font-bold">Order Details</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div v-for="item in orderCart"  class="flex justify-between py-2 border-b">
+                    <div v-for="item in orderCart" class="flex justify-between py-2 border-b">
                         <div>
                             <p class="font-semibold">{{ item.productName }}</p>
                             <p class="text-sm text-gray-500">{{ item.category }} - {{ item.subcategory }}</p>
@@ -287,7 +287,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                 <CardContent class="py-6 ">
                     <form @submit.prevent="handlePayment">
                         <div id="checkout-form"><!-- Stripe card element will be mounted here --></div>
-                        <Button id="submit" class="w-full mt-10">
+                        <Button id="submit" class="w-full mt-10" @click="nextStep">
                             <div class="spinner hidden" id="spinner"></div>
                             <span id="button-text">Pay ${{ orderAmount.toFixed(2) }}</span>
                         </Button>
@@ -371,7 +371,9 @@ export default {
             restaurantAddress: "",
 
             // Stripe
+            elements: null,
             errorMessage: "",
+            stripe: null,
         };
     },
     computed: {
@@ -463,7 +465,7 @@ export default {
                 }
             } else if (this.activeStep == 4) {
                 // Call the payment function
-                this.handleConfirmedOrder();
+                this.completePayment();
             }
             else
                 if (this.activeStep < this.steps.length) {
@@ -514,7 +516,6 @@ export default {
                 }));
 
                 this.supplierListing = mergedData;
-                console.log(this.supplierListing);
 
             } catch (error) {
                 console.error('Error fetching listings:', error)
@@ -551,13 +552,13 @@ export default {
                 this.clientSecret = response.data.clientSecret;
 
                 // Initialize Stripe
-                const stripe = await loadStripe('pk_test_51QHnfFELG51EPCRqyoGXIJ4L3B1Y7HAk0L6Gc1qo9Mn4MUkz3DiffFQzgTV2gCU3xxu3pLTkMFJ05WgcCNkmX3N900l2hWpuqe'); // Replace with your Stripe publishable key
+                this.stripe = await loadStripe('pk_test_51QHnfFELG51EPCRqyoGXIJ4L3B1Y7HAk0L6Gc1qo9Mn4MUkz3DiffFQzgTV2gCU3xxu3pLTkMFJ05WgcCNkmX3N900l2hWpuqe'); // Replace with your Stripe publishable key
 
                 const appearance = {
                     theme: 'stripe',
                 };
 
-                let elements = stripe.elements({ appearance, clientSecret: this.clientSecret },);
+                this.elements = this.stripe.elements({ appearance, clientSecret: this.clientSecret },);
 
                 const paymentElementOptions = {
                     layout: "tabs",
@@ -566,8 +567,7 @@ export default {
                     },
                 };
 
-
-                const paymentElement = elements.create("payment", paymentElementOptions);
+                const paymentElement = this.elements.create("payment", paymentElementOptions);
 
                 // Mount the checkout form to the page
                 paymentElement.mount('#checkout-form');
@@ -578,6 +578,33 @@ export default {
             }
 
         },
+        async completePayment() {
+
+            const { error, paymentIntent } = await this.stripe.confirmPayment({
+                elements: this.elements,
+                confirmParams: {
+                return_url: "http://localhost:5173/#",
+                },
+                redirect: 'if_required',
+            });
+
+            // Handle errors or success messages
+            if (error) {
+                if (error.type === "card_error" || error.type === "validation_error") {
+                    message.value = error.message;
+                } else {
+                    message.value = "An unexpected error occurred.";
+                }
+            }
+
+            // If payment succeeds, add order to Firebase
+
+            if (paymentIntent && paymentIntent.status === "succeeded") {
+                await this.handleConfirmedOrder();
+            }
+
+        },
+
         async handleConfirmedOrder() {
             try {
                 // UPDATE SUPPLIERLISTING DATABASE
