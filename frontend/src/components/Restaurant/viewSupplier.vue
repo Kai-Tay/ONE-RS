@@ -643,7 +643,7 @@ export default {
                 const orderData = {
                     orderID: length.toString(),
                     date: new Date(),
-                    paymentStatus: "Pending",
+                    paymentStatus: "Paid",
                     buyerID: sessionStorage.getItem("uid"),
                     supplierID: this.supplierId,
                     orderedItems: this.orderCart,
