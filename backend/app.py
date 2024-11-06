@@ -21,7 +21,7 @@ def hello_world():
 
 
 # START FROM HERE!!!!!!!
-stripe.api_key = 'sk_test_51QHnfFELG51EPCRqb9FRJm4NtYf2qdZRgjbI6fnmxJ3OVnOHLSIbIuRIgeNkmxJBMjOXmJI4nILI4Fc2lGIf7lFI00KNA9FaQv'
+stripe.api_key = os.getenv("STRIPE_SECRET")
 gcloud_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 # Initialize Vertex AI with service account credentials
