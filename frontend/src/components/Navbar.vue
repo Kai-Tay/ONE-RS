@@ -5,8 +5,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { Button } from "./ui/button/index.js";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
-
-
 </script>
 
 
@@ -236,6 +234,13 @@ export default {
         handleLogOut() {
             signOut(auth).then(() => {
                 sessionStorage.clear();
+                // Dispatch auth state change BEFORE any UI updates
+                window.dispatchEvent(new CustomEvent('auth-state-changed', {
+                    detail: { 
+                        type: 'logout',
+                        timestamp: Date.now() 
+                    }
+                }));
 
                 // Redirect the user to the login page or handle it appropriately
                 this.statusHeader = "Logged Out";
@@ -248,8 +253,10 @@ export default {
                 // Automatically close the dialog after 2 seconds
                 setTimeout(() => {
                     this.showAuthDialog = false;
+                    // Force reload the page after logout
+                    window.location.href = '/';  // Change this line
                 }, 2000);
-                this.$router.push('/');
+
 
             }).catch((error) => {
                 alert("Error logging out: ", error);
