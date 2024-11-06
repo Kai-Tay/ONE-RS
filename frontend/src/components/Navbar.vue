@@ -98,23 +98,21 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierInventory' }"
                         href="#/supplierInventory">Inventory Management</a></li>
             </ul>
-        </div>
-
-        <div v-else class="lg:hidden flex items-center space-x-5">
-            <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
-                style="cursor: pointer">
-                <span>
-                    <Avatar class="border-2 border-black">
-                        <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-                        <AvatarFallback>{{ userName }}</AvatarFallback>
-                    </Avatar>
-                </span>
-                <div>{{ userName }}</div>
+            <div class="flex items-center space-x-2 mt-4">
+                <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
+                    style="cursor: pointer">
+                    <span>
+                        <Avatar class="border-2 border-black">
+                            <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                            <AvatarFallback>{{ userName }}</AvatarFallback>
+                        </Avatar>
+                    </span>
+                    <div>{{ userName }}</div>
+                </div>
+                <Button class="w-32" @click="handleLogOut" variant="destructive">Logout</Button>
             </div>
-            <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
         </div>
-            
-            <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4" v-else>
+        <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4" v-else>
             <ul class="flex flex-col items-left space-y-4">
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/' }" href="#">Home</a></li>
             </ul>
