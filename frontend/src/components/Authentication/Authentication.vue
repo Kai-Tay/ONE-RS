@@ -174,7 +174,9 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
   <!-- Sign In Success Dialog -->
   <AuthenticationDialog :showDialog="showAuthDialog" :status="statusHeader" :description="statusDescription"
     :success="statusSuccess" @update:showDialog="showAuthDialog = $event" />
-
+  <div v-if="validationError" class="validation-error">
+    {{ validationError }}
+  </div>
 
 </template>
 
@@ -204,6 +206,7 @@ export default {
       statusSuccess: true,
 
       submitted: false,
+      validationError: "", 
     };
   },
   created() {
@@ -424,11 +427,8 @@ export default {
       return true;
     },
     showValidationError(fieldName, customMessage = null) {
-      this.statusHeader = "Validation Error";
-      this.statusDescription = customMessage || `${fieldName} is required`;
-      this.statusSuccess = false;
-      this.showAuthDialog = true;
-    },
+      this.validationError = customMessage || `${fieldName} is required`;
+    }
 
   },
   watch: {
@@ -506,5 +506,11 @@ input {
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+
+.validation-error {
+  color: red;
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
