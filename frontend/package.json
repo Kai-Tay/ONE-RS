@@ -11,6 +11,7 @@
     "start": "node server.js "
   },
   "dependencies": {
+    "@stripe/stripe-js": "^4.9.0",
     "@tanstack/vue-table": "^8.20.5",
     "@unovis/ts": "^1.4.4",
     "@unovis/vue": "^1.4.4",

@@ -4,7 +4,7 @@ import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
-  <div class="bg-slate-50 min-h-screen">
+  <div class="bg-neutral-100 min-h-screen pb-4">
     <Navbar v-if="$route.path !== '/'" />
     <RouterView></RouterView>
   </div>

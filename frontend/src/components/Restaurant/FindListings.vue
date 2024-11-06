@@ -39,18 +39,18 @@ import axios from 'axios';
     </div>
 
     <!-- Listings Section -->
-    <div class="grid grid-cols-1 gap-4 mx-8 md:mx-28">
+    <div class="grid grid-cols-1 gap-4 mx-8  md:mx-28">
         <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
-                <CardContent class="flex items-center">
+                <CardContent class="flex items-center pt-4">
                     <!-- Centered Placeholder Image on the Left -->
-                    <div class="w-1/4 flex items-center justify-center">
+                    <div class="w-1/5 flex items-center justify-center">
                         <img src="./images/placeholder.svg" alt="Placeholder Image"
-                            class="w-20 h-20 object-cover rounded-md">
+                            class="w-auto h-auto object-cover rounded-md">
                     </div>
 
                     <!-- Supplier Content on the Right -->
-                    <div class="ml-4 w-3/4">
+                    <div class="ml-4 w-3/5 flex flex-col">
                         <CardHeader>
                             <CardTitle>
                                 <div class="text-2xl">{{ listing.supplierName }}</div>
@@ -61,7 +61,12 @@ import axios from 'axios';
                                 }}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
+                        <CardFooter>
+                            <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
+                        </CardFooter>
+                    </div>
+                    <div class="w-3/5">
+                    <CardContent>
                             <div class="flex flex-col">
                                 <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
                                 <CardDescription class="text-md" v-for="item in listing.inventory"
@@ -70,9 +75,6 @@ import axios from 'axios';
                                 </CardDescription>
                             </div>
                         </CardContent>
-                        <CardFooter>
-                            <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
-                        </CardFooter>
                     </div>
                 </CardContent>
             </Card>
