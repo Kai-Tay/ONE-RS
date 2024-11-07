@@ -209,30 +209,24 @@ onMounted(() => {
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <!-- Best Selling Product Card -->
-          <Card class="p-4">
-            <CardContent>
-              <p class="text-sm font-medium text-gray-500">Best Selling Product</p>
+          <Card class="p-4 flex flex-col justify-center">
+              <p class="text-sm font-medium text-green-600">Best Selling Product</p>
               <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
-            </CardContent>
           </Card>
 
           <!-- Total Sales Amount Card -->
-          <Card class="p-4">
-            <CardContent>
-              <p class="text-sm font-medium text-gray-500">Total Sales Amount</p>
-              <p class="text-2xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
-            </CardContent>
+          <Card class="p-4 flex flex-col justify-center">
+              <p class="text-sm font-medium text-grey-800">Total Sales Amount</p>
+              <p class="text-3xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
           </Card>
 
           <!-- Low Stock Items Card -->
-          <Card class="p-4">
-            <CardContent>
-              <p class="text-sm font-medium text-gray-500">Low Stock Items</p>
+          <Card class="p-4  flex flex-col justify-center">
+              <p class="text-sm font-medium text-red-500">Low Stock Items</p>
               <p class="text-2xl font-semibold">
                 <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
                 <span v-else>No items with low stock</span>
               </p>
-            </CardContent>
           </Card>
         </div>
       </div>
