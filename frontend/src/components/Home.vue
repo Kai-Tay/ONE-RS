@@ -26,7 +26,7 @@ const navigateTo = (route) => {
                         <div class="max-w-2xl">
                             <div class="text-7xl font-bold" ref="titleContainer">
                                 <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
-                                    Welcome, {{ userName }}
+                                    Welcome, <br>{{ userName }}
                                 </h1>
                                 <h1 class="text-left text-white mb-2" v-else ref="mainTitle">
                                     Welcome to
@@ -195,7 +195,7 @@ const navigateTo = (route) => {
                         </div>
                         
                         <div class="mb-5">
-                            <p class="mb-5">Find the ingredients needed for your restaurant using our AI Sourcing!
+                            <p class="mb-5 ">Find the ingredients needed for your restaurant using our AI Sourcing!
                                 All you need to do is to input your ingredients and let the AI do the rest.</p>
                         </div>
                     </div>
@@ -299,14 +299,14 @@ const navigateTo = (route) => {
                         <h2 class="text-4xl font-bold mt-4">AI Sourcing for Buyers</h2>
                     </div>
 
-                    <div class="hidden md:flex justify-center items-center flex-1">
+                    <div class="hidden md:flex justify-center items-center flex-1 h-96 flex-grow flex-shrink">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-40 h-40">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                         </svg>
                     </div>
 
                     <div class="mb-5">
-                        <p class="hide text-gray-400">AI-powered sourcing helps you find quality ingredients efficiently by
+                        <p class="hide text-gray-400 md:text-xl">AI-powered sourcing helps you find quality ingredients efficiently by
                             analyzing supplier data and sustainability metrics.</p>
                     </div>
                 </div>
@@ -315,17 +315,17 @@ const navigateTo = (route) => {
                 <div class="bg-white px-5 flex flex-col justify-between"
                     @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
                     <div>
-                        <h2 class="text-4xl font-bold mt-4">Real-time Database for Suppliers</h2>
+                        <h2 class="text-4xl font-bold mt-4">Inventory Management for Suppliers</h2>
                     </div>
 
-                    <div class="hidden md:flex justify-center items-center flex-1">
+                    <div class="hidden md:flex justify-center items-center flex-1 h-96 flex-grow flex-shrink">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-40 h-40">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                         </svg>
                     </div>
 
                     <div class="mb-5">
-                        <p class="hide text-gray-600">Track supplier inventory, metrics, and compliance in real-time through
+                        <p class="hide text-gray-600 md:text-xl">Track supplier inventory, metrics, and compliance in real-time through
                             a
                             single dashboard.</p>
                     </div>
@@ -337,17 +337,19 @@ const navigateTo = (route) => {
                         <h2 class="text-4xl font-bold mt-4">Real-time Chat Translation</h2>
                     </div>
 
-                    <div class="hidden md:flex justify-center items-center flex-1">
+                    <div class="hidden md:flex justify-center items-center flex-1 h-96 flex-grow flex-shrink">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-40 h-40">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
                         </svg>
                     </div>
 
                     <div class="mb-5">
-                        <p class="hide text-gray-600">Chat in your language, understood in theirs. Real-time translation for seamless business communication.</p>
+                        <p class="hide text-gray-600 md:text-xl">Chat in your language, understood in theirs. Real-time translation for seamless business communication.</p>
                     </div>
                 </div>
             </div>
+
+            
 
             <!-- Signup Section -->
             <div class="h-fit md:h-screen grid grid-rows-2 md:grid-rows-1 md:grid-cols-2">
@@ -364,12 +366,12 @@ const navigateTo = (route) => {
                         </div>
 
                         <h3 class="text-4xl font-bold mb-4">Join as a Restaurant</h3>
-                        <p class="text-gray-600 mb-6">
+                        <p class="text-gray-600 mb-6 ">
                             Access our platform to find the best suppliers and manage your inventory efficiently.
                         </p>
                         <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
+                            class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Sign Up
                         </button>
                     </div>
                 </div>
@@ -391,8 +393,8 @@ const navigateTo = (route) => {
                             Connect with restaurants and grow your business with our platform.
                         </p>
                         <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
+                            class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Sign Up
                         </button>
                     </div>
                 </div>
