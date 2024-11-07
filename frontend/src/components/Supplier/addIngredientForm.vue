@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { auth } from '../../firebase'; // Import the Firebase auth module
+import Button from '../ui/button/Button.vue';
 
 // Initialize Firebase
 const db = getFirestore();
@@ -124,9 +125,9 @@ const addNewIngredient = async () => {
                     </select>
                 </div>
 
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                <Button type="submit" class="w-full text-white font-bold py-2 px-4 ">
                     Add Ingredient
-                </button>
+                </Button>
             </form>
         </div>
     </div>
