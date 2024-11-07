@@ -275,7 +275,7 @@ export default {
 
           
           // alert("Signed In")
-          this.statusHeader = "Logged In Successful!";
+          this.statusHeader = "Successful Logged In!";
           this.statusDescription = "Redirecting to home page in 2 seconds...";
           this.statusSuccess = true;
           this.showAuthDialog = true;

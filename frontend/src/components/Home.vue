@@ -370,8 +370,8 @@ const navigateTo = (route) => {
                             Access our platform to find the best suppliers and manage your inventory efficiently.
                         </p>
                         <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
+                            class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Sign Up
                         </button>
                     </div>
                 </div>
@@ -393,8 +393,8 @@ const navigateTo = (route) => {
                             Connect with restaurants and grow your business with our platform.
                         </p>
                         <button
-                            class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                            Sign Up Now
+                            class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Sign Up
                         </button>
                     </div>
                 </div>
