@@ -19,10 +19,10 @@ const subcategory = ref(''); // Field for subcategory
 
 // Predefined categories and their subcategories
 const categories = [
-    { name: 'Meat', subcategories: ['Poultry', 'Beef', 'Pork', 'Lamb', 'Fish', 'Shellfish'] },
-    { name: 'Fruits & Vegetables', subcategories: ['Vegetables', 'Fruits'] },
-    { name: 'Dairy', subcategories: ['Eggs', 'Milk', 'Cheese'] },
-    { name: 'Carbohydrates', subcategories: ['Grains', 'Pasta', 'Bread'] }
+    { name: 'Meat', subcategories: ['Beef', 'Fish', 'Lamb', 'Pork', 'Poultry', 'Shellfish'] },
+    { name: 'Fruits & Vegetables', subcategories: ['Fruits', 'Vegetables'] },
+    { name: 'Dairy', subcategories: ['Cheese', 'Egg', 'Milk'] },
+    { name: 'Carbohydrates', subcategories: ['Bread', 'Grains', 'Pasta'] }
 ];
 
 // Reactive subcategories based on selected category
@@ -57,7 +57,8 @@ const addNewIngredient = async () => {
                             unit: unit.value,
                             pricePerUnit: parseFloat(pricePerUnit.value),
                             category: category.value,
-                            subcategory: subcategory.value // Subcategory selected by the user
+                            subcategory: subcategory.value, // Subcategory selected by the user
+                            purchaseQuantity: 0
                         })
                     });
 
@@ -97,7 +98,7 @@ const addNewIngredient = async () => {
                 </div>
 
                 <div class="mb-4">
-                    <label for="unit" class="block text-sm font-medium text-gray-700">Unit</label>
+                    <label for="unit" class="block text-sm font-medium text-gray-700">Unit (In Kg)</label>
                     <input v-model="unit" type="text" id="unit" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
                 </div>
 
