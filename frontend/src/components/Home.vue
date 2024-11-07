@@ -24,11 +24,11 @@ const navigateTo = (route) => {
                 <div class="w-1/2">
                     <div class="flex-grow flex items-center">
                         <div class="max-w-2xl">
-                            <div class="text-7xl font-bold" ref="titleContainer">
+                            <div class="text-4xl md:text-7xl font-bold" ref="titleContainer">
                                 <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
                                     Welcome, <br>{{ userName }}
                                 </h1>
-                                <h1 class="text-left text-white mb-2" v-else ref="mainTitle">
+                                <h1 class="text-4xl md:text-7xl text-left text-white mb-2" v-else ref="mainTitle">
                                     Welcome to
                                     <br />
                                     ONE.RS
