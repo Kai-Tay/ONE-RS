@@ -5,9 +5,9 @@
             <h2 class="text-2xl font-bold text-white">ONE.RS 🧑‍🍳</h2>
 
             <!-- Contact Information -->
-            <div>
-                <p class="text-gray-400 px-28 ">Effortless sourcing for restaurant owners. </p>
-                <p class="text-gray-400 px-28">Discover and connect with reliable suppliers, simplify orders, and ensure
+            <div class="md:px-28 text-sm md:text-lg">
+                <p class="text-gray-400 ">Effortless sourcing for restaurant owners. </p>
+                <p class="text-gray-400 ">Discover and connect with reliable suppliers, simplify orders, and ensure
                     your kitchen is always stocked with the finest ingredients.</p>
             </div>
             <p class="text-gray-400">contact@oners.com</p>

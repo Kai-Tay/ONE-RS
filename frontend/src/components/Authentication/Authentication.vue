@@ -18,7 +18,7 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
 
 <!-- HTML STUFF -->
 <template>
-  <div class="mt-10">
+  <div class="mt-10 ">
     <!-- Login -->
     <Card class="mx-auto max-w-sm" v-if="isLogin">
       <CardHeader>
