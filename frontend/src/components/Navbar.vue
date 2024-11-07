@@ -192,6 +192,13 @@ export default {
                             signOut(auth).then(() => {
                                 sessionStorage.clear();
 
+                                window.dispatchEvent(new CustomEvent('auth-state-changed', {
+                                    detail: { 
+                                        type: 'timeout',
+                                        timestamp: Date.now() 
+                                    }
+                                }));
+
                                 // Redirect the user to the login page or handle it appropriately
                                 this.statusHeader = "Session Timed Out";
                                 this.statusDescription = "Please Login Again!";
