@@ -219,7 +219,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                         :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
                                         v-if="order.buyerCompanyName"
                                     >
-                                        <Button class="bg-blue-500 text-white">Chat with Buyer</Button>
+                                        <Button class="text-white">Chat with Buyer</Button>
                                     </router-link>
                                 </TableCell>
                             </TableRow>
