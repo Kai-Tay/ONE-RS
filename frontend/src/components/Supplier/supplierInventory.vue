@@ -163,6 +163,34 @@ const filteredInventory = computed(() => {
   return inventoryData.value.filter(item => item.category === selectedCategory.value);
 });
 
+// Define computed properties for best-selling product, total sales amount, and low stock items
+const bestSellingProduct = computed(() => {
+  let maxSalesProduct = null;
+  let maxSalesQuantity = 0;
+
+  inventoryData.value.forEach(item => {
+    if (item.purchaseQuantity > maxSalesQuantity) {
+      maxSalesQuantity = item.purchaseQuantity;
+      maxSalesProduct = item.productName;
+    }
+  });
+
+  return maxSalesProduct;
+});
+
+const totalSalesAmount = computed(() => {
+  return inventoryData.value.reduce((total, item) => {
+    return total + item.purchaseQuantity * item.pricePerUnit;
+  }, 0);
+});
+
+const lowStockItems = computed(() => {
+  return inventoryData.value
+    .filter(item => item.quantity <= 20)
+    .map(item => item.productName);
+});
+
+
 // Fetch user and supplier data when the component is mounted
 onMounted(() => {
   fetchUserAndSuppliers();
@@ -170,32 +198,63 @@ onMounted(() => {
 </script>
 
 <template>
-
   <div class="flex min-h-screen w-full flex-col bg-muted/40">
-      <div class="container mx-auto px-8 my-5">
-      <div class="flex items-center justify-between ">
-        <div>
-          <h2 class="text-2xl font-bold">{{ companyName }}</h2>
-          <p class="text-sm">Manage your Inventory</p>
-        </div>
-        <div class="flex">
-          <Button @click="navigateToFormPage">Add</Button>
+    <div class="container mx-auto px-8 my-5">
+
+      <!-- Title and Summary Display Section -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold">{{ companyName }}</h2>
+        <p class="text-sm mb-4">Manage your Inventory</p>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Best Selling Product Card -->
+          <Card class="p-4">
+            <CardContent>
+              <p class="text-sm font-medium text-gray-500">Best Selling Product</p>
+              <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
+            </CardContent>
+          </Card>
+
+          <!-- Total Sales Amount Card -->
+          <Card class="p-4">
+            <CardContent>
+              <p class="text-sm font-medium text-gray-500">Total Sales Amount</p>
+              <p class="text-2xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
+            </CardContent>
+          </Card>
+
+          <!-- Low Stock Items Card -->
+          <Card class="p-4">
+            <CardContent>
+              <p class="text-sm font-medium text-gray-500">Low Stock Items</p>
+              <p class="text-2xl font-semibold">
+                <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
+                <span v-else>No items with low stock</span>
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      <!-- Controls: Add Product Button and Filter Dropdown -->
+      <div class="flex items-center justify-between mb-4">
+        <div>
+        </div>
+        <div class="flex items-center gap-4">
+          <Button @click="navigateToFormPage">Add Product</Button>
+          <select id="categoryFilter" v-model="selectedCategory" class="p-2 border border-gray-300 rounded-md">
+            <option value="All">All</option>
+            <option v-for="category in categories" :key="category.name" :value="category.name">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Inventory Management Section -->
       <main>
         <Tabs default-value="all">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center justify-end w-full">
-              <div class="mb-4 flex">
-                <select id="categoryFilter" v-model="selectedCategory" class="p-2 border border-gray-300 rounded-md">
-                  <option value="All">All</option>
-                  <option v-for="category in categories" :key="category.name" :value="category.name">{{ category.name }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
           <TabsContent value="all">
             <Card>
               <CardHeader>
@@ -231,12 +290,10 @@ onMounted(() => {
                       <TableCell>{{ "$" + parseFloat(item.pricePerUnit).toFixed(2) }}</TableCell>
                       <TableCell>{{ item.category }}</TableCell>
                       <TableCell class="flex justify-end gap-2">
-                        <!-- Keep DialogTrigger always rendered -->
                         <Dialog>
                           <DialogTrigger as-child>
                             <Button variant="secondary" @click="editItem(item)">Edit</Button>
                           </DialogTrigger>
-                          <!-- Use v-if only on DialogContent -->
                           <DialogContent v-if="isEditing" class="sm:max-w-[425px]">
                             <DialogHeader>
                               <DialogTitle>Edit Ingredient</DialogTitle>
@@ -267,8 +324,9 @@ onMounted(() => {
                               <select id="editedCategory" v-model="editedCategory"
                                 class="w-full p-2 border border-gray-300 rounded-md">
                                 <option value="" disabled>Select Category</option>
-                                <option v-for="category in categories" :key="category.name" :value="category.name">{{
-                                  category.name }}</option>
+                                <option v-for="category in categories" :key="category.name" :value="category.name">
+                                  {{ category.name }}
+                                </option>
                               </select>
 
                               <label for="editedSubcategory"
@@ -283,7 +341,6 @@ onMounted(() => {
                               <Button type="submit" @click="saveChanges">Save Changes</Button>
                             </DialogFooter>
                           </DialogContent>
-
                         </Dialog>
                         <Button variant="secondary" @click="deleteItem(item)">Delete</Button>
                       </TableCell>
