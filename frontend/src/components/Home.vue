@@ -315,7 +315,7 @@ const navigateTo = (route) => {
                 <div class="bg-white px-5 flex flex-col justify-between"
                     @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
                     <div>
-                        <h2 class="text-4xl font-bold mt-4">Real-time Database for Suppliers</h2>
+                        <h2 class="text-4xl font-bold mt-4">Inventory Management for Suppliers</h2>
                     </div>
 
                     <div class="hidden md:flex justify-center items-center flex-1 h-96 flex-grow flex-shrink">
