@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 </script>
 
 <template>
-    <div class="container mx-auto px-8 my-5">
+    <div class="container mx-auto px-8 my-5 min-h-screen">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold">Order History</h2>
