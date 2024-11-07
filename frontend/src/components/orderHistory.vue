@@ -117,7 +117,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
                                     <!-- Chat with Supplier -->
                                     <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`" v-if="order.supplierName">
-                                        <Button class="bg-blue-500 text-white">Chat with Supplier</Button>
+                                        <Button class=" text-white">Chat with Supplier</Button>
                                     </router-link>
                                 </TableCell>
                             </TableRow>
