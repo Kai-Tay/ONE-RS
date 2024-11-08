@@ -37,9 +37,6 @@ const editedPricePerUnit = ref('');
 const editedCategory = ref('');
 const editedSubcategory = ref('');
 
-// Loading
-const loading = ref(true)
-
 // Predefined categories and subcategories
 const categories = [
   { name: 'Meat', subcategories: ['Poultry', 'Beef', 'Pork', 'Lamb', 'Fish', 'Shellfish'] },
@@ -87,10 +84,8 @@ const fetchUserAndSuppliers = async () => {
         const supplierData = supplierDoc.data();
         inventoryData.value = supplierData.inventory;
       }
-
     }
   }
-
 };
 
 // Navigate to the form page for adding products
@@ -199,27 +194,11 @@ const lowStockItems = computed(() => {
 // Fetch user and supplier data when the component is mounted
 onMounted(() => {
   fetchUserAndSuppliers();
-    // Simulate data fetching or delay
-    setTimeout(() => {
-                    loading.value = false; // Set loading to false once data is loaded
-                }, 250);
 });
-
 </script>
 
 <template>
-  <div class="container mx-auto px-8 my-5 " v-if="loading">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
-        <Skeleton class="h-[20px] w-[180px] rounded-xl" />
-      </div>
-    </div>
-
-    <Skeleton class="h-[300px] w-full rounded-xl" />
-  </div>
-
-  <div class="flex min-h-screen w-full flex-col bg-muted/40" v-else>
+  <div class="flex min-h-screen w-full flex-col bg-muted/40">
     <div class="container mx-auto px-8 my-5">
 
       <!-- Title and Summary Display Section -->
@@ -231,23 +210,23 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <!-- Best Selling Product Card -->
           <Card class="p-4 flex flex-col justify-center">
-            <p class="text-sm font-medium text-green-600">Best Selling Product</p>
-            <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
+              <p class="text-sm font-medium text-green-600">Best Selling Product</p>
+              <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
           </Card>
 
           <!-- Total Sales Amount Card -->
           <Card class="p-4 flex flex-col justify-center">
-            <p class="text-sm font-medium text-grey-800">Total Sales Amount</p>
-            <p class="text-3xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
+              <p class="text-sm font-medium text-grey-800">Total Sales Amount</p>
+              <p class="text-3xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
           </Card>
 
           <!-- Low Stock Items Card -->
           <Card class="p-4  flex flex-col justify-center">
-            <p class="text-sm font-medium text-red-500">Low Stock Items</p>
-            <p class="text-2xl font-semibold">
-              <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
-              <span v-else>No items with low stock</span>
-            </p>
+              <p class="text-sm font-medium text-red-500">Low Stock Items</p>
+              <p class="text-2xl font-semibold">
+                <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
+                <span v-else>No items with low stock</span>
+              </p>
           </Card>
         </div>
       </div>
@@ -296,10 +275,15 @@ onMounted(() => {
                   <TableBody>
                     <TableRow v-for="item in filteredInventory" :key="item.productName">
                       <TableCell class="hidden sm:table-cell">
-                        <img :src="item.imageData" :alt="item.productName" class="aspect-square rounded-md object-cover"
-                          height="64" width="64"
-                          @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'">
-                      </TableCell>
+                        <img 
+                            :src="item.imageData" 
+                            :alt="item.productName"
+                            class="aspect-square rounded-md object-cover" 
+                            height="64"
+                            width="64"
+                            @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'"
+                        >
+                    </TableCell>
                       <TableCell>{{ item.productName }}</TableCell>
                       <TableCell :class="{ 'text-red-600': item.quantity <= 20 }">{{ item.quantity }}</TableCell>
                       <TableCell>{{ item.unit }}</TableCell>
@@ -317,11 +301,14 @@ onMounted(() => {
                               </DialogDescription>
                             </DialogHeader>
                             <div class="space-y-4">
-                              <!-- Add image preview -->
+                            <!-- Add image preview -->
                               <div class="mb-4">
-                                <img :src="selectedItem?.imageData" :alt="selectedItem?.productName"
-                                  class="w-32 h-32 object-cover rounded-lg"
-                                  @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'">
+                                  <img 
+                                      :src="selectedItem?.imageData" 
+                                      :alt="selectedItem?.productName"
+                                      class="w-32 h-32 object-cover rounded-lg"
+                                      @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'"
+                                  >
                               </div>
 
                               <label for="editedProductName" class="block text-sm font-medium text-gray-700">Product

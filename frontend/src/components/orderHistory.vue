@@ -1,7 +1,6 @@
 <script setup>
 import Navbar from './Navbar.vue';
 import Chat from './chat.vue';
-import Skeleton from './ui/skeleton/Skeleton.vue';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from './ui/table';
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
@@ -13,18 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 </script>
 
 <template>
-    <div class="container mx-auto px-8 my-5 " v-if="loading">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
-                <Skeleton class="h-[20px] w-[180px] rounded-xl" />
-            </div>
-        </div>
-
-        <Skeleton class="h-[500px] w-full rounded-xl" />
-    </div>
-
-    <div class="container mx-auto px-8 my-5 " v-else>
+    <div class="container mx-auto px-8 my-5 ">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold">Order History</h2>
@@ -128,8 +116,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                     </Dialog>
 
                                     <!-- Chat with Supplier -->
-                                    <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`"
-                                        v-if="order.supplierName">
+                                    <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`" v-if="order.supplierName">
                                         <Button class=" text-white">Chat with Supplier</Button>
                                     </router-link>
                                 </TableCell>
@@ -228,8 +215,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                     </Dialog>
 
                                     <!-- Chat with Buyer -->
-                                    <router-link :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
-                                        v-if="order.buyerCompanyName">
+                                    <router-link 
+                                        :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
+                                        v-if="order.buyerCompanyName"
+                                    >
                                         <Button class="text-white">Chat with Buyer</Button>
                                     </router-link>
                                 </TableCell>
@@ -255,8 +244,6 @@ export default {
         return {
             userType: "restaurant",
             orderHistory: [],
-
-            loading: true,
         }
     },
     methods: {
@@ -264,7 +251,7 @@ export default {
             try {
                 const userRef = doc(db, "users", userId);
                 const userSnap = await getDoc(userRef);
-
+                
                 if (userSnap.exists()) {
                     return userSnap.data();
                 }
@@ -274,13 +261,13 @@ export default {
                 return null;
             }
         },
-
+        
         async fetchOrderHistory() {
             try {
                 const orderHistoryRef = collection(db, "orderHistory");
                 const orderHistorySnapshot = await getDocs(orderHistoryRef);
                 const currentUserId = sessionStorage.getItem("uid");
-
+                
                 // Clear existing orders
                 this.orderHistory = [];
 
@@ -317,10 +304,6 @@ export default {
 
                     this.orderHistory.push(order);
                 }
-                // Simulate data fetching or delay
-                setTimeout(() => {
-                    this.loading = false; // Set loading to false once data is loaded
-                }, 250);
 
                 console.log("Order History with user details:", this.orderHistory);
             } catch (error) {
@@ -335,8 +318,6 @@ export default {
         if (sessionStorage.getItem("userType") === "supplier") {
             this.userType = "supplier";
         }
-
-        
     }
 }
 </script>
