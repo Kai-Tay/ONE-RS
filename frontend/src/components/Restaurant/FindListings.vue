@@ -45,8 +45,9 @@ import axios from 'axios';
                 <CardContent class="flex items-center pt-4">
                     <!-- Centered Placeholder Image on the Left -->
                     <div class="w-1/5 flex items-center justify-center">
-                        <img src="./images/placeholder.svg" alt="Placeholder Image"
-                            class="w-auto h-auto object-cover rounded-md">
+                        <img :src="listing.imageData || './images/placeholder.svg'" 
+                            alt="Supplier Image"
+                            class="w-auto h-auto max-h-40 object-cover rounded-md">
                     </div>
 
                     <!-- Supplier Content on the Right -->
@@ -165,7 +166,7 @@ export default {
                 const mergedArray = listingsArray.map(listing => {
                     const company = usersArray.find(user => user.id === listing.id)
 
-                    return { ...listing, supplierDescription: company.companyDescription }
+                    return { ...listing, supplierDescription: company.companyDescription, imageData: company.imageData || null }
                 })
 
                 this.listings = mergedArray;
