@@ -1,182 +1,181 @@
 <template>
-  <AreaChart
-    v-if="chartData.length > 0" 
-    :data="chartData"
-    index="interval"
-    :categories="['InventoryLevel']"
-    :lineOptions="lineOptions"
-  />
+    <div>
+        <h2>Inventory Levels</h2>
+
+    <!-- Show loading indicator while fetching data -->
+    <div v-if="loadingTable" class="text-center">Loading...</div>
+
+    <!-- Render the table only once currentInventoryLevels data is available -->
+    <div v-else class="w-full">
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 text-left w-1/4">Category</th>
+                    <th class="px-4 py-2 text-left w-1/4">Item</th>
+                    <!-- Display current and next intervals in headers -->
+                    <th class="px-4 py-2 text-left w-1/4">
+                        Current Level ({{ currentIntervalDisplay }})
+                    </th>
+                    <th class="px-4 py-2 text-left w-1/4">
+                        Update Level ({{ nextIntervalDisplay }})
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="(items, category) in currentInventoryLevels" :key="category">
+                <!-- Render each row of items for the current category -->
+                <tr v-for="(level, item, index) in items" :key="item">
+                    <!-- Only display the category name in the first row of each group -->
+                    <td v-if="index === 0" :rowspan="Object.keys(items).length" class="border px-4 py-2 w-1/4">
+                    {{ category }}
+                    </td>
+                    <td class="border px-4 py-2 w-1/4">{{ item }}</td>
+                    <td class="border px-4 py-2 w-1/4">{{ level }}</td>
+                    <td class="border px-4 py-2 w-1/4">
+                    <input type="number" v-model.number="updatedLevels[category][item]" class="w-full" />
+                    </td>
+                </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Submit button -->
+    <button @click="submitUpdatedLevels" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+  </div>
 </template>
 
-<script setup>
+<script>
 import { db } from '../firebase.js';
-import { doc, getDoc } from "firebase/firestore";
-import { AreaChart } from '@/components/ui/areaChart';
-import { ref, onMounted } from 'vue';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-const chartData = ref([]);  // Declare only once here
+export default {
+    data() {
+        return {
+            loadingTable: true,  // Moved `loading` here to make it part of the Vue instance
+            restaurantId: 'GYFKVpkDpI74zYTzzsfY', // Assuming you have this available
+            currentInventoryLevels: {}, // To hold the data to display in the table
+            updatedLevels: {}, // To hold the user's modified data
+            selectedInterval: "", // Make selectedInterval reactive
+        };
+    },
+    computed: {
+        currentIntervalDisplay() {
+            // Use the actual current interval value here
+            const currentInterval = this.selectedInterval; // Assuming this is stored in `selectedInterval`
+            return currentInterval;
+            console.log(this.selectedInterval);
+        },
+        nextIntervalDisplay() {
+            const [year, month, interval] = this.selectedInterval.split('-').map(Number);
+            if (interval === 5) {
+                const nextMonth = month === 12 ? 1 : month + 1;
+                const nextYear = month === 12 ? year + 1 : year;
+                return `${nextYear}-${nextMonth}-1`;
+            }
+            return `${year}-${month}-${interval + 1}`;
+        },
+    },
+    methods: {
+        async fetchCurrentInventory() {
+        try {
+        const inventoryDocRef = doc(db, "inventoryLevels", this.restaurantId);
+        const docSnapshot = await getDoc(inventoryDocRef);
 
-const lineOptions = {
-    yAxis: { title: 'Inventory Level' },
-    xAxis: {
-        title: 'Year-Month-Interval',
-        plotLines: [], // Existing plot lines
+        if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+          
+            // Assuming you want to display only one interval, let's select the most recent one or a specific interval
+            this.selectedInterval = this.getSelectedInterval(data.currentInventoryLevel);  // Use a method or logic to pick the interval
+
+            if (this.selectedInterval) {
+            // Initialize `currentInventoryLevels` for that selected interval
+            this.currentInventoryLevels = {};
+
+            const inventoryData = data.currentInventoryLevel[this.selectedInterval];
+            console.log(inventoryData.afterOrder);
+
+            if (this.selectedInterval.endsWith("-5")) {
+                // Handle intervals that end with "-5"
+                if (inventoryData.beforeOrder && inventoryData.afterOrder) {
+                    // If both beforeOrder and afterOrder exist, display only afterOrder
+                    this.currentInventoryLevels = inventoryData.afterOrder;
+
+                } else if (inventoryData.beforeOrder) {
+                    // If only beforeOrder exists, display beforeOrder
+                    this.currentInventoryLevels = inventoryData.beforeOrder;
+
+                } else if (inventoryData.afterOrder) {
+                    // If only afterOrder exists, display afterOrder
+                    this.currentInventoryLevels = inventoryData.afterOrder;
+                }
+
+            } else {
+                // For intervals not ending in "-5", show the normal inventory
+                this.currentInventoryLevels = inventoryData;
+            }
+          
+            // Initialize `updatedLevels` to allow for user edits
+            this.updatedLevels = JSON.parse(JSON.stringify(this.currentInventoryLevels));
+            } else {
+                console.error("No valid interval found for the current data.");
+            }
+        } else {
+            console.error("No document found for the provided restaurant ID:", this.restaurantId);
+        }
+        } catch (error) {
+            console.error("Error fetching inventory data:", error);
+        } finally {
+            this.loadingTable = false;  // Set loading to false once the data fetching is complete
+        }
+        },
+
+    // Method to select the most recent interval, or a specific interval as needed
+    getSelectedInterval(inventoryLevels) {
+        const intervals = Object.keys(inventoryLevels);
+        // Assuming the most recent interval is the highest number or you can use another criterion
+        intervals.sort((a, b) => (a > b ? -1 : 1)); // Sort intervals in descending order
+        return intervals[0]; // Return the most recent interval
     },
-    series: {
-        InventoryLevel: { borderColor: 'green' },
+
+    async submitUpdatedLevels() {
+        console.log("Updated Inventory Levels:", this.updatedLevels); 
+
+        const inventoryDocRef = doc(db, "inventoryLevels", this.restaurantId);
+        console.log("DOC Ref",  inventoryDocRef)
+        // try {
+        //     // Update Firestore with the new inventory levels from updatedLevels
+        //     await updateDoc(inventoryDocRef, {
+        //         currentInventoryLevel: this.updatedLevels,
+        //     });
+
+        // alert("Inventory updated successfully!");
+        // } catch (error) {
+        //     console.error("Error updating inventory:", error);
+        //     alert("Failed to update inventory.");
+        // }
     },
+    },
+
+    mounted() {
+        // Automatically fetch the current inventory when the component is mounted
+        this.fetchCurrentInventory();
+
+    }
 };
 
-// Fetch inventory data
-async function fetchInventoryData(restaurantId) {
-    const inventoryCollection = doc(db, 'inventoryLevels', restaurantId);
-    const inventorySnapshot = await getDoc(inventoryCollection);
-
-    if (!inventorySnapshot.exists()) {
-        console.log("Restaurant not found");
-        return null;
-    }
-
-    const inventoryData = inventorySnapshot.data();
-    console.log(inventoryData.pastInventoryLevels);
-    return inventoryData;
-}
-
-// Process and transform data for the chart
-function transformDataForChart(inventoryData) {
-    const chartDataArray = [];
-
-    // Check if pastInventoryLevel exists
-    if (inventoryData.pastInventoryLevels) {
-        // Process past inventory levels
-        for (const [interval, categories] of Object.entries(inventoryData.pastInventoryLevels)) {
-            console.log(`Processing interval: ${interval}`);
-            console.log(`Categories for interval ${interval}:`, categories);
-
-            // Ensure "beef" data exists in "meat" category
-            const beefExists = categories['meat']?.['beef'];
-
-            // Get values for beforeOrder and afterOrder
-            const beforeOrderLevel = categories.beforeOrder?.['meat']?.['beef'] || null;
-            const afterOrderLevel = categories.afterOrder?.['meat']?.['beef'] || null;
-
-            if (interval.endsWith("-5")) {
-                // Check if beforeOrderLevel exists
-                if (beforeOrderLevel !== null) {
-                    // Add InventoryLevel for beforeOrder (renamed)
-                    chartDataArray.push({
-                        interval: `${interval}-1`, // New interval for beforeOrder
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel: beforeOrderLevel, // Use InventoryLevel to display beforeOrder
-                    });
-                } else {
-                    console.log(`No beforeOrder level for interval ${interval}`);
-                }
-
-                // Check if afterOrderLevel exists
-                if (afterOrderLevel !== null) {
-                    // Add InventoryLevel for afterOrder (renamed)
-                    chartDataArray.push({
-                        interval: `${interval}-2`, // New interval for afterOrder
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel: afterOrderLevel, // Use InventoryLevel to display afterOrder
-                    });
-                } else {
-                    console.log(`No afterOrder level for interval ${interval}`);
-                }
-            } else {
-                // Single inventory level for other intervals
-                if (beefExists) {
-                    const singleInventoryLevel = categories['meat']['beef'];
-                    chartDataArray.push({
-                        interval,
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel: singleInventoryLevel,
-                    });
-                } else {
-                    console.log(`No beef data for interval ${interval}`);
-                }
-            }
-        }
-    } else {
-        console.log("No pastInventoryLevel data found");
-    }
-
-    // Check if currentInventoryLevel exists and includes "meat" and "beef" data
-    const currentInv = inventoryData.currentInventoryLevel;
-    // Ensure "beef" data exists in "meat" category
-    if (currentInv) {
-    const interval = Object.keys(currentInv)[0]; // Get the single key
-    if (interval.endsWith("-5")) {
-        console.log("ebdjwbdken", currentInv[interval].beforeOrder);
-
-        console.log(`Interval ${interval} ends with -5`);
-        // Add further processing here if needed
-        const currentBeforeOrderLevel = currentInv[interval].beforeOrder?.['meat']?.['beef'] || null;
-        const currentAfterOrderLevel = currentInv[interval].afterOrder?.['meat']?.['beef'] || null;
-        if (currentBeforeOrderLevel !== null) {
-                    // Add InventoryLevel for beforeOrder (renamed)
-                    chartDataArray.push({
-                        interval: `${interval}-1`, // New interval for beforeOrder
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel: currentBeforeOrderLevel, // Use InventoryLevel to display beforeOrder
-                    });
-                } else {
-                    console.log(`No beforeOrder level for interval ${interval}`);
-                }
-
-                // Check if afterOrderLevel exists
-                if ( currentAfterOrderLevel !== null) {
-                    // Add InventoryLevel for afterOrder (renamed)
-                    chartDataArray.push({
-                        interval: `${interval}-2`, // New interval for afterOrder
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel:  currentAfterOrderLevel, // Use InventoryLevel to display afterOrder
-                    });
-                } else {
-                    console.log(`No afterOrder level for interval ${interval}`);
-                }
 
 
-
-    } else {
-        const currentBeefExists = currentInv[interval]['meat']?.['beef'] || null;
-        if (currentBeefExists) {
-                    const singleInventoryLevel = categories['meat']['beef'];
-                    chartDataArray.push({
-                        interval,
-                        category: 'meat',
-                        itemType: 'beef',
-                        InventoryLevel: singleInventoryLevel,
-                    });
-        }
-    }
-
-
-} else {
-    console.log("No current inventory level data found");
-}
-
-
-    console.log("happy:", inventoryData.currentInventoryLevel);
-
-    chartDataArray.sort((a, b) => (a.interval > b.interval ? 1 : -1));
-    console.log("Final Chart Data Array:", chartDataArray);
-    return chartDataArray;
-}
-
-
-onMounted(async () => {
-    const inventoryData = await fetchInventoryData("GYFKVpkDpI74zYTzzsfY");
-
-    if (inventoryData) {
-        chartData.value = transformDataForChart(inventoryData);  // Assign to the existing chartData ref
-        console.log(chartData.value); // Check to ensure data is correct
-    }
-});
 </script>
+
+<style scoped>
+table {
+    width: 100%;
+    border-collapse: collapse;
+  
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+</style>
