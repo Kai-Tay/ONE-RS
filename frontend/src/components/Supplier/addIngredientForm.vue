@@ -1,10 +1,13 @@
 <script setup>
 // Import necessary Firebase functions and Vue tools
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { auth } from '../../firebase'; // Import the Firebase auth module
 import Button from '../ui/button/Button.vue';
+import 'vue-advanced-cropper/dist/style.css';
+import ImageCropper from './ImageCropper.vue'; 
+
 
 // Initialize Firebase
 const db = getFirestore();
@@ -38,46 +41,95 @@ watch(category, (newCategory) => {
     }
 });
 
+
+// Form fields for image 
+const showCropper = ref(false);
+const selectedFile = ref(null);
+const imageFile = ref(null);
+const imagePreview = ref('');
+const isLoading = ref(false); 
+
+// Handle image upload
+const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        selectedFile.value = file;
+        showCropper.value = true;
+    }
+};
+
+// Convert file to base64
+const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+};
+
+// Handle cropped image
+const handleCropComplete = ({ file, url }) => {
+    imageFile.value = file;
+    imagePreview.value = url;
+    showCropper.value = false;
+};
+
+// Cleanup function
+onBeforeUnmount(() => {
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value);
+    }
+});
+
 // Function to submit the new ingredient item to the Firebase database
 const addNewIngredient = async () => {
-    // Get the current logged-in user
-    const user = auth.currentUser;
+    if (!imageFile.value) {
+        alert('Please select an image');
+        return;
+    }
 
-    if (user) {
-        const supplierDocRef = doc(db, "supplierListing", user.uid); // Use user's UID as the document ID
-        const supplierDoc = await getDoc(supplierDocRef); // Fetch the supplier document
+    try {
+        isLoading.value = true;
+        const user = auth.currentUser;
+        if (!user) {
+            alert('User not logged in');
+            return;
+        }
+
+        // Convert image to base64
+        const base64Image = await fileToBase64(imageFile.value);
+
+        const supplierDocRef = doc(db, "supplierListing", user.uid);
+        const supplierDoc = await getDoc(supplierDocRef);
 
         if (supplierDoc.exists()) {
-            // Add the new ingredient to the supplier's inventory
             if (productName.value && pricePerUnit.value && quantity.value && unit.value && category.value && subcategory.value) {
-                try {
-                    await updateDoc(supplierDocRef, {
-                        inventory: arrayUnion({
-                            productName: productName.value,
-                            quantity: parseInt(quantity.value),
-                            unit: unit.value,
-                            pricePerUnit: parseFloat(pricePerUnit.value),
-                            category: category.value,
-                            subcategory: subcategory.value, // Subcategory selected by the user
-                            purchaseQuantity: 0
-                        })
-                    });
+                await updateDoc(supplierDocRef, {
+                inventory: arrayUnion({
+                productName: productName.value,
+                quantity: parseInt(quantity.value),
+                unit: unit.value,
+                pricePerUnit: parseFloat(pricePerUnit.value),
+                category: category.value,
+                subcategory: subcategory.value,
+                purchaseQuantity: 0,
+                imageData: base64Image // Store as base64 instead of URL
+                })
+        });
 
-                    // Redirect back to the inventory list after adding
-                    router.push('/supplierInventory');
-                } catch (error) {
-                    console.error("Error adding new ingredient: ", error);
-                    alert("Failed to add ingredient.");
-                }
-            } else {
-                alert('Please fill in all fields');
-            }
+        router.push('/supplierInventory');
         } else {
-            console.error("Supplier document not found for user ID:", user.uid);
+            alert('Please fill in all fields');
+        }
+        } else {
             alert('Supplier document not found.');
         }
-    } else {
-        alert('User not logged in');
+    } catch (error) {
+        console.error("Error adding new ingredient: ", error);
+        alert("Failed to add ingredient.");
+    } finally {
+        isLoading.value = false;
     }
 };
 </script>
@@ -125,10 +177,44 @@ const addNewIngredient = async () => {
                     </select>
                 </div>
 
+                <!-- Image Upload Section -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Product Image</label>
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        @change="handleImageUpload" 
+                        class="mt-1 block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100"
+                        required
+                    >
+                </div>
+
+                <!-- Image Preview -->
+                <div v-if="imagePreview" class="mb-4">
+                    <img 
+                        :src="imagePreview" 
+                        alt="Preview" 
+                        class="w-32 h-32 object-cover rounded-lg"
+                    >
+                </div>
+
                 <Button type="submit" class="w-full text-white font-bold py-2 px-4 ">
                     Add Ingredient
                 </Button>
             </form>
+
+            <!-- Image Cropper Modal -->
+            <ImageCropper
+                v-if="showCropper && selectedFile"
+                :image-file="selectedFile"
+                @crop-complete="handleCropComplete"
+                @cancel="() => showCropper = false"
+            />
         </div>
     </div>
 </template>

@@ -104,7 +104,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <TableBody v-for="(item, index) in supplierListing.inventory" :key="item.id">
                             <TableRow>
                                 <TableCell class="flex items-center justify-center">
-                                    <img src="./images/placeholder.svg" alt="Placeholder Image"
+                                    <img :src="item.imageData || './images/placeholder.svg'" alt="Product Image"
                                         class="w-12 h-12 object-cover rounded-md">
                                 </TableCell>
                                 <TableCell class="font-semibold">
@@ -181,7 +181,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <TableBody v-for="(item, index) in orderCart" :key="item.id">
                             <TableRow>
                                 <TableCell class="flex items-center justify-center">
-                                    <img src="./images/placeholder.svg" alt="Placeholder Image"
+                                    <img :src="item.imageData || './images/placeholder.svg'" alt="Product Image"
                                         class="w-12 h-12 object-cover rounded-md">
                                 </TableCell>
                                 <TableCell class="font-semibold">

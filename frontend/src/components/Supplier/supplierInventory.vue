@@ -28,7 +28,7 @@ const supplierDocId = ref('');
 const userId = ref('');
 
 // Variables for editing
-const isEditing = ref(true);
+const isEditing = ref(false);
 const selectedItem = ref(null);
 const editedProductName = ref('');
 const editedQuantity = ref('');
@@ -275,9 +275,15 @@ onMounted(() => {
                   <TableBody>
                     <TableRow v-for="item in filteredInventory" :key="item.productName">
                       <TableCell class="hidden sm:table-cell">
-                        <img alt="Product image" class="aspect-square rounded-md object-cover" height="64"
-                          src="./images/placeholder.svg" width="64">
-                      </TableCell>
+                        <img 
+                            :src="item.imageData" 
+                            :alt="item.productName"
+                            class="aspect-square rounded-md object-cover" 
+                            height="64"
+                            width="64"
+                            @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'"
+                        >
+                    </TableCell>
                       <TableCell>{{ item.productName }}</TableCell>
                       <TableCell :class="{ 'text-red-600': item.quantity <= 20 }">{{ item.quantity }}</TableCell>
                       <TableCell>{{ item.unit }}</TableCell>
@@ -295,6 +301,16 @@ onMounted(() => {
                               </DialogDescription>
                             </DialogHeader>
                             <div class="space-y-4">
+                            <!-- Add image preview -->
+                              <div class="mb-4">
+                                  <img 
+                                      :src="selectedItem?.imageData" 
+                                      :alt="selectedItem?.productName"
+                                      class="w-32 h-32 object-cover rounded-lg"
+                                      @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'"
+                                  >
+                              </div>
+
                               <label for="editedProductName" class="block text-sm font-medium text-gray-700">Product
                                 Name</label>
                               <Input id="editedProductName" v-model="editedProductName" placeholder="Product Name" />
