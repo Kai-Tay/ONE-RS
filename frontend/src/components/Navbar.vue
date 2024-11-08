@@ -5,8 +5,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { Button } from "./ui/button/index.js";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
-
-
 </script>
 
 
@@ -98,8 +96,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                 <li><a class="nav-link" :class="{ 'font-bold': $route.path === '/supplierInventory' }"
                         href="#/supplierInventory">Inventory Management</a></li>
             </ul>
-            
-            <div v-else class="lg:hidden flex items-center space-x-5">
+            <div class="flex items-center space-x-2 mt-4">
                 <div class="flex flex-inline items-center space-x-2" @click="handleProfileClick"
                     style="cursor: pointer">
                     <span>
@@ -110,7 +107,7 @@ import AuthenticationDialog from "./Authentication/AuthenticationDialog.vue";
                     </span>
                     <div>{{ userName }}</div>
                 </div>
-                <Button class="" @click="handleLogOut" variant="destructive">Logout</Button>
+                <Button class="w-32" @click="handleLogOut" variant="destructive">Logout</Button>
             </div>
         </div>
         <div :class="[{ 'hidden': !isMenuOpen, 'lg:hidden': true },{'mt-16': $route.path == '/'}, navbarClasses]" class="px-5 pb-5 space-y-4" v-else>
@@ -195,6 +192,13 @@ export default {
                             signOut(auth).then(() => {
                                 sessionStorage.clear();
 
+                                window.dispatchEvent(new CustomEvent('auth-state-changed', {
+                                    detail: { 
+                                        type: 'timeout',
+                                        timestamp: Date.now() 
+                                    }
+                                }));
+
                                 // Redirect the user to the login page or handle it appropriately
                                 this.statusHeader = "Session Timed Out";
                                 this.statusDescription = "Please Login Again!";
@@ -237,6 +241,13 @@ export default {
         handleLogOut() {
             signOut(auth).then(() => {
                 sessionStorage.clear();
+                // Dispatch auth state change BEFORE any UI updates
+                window.dispatchEvent(new CustomEvent('auth-state-changed', {
+                    detail: { 
+                        type: 'logout',
+                        timestamp: Date.now() 
+                    }
+                }));
 
                 // Redirect the user to the login page or handle it appropriately
                 this.statusHeader = "Logged Out";
@@ -249,8 +260,10 @@ export default {
                 // Automatically close the dialog after 2 seconds
                 setTimeout(() => {
                     this.showAuthDialog = false;
+                    // Force reload the page after logout
+                    window.location.href = '/';  // Change this line
                 }, 2000);
-                this.$router.push('/');
+
 
             }).catch((error) => {
                 alert("Error logging out: ", error);

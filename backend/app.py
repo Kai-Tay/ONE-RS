@@ -1,6 +1,9 @@
 import json
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from dotenv import load_dotenv
+import stripe
 
 # VERTEX AI
 import vertexai
@@ -10,16 +13,17 @@ from vertexai.generative_models import GenerativeModel, Part, SafetySetting
 
 app = Flask(__name__)
 CORS(app, origins="http://localhost:5173")
+CORS(app, origins="http://oners-frontend.s3-website-ap-southeast-1.amazonaws.com")
 
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World'
+    return jsonify({"working!": "hello world"}), 200
 
 
 # START FROM HERE!!!!!!!
-
-app = Flask(__name__)
+stripe.api_key = os.getenv("STRIPE_SECRET")
+gcloud_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 # Initialize Vertex AI with service account credentials
 credentials = service_account.Credentials.from_service_account_file("./serviceAccountKey.json")
@@ -98,9 +102,34 @@ def generate_ingredients():
         return jsonify(output_json), 200
     except json.JSONDecodeError:
         return jsonify({"error": "Invalid JSON response from the model"}), 500
+    
+
+@app.route('/create-checkout', methods=['POST'])
+def create_payment_intent():
+    try:
+        # Retrieve data from the request body
+        data = request.get_json()
+        # Get payment amount
+        amount = data.get("amount") 
+
+
+        # Create a payment intent
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,  # Amount in cents
+            currency="sgd"
+        )
+
+        # Send the client secret back to the frontend
+        return jsonify({"clientSecret": payment_intent.client_secret})
+    
+    except Exception as e:
+        # Handle exceptions
+        return jsonify({"error": str(e)}), 500
+
+    
 
 # Initialise server
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5000)
 
 

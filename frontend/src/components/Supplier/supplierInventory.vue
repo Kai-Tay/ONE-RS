@@ -28,7 +28,7 @@ const supplierDocId = ref('');
 const userId = ref('');
 
 // Variables for editing
-const isEditing = ref(true);
+const isEditing = ref(false);
 const selectedItem = ref(null);
 const editedProductName = ref('');
 const editedQuantity = ref('');
@@ -36,6 +36,9 @@ const editedUnit = ref('');
 const editedPricePerUnit = ref('');
 const editedCategory = ref('');
 const editedSubcategory = ref('');
+
+// Loading
+const loading = ref(true)
 
 // Predefined categories and subcategories
 const categories = [
@@ -84,8 +87,10 @@ const fetchUserAndSuppliers = async () => {
         const supplierData = supplierDoc.data();
         inventoryData.value = supplierData.inventory;
       }
+
     }
   }
+
 };
 
 // Navigate to the form page for adding products
@@ -163,39 +168,108 @@ const filteredInventory = computed(() => {
   return inventoryData.value.filter(item => item.category === selectedCategory.value);
 });
 
+// Define computed properties for best-selling product, total sales amount, and low stock items
+const bestSellingProduct = computed(() => {
+  let maxSalesProduct = null;
+  let maxSalesQuantity = 0;
+
+  inventoryData.value.forEach(item => {
+    if (item.purchaseQuantity > maxSalesQuantity) {
+      maxSalesQuantity = item.purchaseQuantity;
+      maxSalesProduct = item.productName;
+    }
+  });
+
+  return maxSalesProduct;
+});
+
+const totalSalesAmount = computed(() => {
+  return inventoryData.value.reduce((total, item) => {
+    return total + item.purchaseQuantity * item.pricePerUnit;
+  }, 0);
+});
+
+const lowStockItems = computed(() => {
+  return inventoryData.value
+    .filter(item => item.quantity <= 20)
+    .map(item => item.productName);
+});
+
+
 // Fetch user and supplier data when the component is mounted
 onMounted(() => {
   fetchUserAndSuppliers();
+    // Simulate data fetching or delay
+    setTimeout(() => {
+                    loading.value = false; // Set loading to false once data is loaded
+                }, 250);
 });
+
 </script>
 
 <template>
+  <div class="container mx-auto px-8 my-5 " v-if="loading">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
+        <Skeleton class="h-[20px] w-[180px] rounded-xl" />
+      </div>
+    </div>
 
-  <div class="flex min-h-screen w-full flex-col bg-muted/40">
-      <div class="container mx-auto px-8 my-5">
-      <div class="flex items-center justify-between ">
-        <div>
-          <h2 class="text-2xl font-bold">{{ companyName }}</h2>
-          <p class="text-sm">Manage your Inventory</p>
-        </div>
-        <div class="flex">
-          <Button @click="navigateToFormPage">Add</Button>
+    <Skeleton class="h-[300px] w-full rounded-xl" />
+  </div>
+
+  <div class="flex min-h-screen w-full flex-col bg-muted/40" v-else>
+    <div class="container mx-auto px-8 my-5">
+
+      <!-- Title and Summary Display Section -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold">{{ companyName }}</h2>
+        <p class="text-sm mb-4">Manage your Inventory</p>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Best Selling Product Card -->
+          <Card class="p-4 flex flex-col justify-center">
+            <p class="text-sm font-medium text-green-600">Best Selling Product</p>
+            <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
+          </Card>
+
+          <!-- Total Sales Amount Card -->
+          <Card class="p-4 flex flex-col justify-center">
+            <p class="text-sm font-medium text-grey-800">Total Sales Amount</p>
+            <p class="text-3xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
+          </Card>
+
+          <!-- Low Stock Items Card -->
+          <Card class="p-4  flex flex-col justify-center">
+            <p class="text-sm font-medium text-red-500">Low Stock Items</p>
+            <p class="text-2xl font-semibold">
+              <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
+              <span v-else>No items with low stock</span>
+            </p>
+          </Card>
         </div>
       </div>
+
+      <!-- Controls: Add Product Button and Filter Dropdown -->
+      <div class="flex items-center justify-between mb-4">
+        <div>
+        </div>
+        <div class="flex items-center gap-4">
+          <Button @click="navigateToFormPage">Add Product</Button>
+          <select id="categoryFilter" v-model="selectedCategory" class="p-2 border border-gray-300 rounded-md">
+            <option value="All">All</option>
+            <option v-for="category in categories" :key="category.name" :value="category.name">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Inventory Management Section -->
       <main>
         <Tabs default-value="all">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center justify-end w-full">
-              <div class="mb-4 flex">
-                <select id="categoryFilter" v-model="selectedCategory" class="p-2 border border-gray-300 rounded-md">
-                  <option value="All">All</option>
-                  <option v-for="category in categories" :key="category.name" :value="category.name">{{ category.name }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
           <TabsContent value="all">
             <Card>
               <CardHeader>
@@ -222,8 +296,9 @@ onMounted(() => {
                   <TableBody>
                     <TableRow v-for="item in filteredInventory" :key="item.productName">
                       <TableCell class="hidden sm:table-cell">
-                        <img alt="Product image" class="aspect-square rounded-md object-cover" height="64"
-                          src="./images/placeholder.svg" width="64">
+                        <img :src="item.imageData" :alt="item.productName" class="aspect-square rounded-md object-cover"
+                          height="64" width="64"
+                          @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'">
                       </TableCell>
                       <TableCell>{{ item.productName }}</TableCell>
                       <TableCell :class="{ 'text-red-600': item.quantity <= 20 }">{{ item.quantity }}</TableCell>
@@ -231,12 +306,10 @@ onMounted(() => {
                       <TableCell>{{ "$" + parseFloat(item.pricePerUnit).toFixed(2) }}</TableCell>
                       <TableCell>{{ item.category }}</TableCell>
                       <TableCell class="flex justify-end gap-2">
-                        <!-- Keep DialogTrigger always rendered -->
                         <Dialog>
                           <DialogTrigger as-child>
                             <Button variant="secondary" @click="editItem(item)">Edit</Button>
                           </DialogTrigger>
-                          <!-- Use v-if only on DialogContent -->
                           <DialogContent v-if="isEditing" class="sm:max-w-[425px]">
                             <DialogHeader>
                               <DialogTitle>Edit Ingredient</DialogTitle>
@@ -244,6 +317,13 @@ onMounted(() => {
                               </DialogDescription>
                             </DialogHeader>
                             <div class="space-y-4">
+                              <!-- Add image preview -->
+                              <div class="mb-4">
+                                <img :src="selectedItem?.imageData" :alt="selectedItem?.productName"
+                                  class="w-32 h-32 object-cover rounded-lg"
+                                  @error="e => (e.target as HTMLImageElement).src = '/images/placeholder.svg'">
+                              </div>
+
                               <label for="editedProductName" class="block text-sm font-medium text-gray-700">Product
                                 Name</label>
                               <Input id="editedProductName" v-model="editedProductName" placeholder="Product Name" />
@@ -267,8 +347,9 @@ onMounted(() => {
                               <select id="editedCategory" v-model="editedCategory"
                                 class="w-full p-2 border border-gray-300 rounded-md">
                                 <option value="" disabled>Select Category</option>
-                                <option v-for="category in categories" :key="category.name" :value="category.name">{{
-                                  category.name }}</option>
+                                <option v-for="category in categories" :key="category.name" :value="category.name">
+                                  {{ category.name }}
+                                </option>
                               </select>
 
                               <label for="editedSubcategory"
@@ -283,7 +364,6 @@ onMounted(() => {
                               <Button type="submit" @click="saveChanges">Save Changes</Button>
                             </DialogFooter>
                           </DialogContent>
-
                         </Dialog>
                         <Button variant="secondary" @click="deleteItem(item)">Delete</Button>
                       </TableCell>

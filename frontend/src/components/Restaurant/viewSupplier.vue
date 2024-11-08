@@ -1,4 +1,6 @@
 <script setup>
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -17,6 +19,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
 
 <template>
     <!-- Filter Bar from Search -->
+
 
     <div class="mt-5 mb-5 mx-5 space-y-10">
         <div class="text-4xl font-bold h-10">{{ supplierListing.supplierName }}</div>
@@ -102,7 +105,8 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <TableBody v-for="(item, index) in supplierListing.inventory" :key="item.id">
                             <TableRow>
                                 <TableCell class="flex items-center justify-center">
-                                    <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-12 h-12 object-cover rounded-md">
+                                    <img :src="item.imageData || './images/placeholder.svg'" alt="Product Image"
+                                        class="w-12 h-12 object-cover rounded-md">
                                 </TableCell>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
@@ -178,7 +182,8 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
                         <TableBody v-for="(item, index) in orderCart" :key="item.id">
                             <TableRow>
                                 <TableCell class="flex items-center justify-center">
-                                    <img src="./images/placeholder.svg" alt="Placeholder Image" class="w-12 h-12 object-cover rounded-md">
+                                    <img :src="item.imageData || './images/placeholder.svg'" alt="Product Image"
+                                        class="w-12 h-12 object-cover rounded-md">
                                 </TableCell>
                                 <TableCell class="font-semibold">
                                     {{ item.productName }}
@@ -248,11 +253,57 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
         </div>
     </div>
 
+    <div v-else-if="activeStep === 4">
+        <div class="grid grid-cols-1 gap-4 mx-5">
+            <Card>
+                <CardHeader>
+                    <CardTitle class="text-2xl font-bold">Order Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div v-for="item in orderCart" class="flex justify-between py-2 border-b">
+                        <div>
+                            <p class="font-semibold">{{ item.productName }}</p>
+                            <p class="text-sm text-gray-500">{{ item.category }} - {{ item.subcategory }}</p>
+                            <p class="text-sm text-gray-500">Quantity: {{ item.purchaseQuantity }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold">${{ item.pricePerUnit.toFixed(2) }}</p>
+                            <p class="text-sm text-gray-500">Total: ${{ (item.pricePerUnit *
+                                item.purchaseQuantity).toFixed(2) }}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <p class="font-semibold">Total Amount</p>
+                        <p class="font-bold">${{ orderAmount.toFixed(2) }}</p>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Stripe Checkout</CardTitle>
+                    <CardDescription>
+                        Complete your Purchase
+                    </CardDescription>
+                </CardHeader>
+                <CardContent class="py-6 ">
+                    <form @submit.prevent="handlePayment">
+                        <div id="checkout-form"><!-- Stripe card element will be mounted here --></div>
+                        <Button id="submit" class="w-full mt-10" @click="nextStep">
+                            <div class="spinner hidden" id="spinner"></div>
+                            <span id="button-text">Pay ${{ orderAmount.toFixed(2) }}</span>
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+            <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+        </div>
+    </div>
+
 
 
     <div class="flex flex-inline justify-center my-4 space-x-20">
         <Button @click="previousStep" variant="grey">Previous</Button>
-        <Button @click="nextStep">{{ buttonText }}</Button>
+        <Button @click="nextStep" v-if="activeStep !== 4">{{ buttonText }}</Button>
     </div>
 
     <Dialog :open="showDialog">
@@ -319,6 +370,11 @@ export default {
 
             restaurantPhoneNumber: "",
             restaurantAddress: "",
+
+            // Stripe
+            elements: null,
+            errorMessage: "",
+            stripe: null,
         };
     },
     computed: {
@@ -341,6 +397,9 @@ export default {
                     return "Next";
             }
         },
+        orderAmount() {
+            return this.orderCart.reduce((acc, item) => acc + (item.pricePerUnit * item.purchaseQuantity), 0)
+        }
     },
     watch: {
         // Watch each item’s purchaseQuantity in inventory
@@ -376,6 +435,7 @@ export default {
                     this.showDialog = true;
                     this.activeStep = 3;
                 } else {
+                    this.createPayment();
                     this.activeStep = index;
                 }
             }
@@ -401,11 +461,12 @@ export default {
                     this.description = "Please provide an address/phone number to proceed";
                     this.showDialog = true;
                 } else {
+                    this.createPayment();
                     this.activeStep++;
                 }
             } else if (this.activeStep == 4) {
                 // Call the payment function
-                this.handleConfirmedOrder();
+                this.completePayment();
             }
             else
                 if (this.activeStep < this.steps.length) {
@@ -456,7 +517,6 @@ export default {
                 }));
 
                 this.supplierListing = mergedData;
-                console.log(this.supplierListing);
 
             } catch (error) {
                 console.error('Error fetching listings:', error)
@@ -478,6 +538,72 @@ export default {
             // Add Phone Number to restaurantPhoneNumber
             this.restaurantPhoneNumber = this.userInfo.companyNumber;
             console.log(this.userInfo);
+        },
+        async createPayment() {
+            try {
+                // Calculate the total amount in cents (multiply by 100 for Stripe's format)
+                const amountInCents = this.orderCart.reduce((acc, item) => acc + (item.pricePerUnit * item.purchaseQuantity * 100), 0);
+
+                // Make Axios POST request to backend to create PaymentIntent
+                const response = await axios.post("http://54.169.182.213//create-checkout", {
+                    amount: amountInCents
+                });
+
+                // Get the clientSecret from the response
+                this.clientSecret = response.data.clientSecret;
+
+                // Initialize Stripe
+                this.stripe = await loadStripe('pk_test_51QHnfFELG51EPCRqyoGXIJ4L3B1Y7HAk0L6Gc1qo9Mn4MUkz3DiffFQzgTV2gCU3xxu3pLTkMFJ05WgcCNkmX3N900l2hWpuqe'); // Replace with your Stripe publishable key
+
+                const appearance = {
+                    theme: 'stripe',
+                };
+
+                this.elements = this.stripe.elements({ appearance, clientSecret: this.clientSecret },);
+
+                const paymentElementOptions = {
+                    layout: "tabs",
+                    business: {
+                        name: "ONE.RS"
+                    },
+                };
+
+                const paymentElement = this.elements.create("payment", paymentElementOptions);
+
+                // Mount the checkout form to the page
+                paymentElement.mount('#checkout-form');
+
+            } catch (error) {
+                console.error("Error during payment process:", error);
+                this.errorMessage = error.message || 'An error occurred during the payment process.';
+            }
+
+        },
+        async completePayment() {
+
+            const { error, paymentIntent } = await this.stripe.confirmPayment({
+                elements: this.elements,
+                confirmParams: {
+                return_url: "http://localhost:5173/#",
+                },
+                redirect: 'if_required',
+            });
+
+            // Handle errors or success messages
+            if (error) {
+                if (error.type === "card_error" || error.type === "validation_error") {
+                    message.value = error.message;
+                } else {
+                    message.value = "An unexpected error occurred.";
+                }
+            }
+
+            // If payment succeeds, add order to Firebase
+
+            if (paymentIntent && paymentIntent.status === "succeeded") {
+                await this.handleConfirmedOrder();
+            }
+
         },
 
         async handleConfirmedOrder() {
@@ -518,7 +644,7 @@ export default {
                 const orderData = {
                     orderID: length.toString(),
                     date: new Date(),
-                    paymentStatus: "Pending",
+                    paymentStatus: "Paid",
                     buyerID: sessionStorage.getItem("uid"),
                     supplierID: this.supplierId,
                     orderedItems: this.orderCart,
@@ -598,7 +724,7 @@ export default {
 
                     return acc;
                 }, { ...beforeOrder });  // Start with a copy of beforeOrder
-                
+
                 // Update the inventory levels with afterOrder in inventoryData[docTitle]
                 const updatedInventoryData = {
                     [docTitle]: {
@@ -628,7 +754,7 @@ export default {
 
         this.updateInventoryLevels();
 
-        
+
     },
 };
 </script>
