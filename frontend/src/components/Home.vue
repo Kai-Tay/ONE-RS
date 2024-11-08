@@ -147,7 +147,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72">
+                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
                             <img src="../assets/img/oners_orderHistory.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
@@ -167,7 +167,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72">
+                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
                             <img src="../assets/img/oners_chat.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
@@ -257,7 +257,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72">
+                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
                             <img src="../assets/img/oners_findSuppliers.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
@@ -278,7 +278,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-80">
+                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-80 hidden md:block">
                             <img src="../assets/img/oners_dashboard.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
