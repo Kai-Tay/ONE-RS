@@ -20,6 +20,7 @@ import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, Di
 <template>
     <!-- Filter Bar from Search -->
 
+
     <div class="mt-5 mb-5 mx-5 space-y-10">
         <div class="text-4xl font-bold h-10">{{ supplierListing.supplierName }}</div>
     </div>
