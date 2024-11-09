@@ -139,22 +139,68 @@ export default {
     },
 
     async submitUpdatedLevels() {
-        console.log("Updated Inventory Levels:", this.updatedLevels); 
-
         const inventoryDocRef = doc(db, "inventoryLevels", this.restaurantId);
-        console.log("DOC Ref",  inventoryDocRef)
-        // try {
-        //     // Update Firestore with the new inventory levels from updatedLevels
-        //     await updateDoc(inventoryDocRef, {
-        //         currentInventoryLevel: this.updatedLevels,
-        //     });
 
-        // alert("Inventory updated successfully!");
-        // } catch (error) {
-        //     console.error("Error updating inventory:", error);
-        //     alert("Failed to update inventory.");
-        // }
-    },
+        try {
+            // Step 1: Retrieve the current inventory data
+            const docSnapshot = await getDoc(inventoryDocRef);
+
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+
+                // Step 2: Check if selected interval ends with "-5" and requires `afterOrder`
+                if (this.selectedInterval.endsWith("-5") && !data.currentInventoryLevel[this.selectedInterval]?.afterOrder) {
+                    // Prompt the user to confirm if they want to proceed without ordering
+                    const proceedWithoutOrder = confirm(
+                        "AfterOrder data is missing. Would you like to proceed without ordering a new shipment?"
+                    );
+
+                    if (!proceedWithoutOrder) {
+                        // If the user selects "No," exit the function without updating
+                        return;
+                    }
+                }
+
+                // Step 3: Move the current inventory level to pastInventoryLevels
+                const currentIntervalData = data.currentInventoryLevel[this.selectedInterval];
+                const pastInventoryUpdate = {
+                    ...data.pastInventoryLevels,
+                    [this.selectedInterval]: currentIntervalData
+                };
+
+                // Step 4: Prepare the new `currentInventoryLevel` data based on selected interval
+                let newCurrentLevel = {};
+
+                if (this.selectedInterval.endsWith("-4")) {
+                    // Handle case for interval ending with -4 (updating for -5)
+                    const updatedData = {
+                        beforeOrder: this.updatedLevels // Update with the new levels under beforeOrder
+                    };
+                    newCurrentLevel = {
+                        [this.nextIntervalDisplay]: updatedData
+                    };
+                } else {
+                    // For all other intervals, move the whole data as usual
+                    newCurrentLevel = {
+                        [this.nextIntervalDisplay]: this.updatedLevels
+                    };
+                }
+
+                // Step 5: Update Firestore with the moved data
+                await updateDoc(inventoryDocRef, {
+                    pastInventoryLevels: pastInventoryUpdate,
+                    currentInventoryLevel: newCurrentLevel
+                });
+
+                alert("Inventory updated and archived successfully!");
+            } else {
+                console.error("No document found for the provided restaurant ID:", this.restaurantId);
+            }
+        } catch (error) {
+            console.error("Error updating inventory:", error);
+            alert("Failed to update inventory.");
+        }
+    }
     },
 
     mounted() {
