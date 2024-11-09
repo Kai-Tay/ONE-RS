@@ -4,6 +4,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button'
+import Skeleton from '../ui/skeleton/Skeleton.vue';
 import {
     Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,
 } from '@/components/ui/card'
@@ -11,14 +12,14 @@ import { collection, query, getDocs, where } from "firebase/firestore";
 import { db } from '../../firebase.js';
 import { TagsInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags'
 import axios from 'axios';
-import Skeleton from '../ui/skeleton/Skeleton.vue';
 </script>
 
 <template>
     <div class="container mx-auto my-5 px-8 " v-if="loading">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <Skeleton class="h-[35px] w-[200px] rounded-xl my-1" />
+                <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
+                <Skeleton class="h-[20px] w-[180px] rounded-xl" />
             </div>
         </div>
         <Skeleton class="h-[35px] rounded-xl my-1 my-5" />
@@ -27,73 +28,76 @@ import Skeleton from '../ui/skeleton/Skeleton.vue';
     </div>
 
     <div v-else>
-        <!-- Filter Bar from Search -->
-        <div class="mt-5 mb-5 mx-8">
-            <div class="text-4xl font-bold">Suppliers</div>
-            <!-- Search Bar Section -->
-            <div class="mt-4">
-                <div class="flex items-center space-x-5">
-                    <Input class="" :placeholder="searchPlaceholder" v-model="searchQuery" />
-                    <Button class="rounded-full px-5 py-2 text-md" @click="filterListings">🔎 Search</Button>
-                </div>
-                <div class="my-4 mx-2 flex items-center justify-center">
-                    <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
-                    <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' :
-                        'Disabled' }}</Label>
-                </div>
-
-            </div>
-            <TagsInput v-model="searchResult">
-                <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
-                    <TagsInputItemText />
-                    <TagsInputItemDelete @click="handleFilterBoxClose" />
-                </TagsInputItem>
-            </TagsInput>
+    <!-- Filter Bar from Search -->
+    <div class="mt-5 mb-5 px-8">
+        <div>
+            <h2 class="text-2xl font-bold">Suppliers</h2>
+            <p class="text-sm">Find and Connect with Suppliers</p>
         </div>
-
-        <!-- Listings Section -->
-        <div class="grid grid-cols-1 gap-4 mx-8 ">
-            <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
-                <Card>
-                    <CardContent class="flex items-center pt-4">
-                        <!-- Centered Placeholder Image on the Left -->
-                        <div class="w-1/5 flex items-center justify-center">
-                            <img src="./images/placeholder.svg" alt="Placeholder Image"
-                                class="w-auto h-auto object-cover rounded-md">
-                        </div>
-
-                        <!-- Supplier Content on the Right -->
-                        <div class="ml-4 w-3/5 flex flex-col">
-                            <CardHeader>
-                                <CardTitle>
-                                    <div class="text-2xl">{{ listing.supplierName }}</div>
-                                </CardTitle>
-                                <CardDescription class="text-lg">
-                                    {{
-                                        Array.from(new Set(listing.inventory.map(item => item.category))).join(", ")
-                                    }}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardFooter>
-                                <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
-                            </CardFooter>
-                        </div>
-                        <div class="w-3/5">
-                            <CardContent>
-                                <div class="flex flex-col">
-                                    <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
-                                    <CardDescription class="text-md" v-for="item in listing.inventory"
-                                        :key="item.productName">
-                                        {{ item.productName }} - {{ item.subcategory }}
-                                    </CardDescription>
-                                </div>
-                            </CardContent>
-                        </div>
-                    </CardContent>
-                </Card>
+        <!-- Search Bar Section -->
+        <div class="mt-4">
+            <div class="flex items-center space-x-5">
+                <Input class="" :placeholder="searchPlaceholder" v-model="searchQuery" />
+                <Button class="rounded-full px-5 py-2 text-md" @click="filterListings">🔎 Search</Button>
             </div>
+            <div class="my-4 mx-2 flex items-center justify-center">
+                <Switch id="aiSearch" :checked="isAiSearch" @update:checked="handleSwitchToggle" />
+                <Label for="aiSearch" class="text-gray-700 ml-2 text-lg">Use AI Search {{ isAiSearch ? 'Enabled' :
+                    'Disabled' }}</Label>
+            </div>
+
+        </div>
+        <TagsInput v-model="searchResult">
+            <TagsInputItem v-for="item in searchResult" :key="item" :value="item">
+                <TagsInputItemText />
+                <TagsInputItemDelete @click="handleFilterBoxClose" />
+            </TagsInputItem>
+        </TagsInput>
+    </div>
+
+    <!-- Listings Section -->
+    <div class="grid grid-cols-1 gap-4 px-8">
+        <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
+            <Card>
+                <CardContent class="flex items-center pt-4">
+                    <!-- Centered Placeholder Image on the Left -->
+                    <div class="w-1/5 flex items-center justify-center">
+                        <img :src="listing.imageData || './images/placeholder.svg'" alt="Supplier Image"
+                            class="w-auto h-auto max-h-40 object-cover rounded-md">
+                    </div>
+
+                    <!-- Supplier Content on the Right -->
+                    <div class="ml-4 w-3/5 flex flex-col">
+                        <CardHeader>
+                            <CardTitle>
+                                <div class="text-2xl">{{ listing.supplierName }}</div>
+                            </CardTitle>
+                            <CardDescription class="text-lg">
+                                {{
+                                    Array.from(new Set(listing.inventory.map(item => item.category))).join(", ")
+                                }}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                            <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
+                        </CardFooter>
+                    </div>
+                    <div class="w-3/5">
+                        <CardContent>
+                            <div class="flex flex-col">
+                                <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
+                                <CardDescription class="text-md" v-for="item in listing.inventory"
+                                    :key="item.productName">
+                                    {{ item.productName }} - {{ item.subcategory }}
+                                </CardDescription>
+                            </div>
+                        </CardContent>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </div>
+</div>
 </template>
 
 <style scoped>
@@ -134,7 +138,7 @@ export default {
             // Filter Bar Variable
             searchResult: [],
 
-            loading: true,
+            loading:true,
         };
     },
     mounted() {
@@ -181,16 +185,19 @@ export default {
                 const mergedArray = listingsArray.map(listing => {
                     const company = usersArray.find(user => user.id === listing.id)
 
-                    return { ...listing, supplierDescription: company.companyDescription }
+                    return { ...listing, supplierDescription: company.companyDescription, imageData: company.imageData || null }
                 })
 
                 this.listings = mergedArray;
                 this.filteredListings = this.listings;
 
-                this.loading = false;
             } catch (error) {
                 console.error('Error fetching listings:', error)
             }
+            // Simulate data fetching or delay
+            setTimeout(() => {
+                    this.loading = false; // Set loading to false once data is loaded
+                }, 250);
         },
 
         filterListings() {

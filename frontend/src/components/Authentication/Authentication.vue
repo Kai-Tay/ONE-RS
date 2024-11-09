@@ -14,6 +14,9 @@ import {
 } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import AuthenticationDialog from './AuthenticationDialog.vue';
+import { ref as vueRef } from 'vue';
+import ImageCropper from '../Supplier/ImageCropper.vue'
+import 'vue-advanced-cropper/dist/style.css'
 </script>
 
 <!-- HTML STUFF -->
@@ -155,6 +158,29 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
               <Input id="password" type="password" v-model="password" required :class="{'border-red-500': submitted && !password}"/>
             </div>
 
+            <div class="space-y-1">
+              <Label for="companyLogo">Company Logo</Label>
+              <div class="space-y-2">
+                <img 
+                  v-if="imagePreview" 
+                  :src="imagePreview" 
+                  alt="Company Logo" 
+                  class="w-32 h-32 object-cover rounded-lg"
+                />
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  @change="handleImageUpload" 
+                  class="mt-1 block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100"
+                />
+              </div>
+            </div>
+
             <Button type="submit" class="w-full" @click="handleSignUp">
               Sign Up
             </Button>
@@ -176,6 +202,29 @@ import AuthenticationDialog from './AuthenticationDialog.vue';
     :success="statusSuccess" @update:showDialog="showAuthDialog = $event" />
   <div v-if="validationError" class="validation-error">
     {{ validationError }}
+  </div>
+
+  <!-- Cropper Dialog -->
+  <div v-if="showCropper && selectedFile" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-4 rounded-lg max-w-2xl w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Crop Image</h3>
+        <button @click="cancelCrop" class="text-gray-500 hover:text-gray-700">
+          Cancel
+        </button>
+      </div>
+      <div class="mb-4">
+        <ImageCropper
+          :image-file="selectedFile"
+          @crop-complete="handleCropComplete"
+          @cancel="() => showCropper = false"
+        />
+      </div>
+      <div class="flex justify-end gap-2">
+        <Button variant="outline" @click="cancelCrop">Cancel</Button>
+        <Button @click="cropImage">Crop & Save</Button>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -207,6 +256,12 @@ export default {
 
       submitted: false,
       validationError: "", 
+      imageData: null,
+      imagePreview: null,
+      imageSource: null,
+      showCropper: false,
+      selectedFile: null,
+      imageFile: null,
     };
   },
   created() {
@@ -335,14 +390,19 @@ export default {
         userType: this.isSupplier ? "supplier" : "restaurant",
         points: this.isSupplier ? null : 0,
         companyDescription: this.isSupplier ? this.companyDescription : null,
+        imageData: this.isSupplier ? this.imageData : null,
       })
         .then(() => {
-          // Create inventory document if user is a supplier
-          if (!this.isSupplier) {
-            return setDoc(doc(db, "inventoryLevels", user.uid), {
-          });
+          // Create supplier listing if user is a supplier
+          if (this.isSupplier) {
+            return setDoc(doc(db, "supplierListing", user.uid), {
+              supplierName: this.companyName,
+              inventory: [],
+              // Add any other supplier-specific fields you need
+            });
           }
-          return Promise.resolve(); 
+          // Create inventory document if user is a restaurant
+          return setDoc(doc(db, "inventoryLevels", user.uid), {});
         })
         .then(() => {
           // Create restaurant document if user is NOT a supplier
@@ -398,9 +458,14 @@ export default {
       "Company Number": this.companyNumber
     };
 
-    // Add company description for supplier
+    // Add company description and logo for supplier
     if (this.isSupplier) {
       commonFields["Company's Description"] = this.companyDescription;
+      // Check if imagePreview exists (which is set after successful crop)
+      if (!this.imagePreview) {
+        this.showValidationError('Company Logo', 'Please upload and crop a company logo');
+        return false;
+      }
     }
 
     // Check each field
@@ -428,8 +493,33 @@ export default {
     },
     showValidationError(fieldName, customMessage = null) {
       this.validationError = customMessage || `${fieldName} is required`;
-    }
+    },
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedFile = file;
+        this.showCropper = true;
+      }
+    },
 
+    handleCropComplete({ file, url }) {
+      this.imageFile = file;
+      this.imagePreview = url;
+      this.imageData = url;
+      this.showCropper = false;
+    },
+
+    cancelCrop() {
+      this.showCropper = false;
+      this.imageSource = null;
+      // Reset file input
+      const fileInput = document.getElementById('companyLogo');
+      if (fileInput) fileInput.value = '';
+    },
+
+    cropImage() {
+      this.showCropper = false;
+    },
   },
   watch: {
     '$route.query': {
@@ -512,5 +602,23 @@ input {
   color: red;
   margin-top: 20px;
   text-align: center;
+}
+
+.image-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+}
+
+.cropper-container {
+  width: 100%;
+  height: 400px;
+}
+
+/* Make sure the cropper is responsive */
+@media (max-width: 640px) {
+  .cropper-container {
+    height: 300px;
+  }
 }
 </style>
