@@ -505,7 +505,14 @@ export default {
     handleCropComplete({ file, url }) {
       this.imageFile = file;
       this.imagePreview = url;
-      this.imageData = url;
+      
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        this.imageData = reader.result; // This will be the base64 string
+      };
+      reader.readAsDataURL(file);
+      
       this.showCropper = false;
     },
 
