@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from './Navbar.vue';
 import Chat from './chat.vue';
+import Skeleton from './ui/skeleton/Skeleton.vue';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from './ui/table';
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
@@ -12,7 +13,18 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 </script>
 
 <template>
-    <div class="container mx-auto px-8 my-5 ">
+     <div class="container mx-auto px-8 my-5 " v-if="loading">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
+                <Skeleton class="h-[20px] w-[180px] rounded-xl" />
+            </div>
+        </div>
+
+        <Skeleton class="h-[500px] w-full rounded-xl" />
+    </div>
+
+    <div class="container mx-auto px-8 my-5 " v-else>
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold">Order History</h2>
@@ -244,6 +256,8 @@ export default {
         return {
             userType: "restaurant",
             orderHistory: [],
+
+            loading: true,
         }
     },
     methods: {
@@ -309,6 +323,10 @@ export default {
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
+            // Simulate data fetching or delay
+            setTimeout(() => {
+                    this.loading = false; // Set loading to false once data is loaded
+                }, 250);
         }
     },
     mounted() {

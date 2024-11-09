@@ -4,6 +4,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button'
+import Skeleton from '../ui/skeleton/Skeleton.vue';
 import {
     Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,
 } from '@/components/ui/card'
@@ -14,9 +15,25 @@ import axios from 'axios';
 </script>
 
 <template>
+    <div class="container mx-auto my-5 px-8 " v-if="loading">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
+                <Skeleton class="h-[20px] w-[180px] rounded-xl" />
+            </div>
+        </div>
+        <Skeleton class="h-[35px] rounded-xl my-1 my-5" />
+
+        <Skeleton class="h-[400px] w-full rounded-xl mt-20" />
+    </div>
+
+    <div v-else>
     <!-- Filter Bar from Search -->
-    <div class="mt-5 mb-5 mx-5">
-        <div class="text-4xl font-bold">Suppliers</div>
+    <div class="mt-5 mb-5 px-8">
+        <div>
+            <h2 class="text-2xl font-bold">Suppliers</h2>
+            <p class="text-sm">Find and Connect with Suppliers</p>
+        </div>
         <!-- Search Bar Section -->
         <div class="mt-4">
             <div class="flex items-center space-x-5">
@@ -39,14 +56,13 @@ import axios from 'axios';
     </div>
 
     <!-- Listings Section -->
-    <div class="grid grid-cols-1 gap-4 mx-8  md:mx-28">
+    <div class="grid grid-cols-1 gap-4 px-8">
         <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
                 <CardContent class="flex items-center pt-4">
                     <!-- Centered Placeholder Image on the Left -->
                     <div class="w-1/5 flex items-center justify-center">
-                        <img :src="listing.imageData || './images/placeholder.svg'" 
-                            alt="Supplier Image"
+                        <img :src="listing.imageData || './images/placeholder.svg'" alt="Supplier Image"
                             class="w-auto h-auto max-h-40 object-cover rounded-md">
                     </div>
 
@@ -67,7 +83,7 @@ import axios from 'axios';
                         </CardFooter>
                     </div>
                     <div class="w-3/5">
-                    <CardContent>
+                        <CardContent>
                             <div class="flex flex-col">
                                 <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
                                 <CardDescription class="text-md" v-for="item in listing.inventory"
@@ -81,6 +97,7 @@ import axios from 'axios';
             </Card>
         </div>
     </div>
+</div>
 </template>
 
 <style scoped>
@@ -120,6 +137,8 @@ export default {
 
             // Filter Bar Variable
             searchResult: [],
+
+            loading:true,
         };
     },
     mounted() {
@@ -175,6 +194,10 @@ export default {
             } catch (error) {
                 console.error('Error fetching listings:', error)
             }
+            // Simulate data fetching or delay
+            setTimeout(() => {
+                    this.loading = false; // Set loading to false once data is loaded
+                }, 250);
         },
 
         filterListings() {
