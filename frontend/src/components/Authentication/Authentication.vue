@@ -393,12 +393,16 @@ export default {
         imageData: this.isSupplier ? this.imageData : null,
       })
         .then(() => {
-          // Create inventory document if user is a supplier
-          if (!this.isSupplier) {
-            return setDoc(doc(db, "inventoryLevels", user.uid), {
-          });
+          // Create supplier listing if user is a supplier
+          if (this.isSupplier) {
+            return setDoc(doc(db, "supplierListing", user.uid), {
+              supplierName: this.companyName,
+              inventory: [],
+              // Add any other supplier-specific fields you need
+            });
           }
-          return Promise.resolve(); 
+          // Create inventory document if user is a restaurant
+          return setDoc(doc(db, "inventoryLevels", user.uid), {});
         })
         .then(() => {
           // Create restaurant document if user is NOT a supplier
@@ -457,7 +461,11 @@ export default {
     // Add company description and logo for supplier
     if (this.isSupplier) {
       commonFields["Company's Description"] = this.companyDescription;
-      commonFields["Company Logo"] = this.imageData;
+      // Check if imagePreview exists (which is set after successful crop)
+      if (!this.imagePreview) {
+        this.showValidationError('Company Logo', 'Please upload and crop a company logo');
+        return false;
+      }
     }
 
     // Check each field
@@ -497,6 +505,7 @@ export default {
     handleCropComplete({ file, url }) {
       this.imageFile = file;
       this.imagePreview = url;
+      this.imageData = url;
       this.showCropper = false;
     },
 
@@ -509,22 +518,7 @@ export default {
     },
 
     cropImage() {
-      const cropper = this.$refs.cropper;
-      if (cropper) {
-        // Get the cropped canvas
-        const canvas = cropper.getCroppedCanvas({
-          width: 256,
-          height: 256,
-          imageSmoothingEnabled: true,
-          imageSmoothingQuality: 'high',
-        });
-
-        // Convert canvas to base64
-        this.imageData = canvas.toDataURL('image/jpeg', 0.9);
-        this.imagePreview = this.imageData;
-        this.showCropper = false;
-        this.imageSource = null;
-      }
+      this.showCropper = false;
     },
   },
   watch: {
