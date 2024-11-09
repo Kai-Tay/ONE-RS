@@ -48,8 +48,8 @@ import { DonutChart } from './ui/chart-donut';
                         <CardTitle class="text-center">Categories Purchased</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <DonutChart v-if="categoryPercentages.length" index="category" :category="['percentage']"
-                            :data="categoryPercentages" :type="'pie'" />
+                        <DonutChart v-if="categoryPercentages.length" index="category" :category="'percentage'"
+                            :data="categoryPercentages" :type="'pie'"/>
                     </CardContent>
                 </Card>
             </div>
@@ -95,8 +95,8 @@ import { DonutChart } from './ui/chart-donut';
                         <CardTitle class="text-center">Categories Sold</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <DonutChart v-if="categoryPercentages.length" index="category" :category="['percentage']"
-                            :data="categoryPercentages" :type="'pie'" />
+                        <DonutChart v-if="categoryPercentages.length" index="category" :category="'percentage'"
+                            :data="categoryPercentages" :type="'pie'"/>
                     </CardContent>
                 </Card>
             </div>
@@ -120,7 +120,7 @@ export default {
             total: 0,
             percentageChange: 0,
             changeType: "",
-            bestCategory: "Meat"
+            bestCategory: "Meat",
         }
     },
     methods: {
@@ -243,8 +243,8 @@ export default {
 
                 // Calculate percentage for each category
                 this.categoryPercentages = Object.keys(categoryTotals).map(category => ({
-                    category,
-                    percentage: ((categoryTotals[category] / totalQuantity) * 100).toFixed(2)
+                    name: category,
+                    percentage: Number(((categoryTotals[category] / totalQuantity) * 100).toFixed(2))
                 }));
 
                 console.log("Category Percentages:", this.categoryPercentages);
@@ -285,6 +285,7 @@ export default {
         this.userId = sessionStorage.uid;
         this.userType = sessionStorage.userType;
         this.fetchOrderData();
+        console.log()
     }
 }
 </script>
