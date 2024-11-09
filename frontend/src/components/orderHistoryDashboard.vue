@@ -4,6 +4,7 @@ import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from '../firebase';
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { AreaChart } from "./ui/areaChart";
+import { DonutChart } from './ui/chart-donut';
 </script>
 
 <template>
@@ -19,7 +20,7 @@ import { AreaChart } from "./ui/areaChart";
             <!-- Monthly Spent Changes Card Card -->
             <Card class="p-4 flex flex-col justify-center">
                 <p class="text-sm font-medium">Monthly Spent Changes</p>
-                <p class="text-3xl font-semibold">{{ changeType }}{{ percentageChange }}%</p>
+                <p class="text-2xl font-semibold">{{ changeType }}{{ percentageChange }}%</p>
             </Card>
 
             <!-- Most Purchased Category Card -->
@@ -30,8 +31,8 @@ import { AreaChart } from "./ui/areaChart";
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto px-8 my-5">
-            <div>
-                <Card>
+            <div class="flex-1">
+                <Card class="h-full">
                     <CardHeader>
                         <CardTitle class="text-center">Total Spent Graph</CardTitle>
                     </CardHeader>
@@ -41,13 +42,14 @@ import { AreaChart } from "./ui/areaChart";
                     </CardContent>
                 </Card>
             </div>
-            <div>
-                <Card>
+            <div class="flex-1">
+                <Card class="h-full">
                     <CardHeader>
                         <CardTitle class="text-center">Categories Purchased</CardTitle>
                     </CardHeader>
                     <CardContent>
-
+                        <DonutChart v-if="categoryPercentages.length" index="category" :category="['percentage']"
+                            :data="categoryPercentages" :type="'pie'" />
                     </CardContent>
                 </Card>
             </div>
@@ -66,7 +68,7 @@ import { AreaChart } from "./ui/areaChart";
             <!-- Monthly Earned Changes Card -->
             <Card class="p-4 flex flex-col justify-center">
                 <p class="text-sm font-medium">Monthly Earned Changes</p>
-                <p class="text-3xl font-semibold">{{ changeType }}{{ percentageChange }}%</p>
+                <p class="text-2xl font-semibold">{{ changeType }}{{ percentageChange }}%</p>
             </Card>
 
             <!-- Most Sold Category Card -->
@@ -76,23 +78,28 @@ import { AreaChart } from "./ui/areaChart";
             </Card>
         </div>
         <div class="container grid grid-cols-2 gap-4 mx-auto px-8 my-5">
-            <Card>
-                <CardHeader>
-                    <CardTitle class="text-center">Total Earned Graph</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <AreaChart v-if="monthlyTotals.length" :data="monthlyTotals" index="month"
-                        :categories="['total']" />
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle class="text-center">Categories Sold</CardTitle>
-                </CardHeader>
-                <CardContent>
-
-                </CardContent>
-            </Card>
+            <div class="flex-1">
+                <Card class="h-full">
+                    <CardHeader>
+                        <CardTitle class="text-center">Total Earned Graph</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <AreaChart v-if="monthlyTotals.length" :data="monthlyTotals" index="month"
+                            :categories="['total']" />
+                    </CardContent>
+                </Card>
+            </div>
+            <div class="flex-1">
+                <Card class="h-full">
+                    <CardHeader>
+                        <CardTitle class="text-center">Categories Sold</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <DonutChart v-if="categoryPercentages.length" index="category" :category="['percentage']"
+                            :data="categoryPercentages" :type="'pie'" />
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     </section>
 </template>
@@ -109,10 +116,11 @@ export default {
             userType: "",
             orderHistory: [],
             monthlyTotals: [],
+            categoryPercentages: [],
             total: 0,
             percentageChange: 0,
             changeType: "",
-            bestCategory: "Meat",
+            bestCategory: "Meat"
         }
     },
     methods: {
@@ -139,8 +147,9 @@ export default {
                 // Clear existing orders
                 this.orderHistory = [];
 
-                // Object to store monthly totals
+                // Object to store monthly totals and category totals
                 const monthlyTotals = {};
+                const categoryTotals = {};
 
                 // Collect and process all orders that involve the current user
                 const orders = [];
@@ -163,6 +172,16 @@ export default {
                             monthlyTotals[monthName] = 0;
                         }
                         monthlyTotals[monthName] += totalPrice;
+
+                        // Accumulate category totals
+                        data.orderedItems.forEach(item => {
+                            const category = item.category;
+                            const quantity = parseInt(item.quantity) || 0;
+                            if (!categoryTotals[category]) {
+                                categoryTotals[category] = 0;
+                            }
+                            categoryTotals[category] += quantity;
+                        });
 
                         orders.push(data);
                     }
@@ -210,12 +229,25 @@ export default {
                         } else {
                             this.changeType = '=';
                         }
-                        console.log(this.changeType);
                     }
                     else {
                         console.log(`Previous month's total is 0, cannot calculate percentage change.`);
                     }
                 }
+
+                // Calculate total quantity of ALL items
+                let totalQuantity = 0;
+                for (const category in categoryTotals) {
+                    totalQuantity += categoryTotals[category];
+                }
+
+                // Calculate percentage for each category
+                this.categoryPercentages = Object.keys(categoryTotals).map(category => ({
+                    category,
+                    percentage: ((categoryTotals[category] / totalQuantity) * 100).toFixed(2)
+                }));
+
+                console.log("Category Percentages:", this.categoryPercentages);
 
                 // Fetch user details for each order
                 for (const order of orders) {

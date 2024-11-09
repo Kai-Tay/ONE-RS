@@ -14,10 +14,10 @@ const props = defineProps({
     showLegend: { type: Boolean, required: false, default: true },
     showTooltip: { type: Boolean, required: false, default: true },
     filterOpacity: { type: Number, required: false, default: 0.2 },
-    category: { type: String, required: true },
+    category: { type: Array, required: true },
     type: { type: String, required: false, default: 'donut' },
     sortFunction: { type: Function, required: false, default: () => undefined },
-    valueFormatter: { type: Function, required: false, default: (tick: number) => `${tick}` },
+    valueFormatter: { type: Function, required: false, default: (tick) => `${tick}` },
     customTooltip: { type: null, required: false }
   }
 );
