@@ -1,82 +1,131 @@
 <template>
-    <label for="categorySelect">Select Category:</label>
-    <select id="categorySelect" v-model="selectedCategory" @change="onCategoryChange" :disabled="!inventoryDataLoaded">
-        <option v-for="(items, category) in inventoryData" :key="category" :value="category">
-            {{ category }}
-        </option>
-    </select>
+    <div class="p-8 bg-gray-100 min-h-screen">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-6">Inventory Management</h1>
 
-    <label for="itemSelect">Select Item:</label>
-    <select id="itemSelect" v-model="selectedItem" :disabled="!selectedCategory">
-        <option v-for="(quantity, item) in filteredItems" :key="item" :value="item">
-            {{ item }}
-        </option>
-    </select>
-
-    <label for="serviceLevel">Service Level (%):</label>
-    <input 
-        type="number" 
-        id="serviceLevel" 
-        v-model="serviceLevel" 
-        min="0" 
-        max="100" 
-        @input="updateDependentValues"
-        placeholder="96"
-    />
-    <div v-if="serviceLevelWarning" class="warning">{{ serviceLevelWarning }}</div>
-
-    <!-- Updated chartData check to ensure it's defined -->
-    <div v-if="chartData && chartData.length > 0">
-        <AreaChart :key="updateCounter" :data="chartData" index="interval" :categories="['InventoryLevel', 'OUL', 'SafetyStock']" />
-    </div>
-    <div v-else>
-        Loading...
-    </div>
-
-    <!-- Add a divider between sections -->
-    <div class="mt-8 mb-4 border-t border-gray-200"></div>
-
-    <!-- Add the Inventory Levels section -->
-    <div>
-        <h2>Inventory Levels</h2>
-
-        <!-- Show loading indicator while fetching data -->
-        <div v-if="loadingTable" class="text-center">Loading...</div>
-
-        <!-- Render the table only once currentInventoryLevels data is available -->
-        <div v-else class="w-full">
-            <table class="min-w-full table-auto">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 text-left w-1/4">Category</th>
-                        <th class="px-4 py-2 text-left w-1/4">Item</th>
-                        <th class="px-4 py-2 text-left w-1/4">
-                            Current Level ({{ currentIntervalDisplay }})
-                        </th>
-                        <th class="px-4 py-2 text-left w-1/4">
-                            Update Level ({{ nextIntervalDisplay }})
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template v-for="(items, category) in currentInventoryLevels" :key="category">
-                        <tr v-for="(level, item, index) in items" :key="item">
-                            <td v-if="index === 0" :rowspan="Object.keys(items).length" class="border px-4 py-2 w-1/4">
-                                {{ category }}
-                            </td>
-                            <td class="border px-4 py-2 w-1/4">{{ item }}</td>
-                            <td class="border px-4 py-2 w-1/4">{{ level }}</td>
-                            <td class="border px-4 py-2 w-1/4">
-                                <input type="number" v-model.number="updatedLevels[category][item]" class="w-full" />
-                            </td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
+        <!-- Category Select -->
+        <div class="mb-6">
+            <label for="categorySelect" class="block text-gray-700 font-medium mb-2">Select Category:</label>
+            <select 
+                id="categorySelect" 
+                v-model="selectedCategory" 
+                @change="onCategoryChange" 
+                :disabled="!inventoryDataLoaded"
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
+            >
+                <option v-for="(items, category) in inventoryData" :key="category" :value="category">
+                    {{ category }}
+                </option>
+            </select>
         </div>
 
-        <!-- Submit button -->
-        <button @click="submitUpdatedLevels" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+        <!-- Item Select -->
+        <div class="mb-6">
+            <label for="itemSelect" class="block text-gray-700 font-medium mb-2">Select Item:</label>
+            <select 
+                id="itemSelect" 
+                v-model="selectedItem" 
+                :disabled="!selectedCategory"
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
+            >
+                <option v-for="(quantity, item) in filteredItems" :key="item" :value="item">
+                    {{ item }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Service Level Input -->
+        <div class="mb-6">
+            <label for="serviceLevel" class="block text-gray-700 font-medium mb-2">Service Level (%):</label>
+            <input 
+                type="number" 
+                id="serviceLevel" 
+                v-model="serviceLevel" 
+                min="0" 
+                max="100" 
+                @input="updateDependentValues"
+                placeholder="96"
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
+            />
+            <div v-if="serviceLevelWarning" class="text-red-500 text-sm mt-1">{{ serviceLevelWarning }}</div>
+        </div>
+
+
+        <div class="p-8 bg-gray-100 overflow-x-auto">
+          <!-- Card Section -->
+          <div class="max-w-full mx-auto bg-white shadow-lg rounded-lg p-6 min-w-[500px]">
+            <!-- Chart Section -->
+            <div class="flex justify-center items-center w-full">
+              <div 
+                class="relative w-full" 
+                style="height: auto;"
+                ref="chartContainer"
+              >
+                <LineChart
+                  :key="updateCounter"
+                  :data="filteredChartData"
+                  index="interval"
+                  :categories="['InventoryLevel', 'OUL', 'SafetyStock']"
+                  class="w-full h-full"
+                  :colors="['orange','blue','green']"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <!-- Divider -->
+        <div class="border-t border-gray-300 my-8"></div>
+
+        <!-- Inventory Levels Table -->
+          <div>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Inventory Levels</h2>
+
+              <!-- Loading indicator -->
+              <div v-if="loadingTable" class="text-center text-gray-600">Loading...</div>
+
+            <!-- Table -->
+            <div v-else class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700 text-left text-sm font-semibold">
+                            <th class="px-4 py-3 w-1/4">Category</th>
+                            <th class="px-4 py-3 w-1/4">Item</th>
+                            <th class="px-4 py-3 w-1/4">Current Level ({{ currentIntervalDisplay }})</th>
+                            <th class="px-4 py-3 w-1/4">Update Level ({{ nextIntervalDisplay }})</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="(items, category) in currentInventoryLevels" :key="category">
+                            <tr v-for="(level, item, index) in items" :key="item" class="border-b border-gray-200">
+                                <td v-if="index === 0" :rowspan="Object.keys(items).length" class="px-4 py-3 font-medium text-gray-800 bg-gray-100">
+                                    {{ category }}
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">{{ item }}</td>
+                                <td class="px-4 py-3 text-gray-700">{{ level }}</td>
+                                <td class="px-4 py-3">
+                                    <input 
+                                        type="number" 
+                                        v-model.number="updatedLevels[category][item]" 
+                                        class="w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                @click="submitUpdatedLevels" 
+                class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition duration-150 ease-in-out"
+            >
+                Submit
+            </button>
+        </div>
     </div>
 </template>
 
@@ -84,7 +133,7 @@
 <script setup>
 import { db } from '../firebase.js';
 import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
-import { AreaChart } from '@/components/ui/areaChart';
+import { LineChart } from '@/components/ui/chart-line';
 import { ref, watch, computed, onMounted } from 'vue';
 
 const selectedCategory = ref(null);
@@ -99,12 +148,22 @@ const chartData = ref([]);
 const updateCounter = ref(0);
 
 const calculatedResults = ref(null);
+const filteredChartData = computed(() => {
+  // Use slice to return the last 5 months of data (for example)
+  return chartData.value.slice(-20);
+});
+
+
 
 // Add new refs for inventory table
 const loadingTable = ref(true);
 const currentInventoryLevels = ref({});
 const updatedLevels = ref({});
 const selectedInterval = ref("");
+
+
+
+
 
 // Add computed properties for interval display
 const currentIntervalDisplay = computed(() => selectedInterval.value);
@@ -136,13 +195,12 @@ async function fetchInventoryData(restaurantId) {
 // Process and transform data for the chart
 function transformDataForChart(inventoryData, item) {
     const chartDataArray = [];
-    console.log("itemsnasjkdnakndks", item)
+   
     // Check if pastInventoryLevel exists
     if (inventoryData.pastInventoryLevels) {
         // Process past inventory levels
         for (const [interval, categories] of Object.entries(inventoryData.pastInventoryLevels)) {
-            console.log(`Processing interval: ${interval}`);
-            console.log(`Categories for interval ${interval}:`, categories);
+  
 
             const pastInv = inventoryData.pastInventoryLevels;
 
@@ -166,7 +224,7 @@ function transformDataForChart(inventoryData, item) {
                     }
                 }
             }
-            console.log("selected Cate", selectedCategory);
+         
             // Ensure "beef" data exists in "meat" category
             const beefExists = categories[selectedCategory]?.[item];
 
@@ -234,11 +292,10 @@ function transformDataForChart(inventoryData, item) {
     // Ensure "beef" data exists in "meat" category
     if (currentInv) {
     const interval = Object.keys(currentInv)[0]; // Get the single key
-    console.log("check if the storedOUL is there", storedOULResults);
+    
     if (interval.endsWith("-5")) {
-        console.log("ebdjwbdken", currentInv[interval].beforeOrder);
+       
 
-        console.log(`Interval ${interval} ends with -5`);
         
         // Add further processing here if needed
         let selectedCategory = null;
@@ -304,10 +361,9 @@ function transformDataForChart(inventoryData, item) {
     }
 
 
-    console.log("happy:", inventoryData.currentInventoryLevel);
 
     chartDataArray.sort((a, b) => (a.interval > b.interval ? 1 : -1));
-    console.log("Final Chart Data Array:", chartDataArray);
+
     return chartDataArray;
 }
 
@@ -395,7 +451,7 @@ function recalculateOULAndSS(newLevel) {
 // Function to update chart data based on selected item
 async function updateChartData(item) {
     if (item) {
-        console.log(`Updating chart for selected item: ${item}`);
+  
     
         const oulValue = getOUL(item); // Fetch OUL for the selected item
         const ssValue = getSS(item);   // Fetch Safety Stock for the selected item
@@ -404,7 +460,7 @@ async function updateChartData(item) {
         const inventoryData = await fetchInventoryData(sessionStorage.getItem("uid")); // Await the fetch call
         if (inventoryData) {
             chartData.value = transformDataForChart(inventoryData, item);  // Assign to the existing chartData ref
-            console.log("final one", chartData.value); // Check to ensure data is correct
+          
         }
 
         updateCounter.value++;
@@ -515,17 +571,15 @@ function calculateZScore(serviceLevel) {
     return jStat.normal.inv(level / 100, 0, 1);
 }
 
-console.log("hbsajdbajshb", serviceLevel);
+
 
 
 // Calculate OUL for all items
 function calculateOULForAllItems(itemMean, itemSD, serviceLevel) {
-    console.log(serviceLevel.value/100);
-    
     const T = 5; // Review time in Weeks
     const L = 1; // Lead time in Weeks
     const Z = calculateZScore(serviceLevel); // Z-score for 96% service level
-    console.log(Z);
+
     const totalTime = T + L;
     const OULResults = {};
 
@@ -605,6 +659,7 @@ function getSelectedInterval(inventoryLevels) {
 async function submitUpdatedLevels() {
     const currentUserId = sessionStorage.getItem("uid");
     const inventoryDocRef = doc(db, "inventoryLevels", currentUserId);
+    const restaurantDocRef = doc(db, "restaurant", currentUserId);
 
     try {
         const docSnapshot = await getDoc(inventoryDocRef);
@@ -612,62 +667,61 @@ async function submitUpdatedLevels() {
         if (docSnapshot.exists()) {
             const data = docSnapshot.data();
             const currentInterval = selectedInterval.value;
+            const updatedInterval = nextIntervalDisplay.value;
+            let currentData = data.currentInventoryLevel[currentInterval];
 
-            // Check if we're in interval-5
-            if (currentInterval.endsWith("-5")) {
-                const currentData = data.currentInventoryLevel[currentInterval];
-                
-                // If there's no afterOrder data, it means no order was placed
-                if (!currentData?.afterOrder) {
-                    const proceedWithoutOrder = window.confirm(
-                        "You haven't placed an order for this month. Would you like to proceed without placing an order?"
-                    );
-
-                    if (!proceedWithoutOrder) {
-                        return; // Exit if user wants to place an order first
-                    }
-                }
+            // Step 2: Check for interval "-5" and confirm order status
+            if (currentInterval.endsWith("-5") && !currentData?.afterOrder) {
+                const proceedWithoutOrder = window.confirm(
+                    "You haven't placed an order for this month. Would you like to proceed without placing an order?"
+                );
+                if (!proceedWithoutOrder) return;
             }
 
-            // Move current inventory to past inventory
+            // Step 3: Move the current inventory level to `pastInventoryLevels`
             const currentIntervalData = data.currentInventoryLevel[currentInterval];
             const pastInventoryUpdate = {
                 ...data.pastInventoryLevels,
                 [currentInterval]: currentIntervalData
             };
 
-            // Prepare new current inventory level
+            // Step 4: Prepare new `currentInventoryLevel` data based on interval
             let newCurrentLevel = {};
-
             if (currentInterval.endsWith("-4")) {
-                // For interval-4, prepare data for interval-5 with beforeOrder structure
                 newCurrentLevel = {
-                    [nextIntervalDisplay.value]: {
-                        beforeOrder: updatedLevels.value
-                    }
-                };
-            } else if (currentInterval.endsWith("-5")) {
-                // For interval-5, use the afterOrder data if it exists, otherwise use current levels
-                const levelsToUse = currentData?.afterOrder || updatedLevels.value;
-                newCurrentLevel = {
-                    [nextIntervalDisplay.value]: levelsToUse
+                    [updatedInterval]: { beforeOrder: updatedLevels.value }
                 };
             } else {
-                // For all other intervals, use normal structure
-                newCurrentLevel = {
-                    [nextIntervalDisplay.value]: updatedLevels.value
-                };
+                newCurrentLevel = { [updatedInterval]: updatedLevels.value };
             }
 
-            // Update Firestore
+            // Step 5: Calculate the difference, using `afterOrder` if it exists (for "-5" intervals); otherwise, compare directly
+            const demandDifference = {};
+            const comparisonSource = currentInterval.endsWith("-5") 
+                ? (currentIntervalData?.afterOrder || currentIntervalData?.beforeOrder) 
+                : currentIntervalData;
+
+            for (const category in comparisonSource) {
+                demandDifference[category] = {};
+                for (const item in comparisonSource[category]) {
+                    const oldValue = comparisonSource[category][item] || 0;
+                    const newValue = updatedLevels.value[category]?.[item] || 0;
+                    demandDifference[category][item] = oldValue - newValue;
+                }
+            }
+
+            // Step 6: Update Firestore with the new data
             await updateDoc(inventoryDocRef, {
                 pastInventoryLevels: pastInventoryUpdate,
                 currentInventoryLevel: newCurrentLevel
             });
 
-            alert("Inventory updated and archived successfully!");
-            
-            // Refresh the inventory data
+            // Step 7: Store demand difference in `actualDemand` for `restaurant` collection
+            await updateDoc(restaurantDocRef, {
+                [`actualDemand.${currentInterval}`]: demandDifference
+            });
+
+            alert("Inventory updated, archived, and demand recorded successfully!");
             await fetchCurrentInventory();
         } else {
             console.error("No document found for the provided user ID:", currentUserId);
@@ -677,6 +731,8 @@ async function submitUpdatedLevels() {
         alert("Failed to update inventory.");
     }
 }
+
+
 </script>
 
 <style scoped>
@@ -688,5 +744,10 @@ table {
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 100%;
 }
 </style>

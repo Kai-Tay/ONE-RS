@@ -1,16 +1,18 @@
-<!--
 <template>
     <div>
         <h2>Inventory Levels</h2>
 
+    <!-- Show loading indicator while fetching data -->
     <div v-if="loadingTable" class="text-center">Loading...</div>
 
+    <!-- Render the table only once currentInventoryLevels data is available -->
     <div v-else class="w-full">
         <table class="min-w-full table-auto">
             <thead>
                 <tr>
                     <th class="px-4 py-2 text-left w-1/4">Category</th>
                     <th class="px-4 py-2 text-left w-1/4">Item</th>
+                    <!-- Display current and next intervals in headers -->
                     <th class="px-4 py-2 text-left w-1/4">
                         Current Level ({{ currentIntervalDisplay }})
                     </th>
@@ -21,7 +23,9 @@
             </thead>
             <tbody>
                 <template v-for="(items, category) in currentInventoryLevels" :key="category">
+                <!-- Render each row of items for the current category -->
                 <tr v-for="(level, item, index) in items" :key="item">
+                    <!-- Only display the category name in the first row of each group -->
                     <td v-if="index === 0" :rowspan="Object.keys(items).length" class="border px-4 py-2 w-1/4">
                     {{ category }}
                     </td>
@@ -36,6 +40,7 @@
         </table>
     </div>
 
+    <!-- Submit button -->
     <button @click="submitUpdatedLevels" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
   </div>
 </template>
