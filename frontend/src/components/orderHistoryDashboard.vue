@@ -25,8 +25,8 @@ import { DonutChart } from './ui/chart-donut';
 
             <!-- Most Purchased Category Card -->
             <Card class="p-4 flex flex-col justify-center">
-                <p class="text-sm font-medium">Most Purchase Category</p>
-                <p class="text-2xl font-semibold">{{ bestCategory }}</p>
+                <p class="text-sm font-medium">Most Purchased Category</p>
+                <p class="text-2xl font-semibold">{{ getBestCategory }}</p>
             </Card>
         </div>
 
@@ -49,7 +49,7 @@ import { DonutChart } from './ui/chart-donut';
                     </CardHeader>
                     <CardContent>
                         <DonutChart v-if="categoryPercentages.length" index="category" :category="'percentage'"
-                            :data="categoryPercentages" :type="'pie'"/>
+                            :data="categoryPercentages" :type="'pie'" />
                     </CardContent>
                 </Card>
             </div>
@@ -74,7 +74,7 @@ import { DonutChart } from './ui/chart-donut';
             <!-- Most Sold Category Card -->
             <Card class="p-4 flex flex-col justify-center">
                 <p class="text-sm font-medium">Most Sold Category</p>
-                <p class="text-2xl font-semibold">{{ bestCategory }}</p>
+                <p class="text-2xl font-semibold">{{ getBestCategory }}</p>
             </Card>
         </div>
         <div class="container grid grid-cols-2 gap-4 mx-auto px-8 my-5">
@@ -96,7 +96,7 @@ import { DonutChart } from './ui/chart-donut';
                     </CardHeader>
                     <CardContent>
                         <DonutChart v-if="categoryPercentages.length" index="category" :category="'percentage'"
-                            :data="categoryPercentages" :type="'pie'"/>
+                            :data="categoryPercentages" :type="'pie'" />
                     </CardContent>
                 </Card>
             </div>
@@ -119,8 +119,7 @@ export default {
             categoryPercentages: [],
             total: 0,
             percentageChange: 0,
-            changeType: "",
-            bestCategory: "Meat",
+            changeType: ""
         }
     },
     methods: {
@@ -210,7 +209,7 @@ export default {
                     this.total += monthlyTotals[month];
                 }
 
-                // Calculate Percentage
+                // Calculate Percentage Change
                 const currentMonthData = this.monthlyTotals[this.monthlyTotals.length - 1];
                 const previousMonthData = this.monthlyTotals[this.monthlyTotals.length - 2];
 
@@ -279,6 +278,20 @@ export default {
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
+        }
+    },
+    computed: {
+        getBestCategory() {
+            // Filter the highest percentage category
+            let bestCategory = "";
+            let highestPercentage = 0;
+            for (const category of this.categoryPercentages) {
+                if (category.percentage > highestPercentage) {
+                    highestPercentage = category.percentage;
+                    bestCategory = category.name;
+                }
+            }
+            return bestCategory;
         }
     },
     mounted() {
