@@ -10,7 +10,7 @@ import { DonutChart } from './ui/chart-donut';
 <template>
     <!-- Restaurant Dashboard -->
     <section v-if="userType == 'restaurant'">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto px-8 my-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Total Spent Card -->
             <Card class="p-4 flex flex-col justify-center">
                 <p class="text-sm font-medium text-green-600">Total Spent</p>
@@ -30,7 +30,7 @@ import { DonutChart } from './ui/chart-donut';
             </Card>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto px-8 my-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
             <div class="flex-1">
                 <Card class="h-full">
                     <CardHeader>
@@ -58,7 +58,7 @@ import { DonutChart } from './ui/chart-donut';
 
     <!-- Supplier Dashboard -->
     <section v-if="userType == 'supplier'" class="">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto px-8 my-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Total Earned Card -->
             <Card class="p-4 flex flex-col justify-center">
                 <p class="text-sm font-medium text-green-600">Total Earned</p>
@@ -77,7 +77,7 @@ import { DonutChart } from './ui/chart-donut';
                 <p class="text-2xl font-semibold">{{ getBestCategory }}</p>
             </Card>
         </div>
-        <div class="container grid grid-cols-2 gap-4 mx-auto px-8 my-5">
+        <div class="container grid grid-cols-2 gap-4 my-5">
             <div class="flex-1">
                 <Card class="h-full">
                     <CardHeader>

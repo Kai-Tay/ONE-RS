@@ -10,10 +10,11 @@ import Card from './ui/card/Card.vue';
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from '../firebase';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog'
+import OrderHistoryDashboard from './orderHistoryDashboard.vue';
 </script>
 
 <template>
-     <div class="container mx-auto px-8 my-5 " v-if="loading">
+    <div class="container mx-auto px-8 my-5 " v-if="loading">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
@@ -32,6 +33,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
             </div>
         </div>
 
+        <OrderHistoryDashboard />
 
         <div>
             <!-- Restaurant Order History -->
@@ -128,7 +130,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                     </Dialog>
 
                                     <!-- Chat with Supplier -->
-                                    <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`" v-if="order.supplierName">
+                                    <router-link :to="`/chat/${order.supplierID}/${order.supplierName}`"
+                                        v-if="order.supplierName">
                                         <Button class=" text-white">Chat with Supplier</Button>
                                     </router-link>
                                 </TableCell>
@@ -227,10 +230,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
                                     </Dialog>
 
                                     <!-- Chat with Buyer -->
-                                    <router-link 
-                                        :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
-                                        v-if="order.buyerCompanyName"
-                                    >
+                                    <router-link :to="`/chat/${order.buyerID}/${order.buyerCompanyName}`"
+                                        v-if="order.buyerCompanyName">
                                         <Button class="text-white">Chat with Buyer</Button>
                                     </router-link>
                                 </TableCell>
@@ -265,7 +266,7 @@ export default {
             try {
                 const userRef = doc(db, "users", userId);
                 const userSnap = await getDoc(userRef);
-                
+
                 if (userSnap.exists()) {
                     return userSnap.data();
                 }
@@ -275,13 +276,13 @@ export default {
                 return null;
             }
         },
-        
+
         async fetchOrderHistory() {
             try {
                 const orderHistoryRef = collection(db, "orderHistory");
                 const orderHistorySnapshot = await getDocs(orderHistoryRef);
                 const currentUserId = sessionStorage.getItem("uid");
-                
+
                 // Clear existing orders
                 this.orderHistory = [];
 
@@ -325,8 +326,8 @@ export default {
             }
             // Simulate data fetching or delay
             setTimeout(() => {
-                    this.loading = false; // Set loading to false once data is loaded
-                }, 250);
+                this.loading = false; // Set loading to false once data is loaded
+            }, 250);
         }
     },
     mounted() {
