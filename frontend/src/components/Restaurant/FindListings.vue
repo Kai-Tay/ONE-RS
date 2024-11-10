@@ -59,7 +59,7 @@ import axios from 'axios';
     <div class="grid grid-cols-1 gap-4 px-8">
         <div class="mb-4" v-for="listing in filteredListings" :key="listing.id">
             <Card>
-                <CardContent class="flex items-center pt-4">
+                <CardContent class="flex flex-col sm:flex-row items-center pt-4">
                     <!-- Centered Placeholder Image on the Left -->
                     <div class="w-1/5 flex items-center justify-center">
                         <img :src="listing.imageData || './images/placeholder.svg'" alt="Supplier Image"
@@ -67,23 +67,23 @@ import axios from 'axios';
                     </div>
 
                     <!-- Supplier Content on the Right -->
-                    <div class="ml-4 w-3/5 flex flex-col">
-                        <CardHeader>
+                    <div class="sm:ml-4 w-3/5 flex flex-col">
+                        <CardHeader class="px-0 sm:px-6">
                             <CardTitle>
-                                <div class="text-2xl">{{ listing.supplierName }}</div>
+                                <div class="text-md sm:text-2xl">{{ listing.supplierName }}</div>
                             </CardTitle>
-                            <CardDescription class="text-lg">
+                            <CardDescription class="text-lg px-0">
                                 {{
                                     Array.from(new Set(listing.inventory.map(item => item.category))).join(", ")
                                 }}
                             </CardDescription>
                         </CardHeader>
-                        <CardFooter>
+                        <CardFooter class="px-0 sm:px-6">
                             <Button @click="handleSupplierClick(listing.id)">View Supplier</Button>
                         </CardFooter>
                     </div>
                     <div class="w-3/5">
-                        <CardContent>
+                        <CardContent class="px-0 sm:px-6 ">
                             <div class="flex flex-col">
                                 <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
                                 <CardDescription class="text-md" v-for="item in listing.inventory"
