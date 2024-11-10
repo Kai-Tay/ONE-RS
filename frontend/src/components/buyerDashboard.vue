@@ -32,12 +32,58 @@
     <div v-else>
         Loading...
     </div>
+
+    <!-- Add a divider between sections -->
+    <div class="mt-8 mb-4 border-t border-gray-200"></div>
+
+    <!-- Add the Inventory Levels section -->
+    <div>
+        <h2>Inventory Levels</h2>
+
+        <!-- Show loading indicator while fetching data -->
+        <div v-if="loadingTable" class="text-center">Loading...</div>
+
+        <!-- Render the table only once currentInventoryLevels data is available -->
+        <div v-else class="w-full">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left w-1/4">Category</th>
+                        <th class="px-4 py-2 text-left w-1/4">Item</th>
+                        <th class="px-4 py-2 text-left w-1/4">
+                            Current Level ({{ currentIntervalDisplay }})
+                        </th>
+                        <th class="px-4 py-2 text-left w-1/4">
+                            Update Level ({{ nextIntervalDisplay }})
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template v-for="(items, category) in currentInventoryLevels" :key="category">
+                        <tr v-for="(level, item, index) in items" :key="item">
+                            <td v-if="index === 0" :rowspan="Object.keys(items).length" class="border px-4 py-2 w-1/4">
+                                {{ category }}
+                            </td>
+                            <td class="border px-4 py-2 w-1/4">{{ item }}</td>
+                            <td class="border px-4 py-2 w-1/4">{{ level }}</td>
+                            <td class="border px-4 py-2 w-1/4">
+                                <input type="number" v-model.number="updatedLevels[category][item]" class="w-full" />
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Submit button -->
+        <button @click="submitUpdatedLevels" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+    </div>
 </template>
 
 
 <script setup>
 import { db } from '../firebase.js';
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { AreaChart } from '@/components/ui/areaChart';
 import { ref, watch, computed, onMounted } from 'vue';
 
@@ -53,6 +99,26 @@ const chartData = ref([]);
 const updateCounter = ref(0);
 
 const calculatedResults = ref(null);
+
+// Add new refs for inventory table
+const loadingTable = ref(true);
+const currentInventoryLevels = ref({});
+const updatedLevels = ref({});
+const selectedInterval = ref("");
+
+// Add computed properties for interval display
+const currentIntervalDisplay = computed(() => selectedInterval.value);
+const nextIntervalDisplay = computed(() => {
+    if (!selectedInterval.value) return ''; // Add null check
+    
+    const [year, month, interval] = selectedInterval.value.split('-').map(Number);
+    if (interval === 5) {
+        const nextMonth = month === 12 ? 1 : month + 1;
+        const nextYear = month === 12 ? year + 1 : year;
+        return `${nextYear}-${nextMonth}-1`;
+    }
+    return `${year}-${month}-${interval + 1}`;
+});
 
 async function fetchInventoryData(restaurantId) {
     const inventoryCollection = doc(db, 'inventoryLevels', restaurantId);
@@ -183,7 +249,7 @@ function transformDataForChart(inventoryData, item) {
         
                 }
             }
-      
+            
         const currentBeforeOrderLevel = currentInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
         const currentAfterOrderLevel = currentInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
         if (currentBeforeOrderLevel !== null) {
@@ -251,6 +317,7 @@ onMounted(async () => {
         const currentUserId = sessionStorage.getItem("uid");
         await main(currentUserId); // Call the main function to initialize
         await fetchItemsInInventory(currentUserId);
+        await fetchCurrentInventory(); // Add this line
     } catch (error) {
         console.error("Error during mounted lifecycle:", error);
     }
@@ -494,6 +561,132 @@ function getSS(item) {
     }
 }
 
+// Add new methods for inventory table
+async function fetchCurrentInventory() {
+    try {
+        const currentUserId = sessionStorage.getItem("uid");
+        const inventoryDocRef = doc(db, "inventoryLevels", currentUserId);
+        const docSnapshot = await getDoc(inventoryDocRef);
 
+        if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+            selectedInterval.value = getSelectedInterval(data.currentInventoryLevel);
 
+            if (selectedInterval.value) {
+                currentInventoryLevels.value = {};
+                const inventoryData = data.currentInventoryLevel[selectedInterval.value];
+
+                if (selectedInterval.value.endsWith("-5")) {
+                    if (inventoryData.afterOrder) {
+                        currentInventoryLevels.value = inventoryData.afterOrder;
+                    } else if (inventoryData.beforeOrder) {
+                        currentInventoryLevels.value = inventoryData.beforeOrder;
+                    }
+                } else {
+                    currentInventoryLevels.value = inventoryData;
+                }
+
+                updatedLevels.value = JSON.parse(JSON.stringify(currentInventoryLevels.value));
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching inventory data:", error);
+    } finally {
+        loadingTable.value = false;
+    }
+}
+
+function getSelectedInterval(inventoryLevels) {
+    const intervals = Object.keys(inventoryLevels);
+    intervals.sort((a, b) => (a > b ? -1 : 1));
+    return intervals[0];
+}
+
+async function submitUpdatedLevels() {
+    const currentUserId = sessionStorage.getItem("uid");
+    const inventoryDocRef = doc(db, "inventoryLevels", currentUserId);
+
+    try {
+        const docSnapshot = await getDoc(inventoryDocRef);
+
+        if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+            const currentInterval = selectedInterval.value;
+
+            // Check if we're in interval-5
+            if (currentInterval.endsWith("-5")) {
+                const currentData = data.currentInventoryLevel[currentInterval];
+                
+                // If there's no afterOrder data, it means no order was placed
+                if (!currentData?.afterOrder) {
+                    const proceedWithoutOrder = window.confirm(
+                        "You haven't placed an order for this month. Would you like to proceed without placing an order?"
+                    );
+
+                    if (!proceedWithoutOrder) {
+                        return; // Exit if user wants to place an order first
+                    }
+                }
+            }
+
+            // Move current inventory to past inventory
+            const currentIntervalData = data.currentInventoryLevel[currentInterval];
+            const pastInventoryUpdate = {
+                ...data.pastInventoryLevels,
+                [currentInterval]: currentIntervalData
+            };
+
+            // Prepare new current inventory level
+            let newCurrentLevel = {};
+
+            if (currentInterval.endsWith("-4")) {
+                // For interval-4, prepare data for interval-5 with beforeOrder structure
+                newCurrentLevel = {
+                    [nextIntervalDisplay.value]: {
+                        beforeOrder: updatedLevels.value
+                    }
+                };
+            } else if (currentInterval.endsWith("-5")) {
+                // For interval-5, use the afterOrder data if it exists, otherwise use current levels
+                const levelsToUse = currentData?.afterOrder || updatedLevels.value;
+                newCurrentLevel = {
+                    [nextIntervalDisplay.value]: levelsToUse
+                };
+            } else {
+                // For all other intervals, use normal structure
+                newCurrentLevel = {
+                    [nextIntervalDisplay.value]: updatedLevels.value
+                };
+            }
+
+            // Update Firestore
+            await updateDoc(inventoryDocRef, {
+                pastInventoryLevels: pastInventoryUpdate,
+                currentInventoryLevel: newCurrentLevel
+            });
+
+            alert("Inventory updated and archived successfully!");
+            
+            // Refresh the inventory data
+            await fetchCurrentInventory();
+        } else {
+            console.error("No document found for the provided user ID:", currentUserId);
+        }
+    } catch (error) {
+        console.error("Error updating inventory:", error);
+        alert("Failed to update inventory.");
+    }
+}
 </script>
+
+<style scoped>
+/* Add the table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+</style>
