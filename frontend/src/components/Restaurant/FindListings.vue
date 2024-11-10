@@ -257,6 +257,8 @@ export default {
                         this.searchResult.some(query =>
                             listing.supplierName.toLowerCase().includes(query.toLowerCase()) ||
                             listing.inventory.some(item => item.productName.toLowerCase().includes(query.toLowerCase()))
+                            || listing.inventory.some(item => item.category.toLowerCase().includes(query.toLowerCase()))
+                            || listing.inventory.some(item => item.subcategory.toLowerCase().includes(query.toLowerCase()))
                         )
                     );
                 })
