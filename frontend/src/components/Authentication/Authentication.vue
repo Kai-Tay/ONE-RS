@@ -93,7 +93,7 @@ import 'vue-advanced-cropper/dist/style.css'
               <Label for="companyNumber">Company Number</Label>
               <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" />
             </div>
-            
+
             <div class="space-y-1">
               <Label for="email">Email</Label>
               <Input id="email" placeholder="name@example.com" v-model="email" />
@@ -125,59 +125,57 @@ import 'vue-advanced-cropper/dist/style.css'
           <CardContent class="space-y-2">
             <div class="space-y-1">
               <Label for="name">Name</Label>
-              <Input id="name" placeholder="Name" v-model="userName" required :class="{'border-red-500': submitted && !userName}"/>
+              <Input id="name" placeholder="Name" v-model="userName" required
+                :class="{ 'border-red-500': submitted && !userName }" />
             </div>
 
             <div class="space-y-1">
               <Label for="companyName">Company's Name</Label>
-              <Input id="companyName" placeholder="Company Name" v-model="companyName" required :class="{'border-red-500': submitted && !companyName}"/>
+              <Input id="companyName" placeholder="Company Name" v-model="companyName" required
+                :class="{ 'border-red-500': submitted && !companyName }" />
             </div>
 
             <div class="space-y-1">
               <Label for="companyAddress">Company's Address</Label>
-              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" required :class="{'border-red-500': submitted && !companyAddress}"/>
+              <Input id="companyAddress" placeholder="Company Address" v-model="companyAddress" required
+                :class="{ 'border-red-500': submitted && !companyAddress }" />
             </div>
 
             <div class="space-y-1">
               <Label for="description">Company's Description</Label>
-              <Textarea placeholder="Give a brief description about your company." v-model="companyDescription" required :class="{'border-red-500': submitted && !companyDescription}"/>
+              <Textarea placeholder="Give a brief description about your company." v-model="companyDescription" required
+                :class="{ 'border-red-500': submitted && !companyDescription }" />
             </div>
 
             <div class="space-y-1">
               <Label for="companyNumber">Company Number</Label>
-              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" required :class="{'border-red-500': submitted && !companyNumber}"/>
+              <Input type="tel" id="companyNumber" placeholder="Company Number" v-model="companyNumber" required
+                :class="{ 'border-red-500': submitted && !companyNumber }" />
             </div>
 
             <div class="space-y-1">
               <Label for="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" v-model="email" required :class="{'border-red-500': submitted && !email}"/>
+              <Input id="email" placeholder="name@example.com" v-model="email" required
+                :class="{ 'border-red-500': submitted && !email }" />
             </div>
 
             <div class="space-y-1">
               <Label for="password">Password</Label>
-              <Input id="password" type="password" v-model="password" required :class="{'border-red-500': submitted && !password}"/>
+              <Input id="password" type="password" v-model="password" required
+                :class="{ 'border-red-500': submitted && !password }" />
             </div>
 
             <div class="space-y-1">
               <Label for="companyLogo">Company Logo</Label>
               <div class="space-y-2">
-                <img 
-                  v-if="imagePreview" 
-                  :src="imagePreview" 
-                  alt="Company Logo" 
-                  class="w-32 h-32 object-cover rounded-lg"
-                />
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  @change="handleImageUpload" 
-                  class="mt-1 block w-full text-sm text-gray-500
+                <img v-if="imagePreview" :src="imagePreview" alt="Company Logo"
+                  class="w-32 h-32 object-cover rounded-lg" />
+                <input type="file" accept="image/*" @change="handleImageUpload" class="mt-1 block w-full text-sm text-gray-500
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-full file:border-0
                   file:text-sm file:font-semibold
                   file:bg-blue-50 file:text-blue-700
-                  hover:file:bg-blue-100"
-                />
+                  hover:file:bg-blue-100" />
               </div>
             </div>
 
@@ -205,7 +203,8 @@ import 'vue-advanced-cropper/dist/style.css'
   </div>
 
   <!-- Cropper Dialog -->
-  <div v-if="showCropper && selectedFile" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div v-if="showCropper && selectedFile"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-4 rounded-lg max-w-2xl w-full">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold">Crop Image</h3>
@@ -214,11 +213,8 @@ import 'vue-advanced-cropper/dist/style.css'
         </button>
       </div>
       <div class="mb-4">
-        <ImageCropper
-          :image-file="selectedFile"
-          @crop-complete="handleCropComplete"
-          @cancel="() => showCropper = false"
-        />
+        <ImageCropper :image-file="selectedFile" @crop-complete="handleCropComplete"
+          @cancel="() => showCropper = false" />
       </div>
       <div class="flex justify-end gap-2">
         <Button variant="outline" @click="cancelCrop">Cancel</Button>
@@ -255,7 +251,7 @@ export default {
       statusSuccess: true,
 
       submitted: false,
-      validationError: "", 
+      validationError: "",
       imageData: null,
       imagePreview: null,
       imageSource: null,
@@ -267,31 +263,31 @@ export default {
   created() {
     // Handle route query parameters
     if (this.$route.query.signup === 'true') {
-        this.isLogin = false;
-        const type = this.$route.query.type;
-        
-        if (type === 'supplier') {
-            this.isSupplier = true;
-            // Need to wait for next tick to ensure tabs are mounted
-            this.$nextTick(() => {
-                // Find and click the supplier tab
-                const supplierTab = document.querySelector('[value="supplier"]');
-                if (supplierTab) {
-                    supplierTab.click();
-                }
-            });
-        } else {
-            this.isSupplier = false;
-            this.$nextTick(() => {
-                // Find and click the restaurant tab
-                const restaurantTab = document.querySelector('[value="account"]');
-                if (restaurantTab) {
-                    restaurantTab.click();
-                }
-            });
-        }
+      this.isLogin = false;
+      const type = this.$route.query.type;
+
+      if (type === 'supplier') {
+        this.isSupplier = true;
+        // Need to wait for next tick to ensure tabs are mounted
+        this.$nextTick(() => {
+          // Find and click the supplier tab
+          const supplierTab = document.querySelector('[value="supplier"]');
+          if (supplierTab) {
+            supplierTab.click();
+          }
+        });
+      } else {
+        this.isSupplier = false;
+        this.$nextTick(() => {
+          // Find and click the restaurant tab
+          const restaurantTab = document.querySelector('[value="account"]');
+          if (restaurantTab) {
+            restaurantTab.click();
+          }
+        });
       }
-    },
+    }
+  },
   methods: {
     toggleLogin() {
       this.isLogin = !this.isLogin;
@@ -299,7 +295,7 @@ export default {
     toggleSupplier() {
       this.isSupplier = !this.isSupplier;
     },
-    addSessionCookie(uid,userName,userType, points) {
+    addSessionCookie(uid, userName, userType, points) {
       sessionStorage.setItem('userType', userType);
       sessionStorage.setItem('userName', userName);
       sessionStorage.setItem('uid', uid);
@@ -312,7 +308,7 @@ export default {
           console.log(userCredential)
           // Set User Type
           const uid = userCredential.user.uid;
-    
+
           // Enter database and find userType
           const docRef = doc(db, "users", uid);
           getDoc(docRef).then((docSnap) => {
@@ -321,14 +317,14 @@ export default {
               const userName = docSnap.data().userName;
               const userType = docSnap.data().userType;
               const points = docSnap.data().points;
-              
+
 
               // Store user data in session storage
-              this.addSessionCookie(uid,userName,userType,points);
+              this.addSessionCookie(uid, userName, userType, points);
             }
           });
 
-          
+
           // alert("Signed In")
           this.statusHeader = "Successfully Logged In!";
           this.statusDescription = "Redirecting to home page in 2 seconds...";
@@ -360,134 +356,147 @@ export default {
 
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-        const user = userCredential.user;
-        updateProfile(user, {
-          displayName: this.userName
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: this.userName
+          })
+            .catch((error) => {
+              // Handle specific Firebase auth errors
+              let errorMessage = "Error in Signing Up, Please Try Again!";
+              if (error.code === 'auth/email-already-in-use') {
+                errorMessage = "This email is already registered. Please use a different email or login.";
+              } else if (error.code === 'auth/invalid-email') {
+                errorMessage = "Invalid email format. Please check your email address.";
+              } else if (error.code === 'auth/weak-password') {
+                errorMessage = "Password is too weak. Please use a stronger password.";
+              }
+
+              this.statusHeader = "Signed Up Unsuccessful";
+              this.statusDescription = errorMessage;
+              this.statusSuccess = false;
+              this.showAuthDialog = true;
+            });
+
+          // Store user data in Firestore
+          setDoc(doc(db, "users", user.uid), {
+            userName: this.userName,
+            companyName: this.companyName,
+            companyAddress: this.companyAddress,
+            companyNumber: this.companyNumber,
+            userType: this.isSupplier ? "supplier" : "restaurant",
+            points: this.isSupplier ? null : 0,
+            companyDescription: this.isSupplier ? this.companyDescription : null,
+            imageData: this.isSupplier ? this.imageData : null,
+          })
+            .then(() => {
+              // Create supplier listing if user is a supplier
+              if (this.isSupplier) {
+                return setDoc(doc(db, "supplierListing", user.uid), {
+                  supplierName: this.companyName,
+                  inventory: [],
+                  // Add any other supplier-specific fields you need
+                });
+              }
+
+              //Get current month and year
+              const date = new Date();
+              const month = date.getMonth() + 1;
+              const year = date.getFullYear();
+              const inventoryKey = `${year}-${month < 10 ? '0' + month : month}-05`;
+
+              // Create inventory document if user is a restaurant and create a map objects of inventory lvels with YYYY-MM-05 as key
+              return setDoc(doc(db, "inventoryLevels", user.uid), {
+                currentInventoryLevel: {
+                  [inventoryKey]: {
+                    beforeOrder: {},
+                  },
+                },
+              });
+            })
+            .then(() => {
+              // Create restaurant document if user is NOT a supplier
+              if (!this.isSupplier) {
+                return setDoc(doc(db, "restaurant", user.uid), {
+                });
+              }
+              return Promise.resolve();
+            })
+            .then(() => {
+              // Add session cookie
+              this.addSessionCookie(
+                user.uid,
+                this.userName,
+                this.isSupplier ? "supplier" : "restaurant",
+                this.isSupplier ? null : 0
+              );
+
+              this.statusHeader = "Signed Up Successful!";
+              this.statusDescription = "Redirecting to home page in 2 seconds...";
+              this.statusSuccess = true;
+              this.showAuthDialog = true;
+
+              setTimeout(() => {
+                this.showAuthDialog = false;
+                this.$router.push('/');
+              }, 2000);
+            })
+            .catch((error) => {
+              console.error("Error adding document: ", error);
+              this.statusHeader = "Sign Up Error";
+              this.statusDescription = "Error creating account. Please try again.";
+              this.statusSuccess = false;
+              this.showAuthDialog = true;
+            });
         })
         .catch((error) => {
-          // Handle specific Firebase auth errors
-          let errorMessage = "Error in Signing Up, Please Try Again!";
-          if (error.code === 'auth/email-already-in-use') {
-            errorMessage = "This email is already registered. Please use a different email or login.";
-          } else if (error.code === 'auth/invalid-email') {
-            errorMessage = "Invalid email format. Please check your email address.";
-          } else if (error.code === 'auth/weak-password') {
-            errorMessage = "Password is too weak. Please use a stronger password.";
-          }
-
+          console.error("Error in Signing Up, Please Try Again!", error);
           this.statusHeader = "Signed Up Unsuccessful";
-          this.statusDescription = errorMessage;
+          this.statusDescription = "Error in Signing Up, Please Try Again!";
           this.statusSuccess = false;
           this.showAuthDialog = true;
         });
-
-      // Store user data in Firestore
-      setDoc(doc(db, "users", user.uid), {
-        userName: this.userName,
-        companyName: this.companyName,
-        companyAddress: this.companyAddress,
-        companyNumber: this.companyNumber,
-        userType: this.isSupplier ? "supplier" : "restaurant",
-        points: this.isSupplier ? null : 0,
-        companyDescription: this.isSupplier ? this.companyDescription : null,
-        imageData: this.isSupplier ? this.imageData : null,
-      })
-        .then(() => {
-          // Create supplier listing if user is a supplier
-          if (this.isSupplier) {
-            return setDoc(doc(db, "supplierListing", user.uid), {
-              supplierName: this.companyName,
-              inventory: [],
-              // Add any other supplier-specific fields you need
-            });
-          }
-          // Create inventory document if user is a restaurant
-          return setDoc(doc(db, "inventoryLevels", user.uid), {});
-        })
-        .then(() => {
-          // Create restaurant document if user is NOT a supplier
-          if (!this.isSupplier) {
-            return setDoc(doc(db, "restaurant", user.uid), {
-            });
-          }
-          return Promise.resolve(); 
-        })
-        .then(() => {
-          // Add session cookie
-          this.addSessionCookie(
-            user.uid,
-            this.userName,
-            this.isSupplier ? "supplier" : "restaurant",
-            this.isSupplier ? null : 0
-          );
-
-          this.statusHeader = "Signed Up Successful!";
-          this.statusDescription = "Redirecting to home page in 2 seconds...";
-          this.statusSuccess = true;
-          this.showAuthDialog = true;
-
-          setTimeout(() => {
-            this.showAuthDialog = false;
-            this.$router.push('/');
-          }, 2000);
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
-          this.statusHeader = "Sign Up Error";
-          this.statusDescription = "Error creating account. Please try again.";
-          this.statusSuccess = false;
-          this.showAuthDialog = true;
-        });
-    })
-    .catch((error) => {
-      console.error("Error in Signing Up, Please Try Again!", error);
-      this.statusHeader = "Signed Up Unsuccessful";
-      this.statusDescription = "Error in Signing Up, Please Try Again!";
-      this.statusSuccess = false;
-      this.showAuthDialog = true;
-      });
-    }, 
+    },
     // Add this validation method
-  validateFields() {
-    const commonFields = {
-      'Name': this.userName,
-      'Email': this.email,
-      'Password': this.password,
-      "Company's Name": this.companyName,
-      "Company's Address": this.companyAddress,
-      "Company Number": this.companyNumber
-    };
+    validateFields() {
+      const commonFields = {
+        'Name': this.userName,
+        'Email': this.email,
+        'Password': this.password,
+        "Company's Name": this.companyName,
+        "Company's Address": this.companyAddress,
+        "Company Number": this.companyNumber
+      };
 
-    // Add company description and logo for supplier
-    if (this.isSupplier) {
-      commonFields["Company's Description"] = this.companyDescription;
-      // Check if imagePreview exists (which is set after successful crop)
-      if (!this.imagePreview) {
-        this.showValidationError('Company Logo', 'Please upload and crop a company logo');
+      // Add company description and logo for supplier
+      if (this.isSupplier) {
+        commonFields["Company's Description"] = this.companyDescription;
+        // Check if imagePreview exists (which is set after successful crop)
+        if (!this.imagePreview) {
+          this.showValidationError('Company Logo', 'Please upload and crop a company logo');
+          return false;
+        }
+      }
+
+      // Check each field
+      for (const [fieldName, value] of Object.entries(commonFields)) {
+        if (!value || value.trim() === '') {
+          this.showValidationError(fieldName);
+          return false;
+        }
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.email)) {
+        this.showValidationError('Email', 'Please enter a valid email address');
         return false;
       }
-    }
 
-    // Check each field
-    for (const [fieldName, value] of Object.entries(commonFields)) {
-      if (!value || value.trim() === '') {
-        this.showValidationError(fieldName);
+      // Validate password length
+      if (this.password.length < 6) {
+        this.showValidationError('Password', 'Password must be at least 6 characters long');
         return false;
       }
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email)) {
-      this.showValidationError('Email', 'Please enter a valid email address');
-      return false;
-    }
-
-    // Validate password length
-    if (this.password.length < 6) {
-      this.showValidationError('Password', 'Password must be at least 6 characters long');
-      return false;
-    }
 
       return true;
     },
@@ -505,14 +514,14 @@ export default {
     handleCropComplete({ file, url }) {
       this.imageFile = file;
       this.imagePreview = url;
-      
+
       // Convert to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         this.imageData = reader.result; // This will be the base64 string
       };
       reader.readAsDataURL(file);
-      
+
       this.showCropper = false;
     },
 
@@ -530,26 +539,26 @@ export default {
   },
   watch: {
     '$route.query': {
-        handler(newQuery) {
-            if (newQuery.type === 'supplier') {
-                this.isSupplier = true;
-                this.$nextTick(() => {
-                    const supplierTab = document.querySelector('[value="supplier"]');
-                    if (supplierTab) {
-                        supplierTab.click();
-                    }
-                });
-            } else if (newQuery.type === 'restaurant') {
-                this.isSupplier = false;
-                this.$nextTick(() => {
-                    const restaurantTab = document.querySelector('[value="account"]');
-                    if (restaurantTab) {
-                        restaurantTab.click();
-                    }
-                });
+      handler(newQuery) {
+        if (newQuery.type === 'supplier') {
+          this.isSupplier = true;
+          this.$nextTick(() => {
+            const supplierTab = document.querySelector('[value="supplier"]');
+            if (supplierTab) {
+              supplierTab.click();
             }
-        },
-        immediate: true
+          });
+        } else if (newQuery.type === 'restaurant') {
+          this.isSupplier = false;
+          this.$nextTick(() => {
+            const restaurantTab = document.querySelector('[value="account"]');
+            if (restaurantTab) {
+              restaurantTab.click();
+            }
+          });
+        }
+      },
+      immediate: true
     }
   }
 };

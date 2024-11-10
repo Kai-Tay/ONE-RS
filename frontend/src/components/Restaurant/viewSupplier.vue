@@ -486,6 +486,9 @@ export default {
             if (this.status == "Order Confirmed") {
                 this.$router.push("/buyerOrders");
             }
+            if (this.status == "Inventory not Updated") {
+                this.$router.push("/buyerdashboard");
+            }
         },
 
         // Database Methods
@@ -583,7 +586,7 @@ export default {
             const { error, paymentIntent } = await this.stripe.confirmPayment({
                 elements: this.elements,
                 confirmParams: {
-                return_url: "http://localhost:5173/#",
+                    return_url: "http://localhost:5173/#",
                 },
                 redirect: 'if_required',
             });
@@ -665,80 +668,141 @@ export default {
             this.updateInventoryLevels();
 
         },
-        async updateInventoryLevels() {
-            // Fetch the inventory listing
+        async checkInventoryLevels() {
+            // Fetch the inventory listing and retrieve the latest month documet YYYY-MM-number
             const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
 
-            //Check if the latest document last number is a 4
+            //Check if the latest document last number is a 4 
             const inventorySnapshot = await getDoc(inventoryRef);
             const inventoryData = inventorySnapshot.data().currentInventoryLevel;
-            const docTitle = Object.keys(inventoryData)[0];
-            const month = docTitle.split("-")[1];
 
-            // Check if its the 5th interval
-            if (docTitle[docTitle.length - 1] === "5") {
-                console.log("The last character of the key is 5.");
+            // Sort document keys by YYYY-MM-HighestNumber
+            const sortedKeys = Object.keys(inventoryData)
+                .sort((a, b) => {
+                    // Split each key into [YYYY, MM, Number]
+                    const [yearA, monthA, numberA] = a.split('-').map(Number);
+                    const [yearB, monthB, numberB] = b.split('-').map(Number);
 
-                // Consolidate orderHistory for past month
-                const orderHistoryRef = collection(db, "orderHistory");
-                const orderHistorySnapshot = await getDocs(orderHistoryRef);
-                const orderHistoryData = orderHistorySnapshot.docs.map(doc => doc.data());
-
-                // Filter out data from user for the month
-                const filteredOrderHistory = orderHistoryData.filter(order => {
-                    const orderMonth = order.date.toDate().getMonth() + 1;
-                    return orderMonth == month && order.buyerID == sessionStorage.getItem("uid");
+                    // Sort by year, then month, then number
+                    return yearB - yearA || monthB - monthA || numberB - numberA;
                 });
 
-                // Calculate total qty based on {category: {subcategory:qty}}
-                const totalQty = filteredOrderHistory.reduce((acc, order) => {
-                    order.orderedItems.forEach(item => {
-                        //lower case all category and subcategory
-                        item.category = item.category.toLowerCase();
-                        item.subcategory = item.subcategory.toLowerCase();
-                        if (acc[item.category]) {
-                            if (acc[item.category][item.subcategory]) {
-                                acc[item.category][item.subcategory] += item.purchaseQuantity;
-                            } else {
-                                acc[item.category][item.subcategory] = item.purchaseQuantity;
-                            }
-                        } else {
-                            acc[item.category] = { [item.subcategory]: item.purchaseQuantity };
-                        }
-                    });
-                    return acc;
-                }, {});
+            // Retrieve the latest document key
+            const docTitle = sortedKeys[0];
 
-                // Merge the inventory levels by adding totalQty to beforeOrder (if totalqty keys not in beforeOrder, add it)
-                const beforeOrder = JSON.parse(JSON.stringify(inventoryData[docTitle].beforeOrder));
-                console.log(inventoryData[docTitle].beforeOrder)
-                const mergedOrder = Object.keys(totalQty).reduce((acc, category) => {
-                    // Initialize category if it doesn't exist
-                    acc[category] = acc[category] || {};
+            // Check if month is currentMonth
+            const currentMonth = new Date().getMonth() + 1;
 
-                    Object.keys(totalQty[category]).forEach(subcategory => {
-                        // Initialize subcategory if it doesn't exist
-                        acc[category][subcategory] = (acc[category][subcategory] || 0) + totalQty[category][subcategory];
-                    });
-
-                    return acc;
-                }, { ...beforeOrder });  // Start with a copy of beforeOrder
-
-                // Update the inventory levels with afterOrder in inventoryData[docTitle]
-                const updatedInventoryData = {
-                    [docTitle]: {
-                        beforeOrder: inventoryData[docTitle].beforeOrder,
-                        afterOrder: mergedOrder,
-                    }
-                };
-
-                // Send data to database
-                await updateDoc(inventoryRef, {
-                    currentInventoryLevel: updatedInventoryData,
-                });
-
+            // Check if currentMonth is correct month
+            if (docTitle.split("-")[1] != currentMonth) {
+                this.status = "Inventory not Updated";
+                this.description = "Please update inventory to latest month!";
+                this.showDialog = true;
             }
-        }
+        },
+        async updateInventoryLevels() {
+            // Fetch the inventory listing and retrieve the latest month documet YYYY-MM-number
+            const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
+
+            //Check if the latest document last number is a 4 
+            const inventorySnapshot = await getDoc(inventoryRef);
+            const inventoryData = inventorySnapshot.data().currentInventoryLevel;
+
+            // Sort document keys by YYYY-MM-HighestNumber
+            const sortedKeys = Object.keys(inventoryData)
+                .sort((a, b) => {
+                    // Split each key into [YYYY, MM, Number]
+                    const [yearA, monthA, numberA] = a.split('-').map(Number);
+                    const [yearB, monthB, numberB] = b.split('-').map(Number);
+
+                    // Sort by year, then month, then number
+                    return yearB - yearA || monthB - monthA || numberB - numberA;
+                });
+
+            // Retrieve the latest document key
+            const docTitle = sortedKeys[0];
+
+            console.log("Doc Title: ", docTitle);
+
+            // Check if docTitle is not undefined
+            if (docTitle) {
+                const month = docTitle.split("-")[1];
+
+                console.log("Month: ", month);
+                // Check if its the 5th interval
+                if (docTitle[docTitle.length - 1] === "5") {
+
+                    // Consolidate orderHistory for past month
+                    const orderHistoryRef = collection(db, "orderHistory");
+                    const orderHistorySnapshot = await getDocs(orderHistoryRef);
+                    const orderHistoryData = orderHistorySnapshot.docs.map(doc => doc.data());
+
+                    // Filter out data from user for the month
+                    const filteredOrderHistory = orderHistoryData.filter(order => {
+                        const orderMonth = order.date.toDate().getMonth() + 1;
+                        console.log(orderMonth, month);
+                        return orderMonth == month && order.buyerID == sessionStorage.getItem("uid");
+                    });
+                    console.log("Filtered Order History: ", filteredOrderHistory);
+
+                    // Calculate total qty based on {category: {subcategory:qty}}
+                    const totalQty = filteredOrderHistory.reduce((acc, order) => {
+                        order.orderedItems.forEach(item => {
+                            //lower case all category and subcategory
+                            item.category = item.category.toLowerCase();
+                            item.subcategory = item.subcategory.toLowerCase();
+                            if (acc[item.category]) {
+                                if (acc[item.category][item.subcategory]) {
+                                    acc[item.category][item.subcategory] += item.purchaseQuantity;
+                                } else {
+                                    acc[item.category][item.subcategory] = item.purchaseQuantity;
+                                }
+                            } else {
+                                acc[item.category] = { [item.subcategory]: item.purchaseQuantity };
+                            }
+                        });
+                        return acc;
+                    }, {});
+
+                    // Merge the inventory levels by adding totalQty to beforeOrder (if totalqty keys not in beforeOrder, add it)
+                    const beforeOrder = JSON.parse(JSON.stringify(inventoryData[docTitle].beforeOrder));
+                    console.log(inventoryData[docTitle].beforeOrder)
+                    const mergedOrder = Object.keys(totalQty).reduce((acc, category) => {
+                        // Initialize category if it doesn't exist
+                        acc[category] = acc[category] || {};
+
+                        Object.keys(totalQty[category]).forEach(subcategory => {
+                            // Initialize subcategory if it doesn't exist
+                            acc[category][subcategory] = (acc[category][subcategory] || 0) + totalQty[category][subcategory];
+                        });
+
+                        return acc;
+                    }, { ...beforeOrder });  // Start with a copy of beforeOrder
+
+                    console.log("Merged Order: ", mergedOrder);
+
+                    // Update the inventory levels with afterOrder in inventoryData[docTitle]
+                    const updatedInventoryData = {
+                        ...inventoryData,
+                        [docTitle]: {
+                            beforeOrder: inventoryData[docTitle].beforeOrder,
+                            afterOrder: mergedOrder,
+                        }
+                    };
+
+                    // Send data to database
+                    await updateDoc(inventoryRef, {
+                        currentInventoryLevel: updatedInventoryData,
+                    });
+
+                    console.log("Updated Inventory Data: ", updatedInventoryData);
+
+
+                }
+            } else {
+                console.log("No inventory data found");
+            }
+        },
     },
     mounted() {
         // Get the supplier ID from the URL
@@ -751,8 +815,8 @@ export default {
         // Obtain User Info
         this.fetchUser();
 
-        this.updateInventoryLevels();
-
+        // Check Inventory Levels if is in current month...
+        this.checkInventoryLevels();
 
     },
 };
