@@ -24,7 +24,7 @@ const navigateTo = (route) => {
                 <div class="w-1/2">
                     <div class="flex-grow flex items-center">
                         <div class="max-w-2xl">
-                            <div class="text-4xl md:text-7xl font-bold" ref="titleContainer">
+                            <div class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold" ref="titleContainer">
                                 <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
                                     Welcome, <br>{{ userName }}
                                 </h1>
@@ -59,7 +59,7 @@ const navigateTo = (route) => {
 
                 <!-- Right side image -->
                 <div class="w-1/2 hidden md:flex items-center justify-center overflow-hidden">
-                    <img src="../assets/img/oners_homepage.jpeg" 
+                    <img src="../assets/img/oners_homepage.png" 
                         alt="Homepage Image" 
                         style="width: 200%; height: 200%;"
                         class="object-contain rounded-lg shadow-lg"/>
