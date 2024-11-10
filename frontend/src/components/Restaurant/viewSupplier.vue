@@ -816,7 +816,7 @@ export default {
         this.fetchUser();
 
         // Check Inventory Levels if is in current month...
-        this.checkInventoryLevels();
+        // this.checkInventoryLevels();
 
     },
 };
