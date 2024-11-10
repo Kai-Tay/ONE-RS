@@ -147,11 +147,11 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
+                        <div class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
                             <img src="../assets/img/oners_orderHistory.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
-                                class="object-cover rounded-lg shadow-lg"/>
+                                class=" object-cover rounded-lg shadow-lg"/>
                         </div>
                     </div>
 
@@ -167,11 +167,11 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
+                        <div class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
                             <img src="../assets/img/oners_chat.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
-                                class="object-cover rounded-lg shadow-lg"/>
+                                class=" object-cover rounded-lg shadow-lg"/>
                         </div>
                     </div>
                 </div>
@@ -257,7 +257,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-72 hidden md:block">
+                        <div class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
                             <img src="../assets/img/oners_findSuppliers.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
@@ -278,7 +278,7 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div class="absolute bottom-3 right-1/4 left-1/4 w-1/2 h-80 hidden md:block">
+                        <div class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
                             <img src="../assets/img/oners_dashboard.png" 
                                 alt="Homepage Image" 
                                 style="width: 250%;"
