@@ -3,7 +3,7 @@ import Navbar from './Navbar.vue';
 import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from '../firebase';
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { AreaChart } from "./ui/areaChart";
+import { AreaChart } from "./ui/chart-area";
 import { DonutChart } from './ui/chart-donut';
 </script>
 
@@ -224,7 +224,7 @@ export default {
                         if (this.percentageChange > 0) {
                             this.changeType = '+';
                         } else if (this.percentageChange < 0) {
-                            this.changeType = '-';
+                            this.changeType = '';
                         } else {
                             this.changeType = '=';
                         }
