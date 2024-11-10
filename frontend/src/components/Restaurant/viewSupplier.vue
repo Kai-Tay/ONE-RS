@@ -791,13 +791,33 @@ export default {
                     };
 
                     // Send data to database
-                    await updateDoc(inventoryRef, {
-                        currentInventoryLevel: updatedInventoryData,
+                    // await updateDoc(inventoryRef, {
+                    //     currentInventoryLevel: updatedInventoryData,
+                    // });
+
+                    // Add categories to restaurant database
+                    const restaurantRef = doc(db, "restaurant", sessionStorage.getItem("uid"));
+                    const restaurantSnapshot = await getDoc(restaurantRef);
+                    const restaurantData = restaurantSnapshot.data().inventoryTypes;
+
+                    // Look into mergedOrder, check if category exists in restaurantData else add it
+                    Object.keys(mergedOrder).forEach(category => {
+                        if (!restaurantData[category]) {
+                            restaurantData[category] = {};
+                        }
+                        Object.keys(mergedOrder[category]).forEach(subcategory => {
+                            if (!restaurantData[category][subcategory]) {
+                                restaurantData[category][subcategory] = 0;
+                            }
+                            restaurantData[category][subcategory] = 0;
+                        });
                     });
+                    console.log(restaurantData)
 
-                    console.log("Updated Inventory Data: ", updatedInventoryData);
-
-
+                    // Send data to database
+                    await updateDoc(restaurantRef, {
+                        inventoryTypes: restaurantData,
+                    });
                 }
             } else {
                 console.log("No inventory data found");
@@ -815,8 +835,12 @@ export default {
         // Obtain User Info
         this.fetchUser();
 
+
+        // TESTING
         // Check Inventory Levels if is in current month...
         // this.checkInventoryLevels();
+
+        // this.updateInventoryLevels();
 
     },
 };
