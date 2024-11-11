@@ -77,7 +77,7 @@ import { DonutChart } from './ui/chart-donut';
                 <p class="text-2xl font-semibold">{{ getBestCategory }}</p>
             </Card>
         </div>
-        <div class="container grid grid-cols-2 gap-4 my-5">
+        <div class=" grid grid-cols-2 gap-4 my-5">
             <div class="flex-1">
                 <Card class="h-full">
                     <CardHeader>

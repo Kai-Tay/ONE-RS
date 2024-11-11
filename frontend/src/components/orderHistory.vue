@@ -14,7 +14,7 @@ import OrderHistoryDashboard from './orderHistoryDashboard.vue';
 </script>
 
 <template>
-    <div class="container mx-auto px-8 my-5 " v-if="loading">
+    <div class="mx-2 sm:mx-auto sm:px-8 sm:my-5" v-if="loading">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
@@ -25,7 +25,7 @@ import OrderHistoryDashboard from './orderHistoryDashboard.vue';
         <Skeleton class="h-[500px] w-full rounded-xl" />
     </div>
 
-    <div class="container mx-auto px-8 my-5 " v-else>
+    <div class="mx-2 sm:mx-auto sm:px-8 sm:my-5" v-else>
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h2 class="text-2xl font-bold">Order History</h2>
