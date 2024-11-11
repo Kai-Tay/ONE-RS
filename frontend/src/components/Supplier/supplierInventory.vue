@@ -199,7 +199,7 @@ onMounted(() => {
 
 <template>
   <div class="flex min-h-screen w-full flex-col bg-muted/40">
-    <div class="mx-2 sm:mx-auto sm:px-8 sm:my-5">
+    <div class="mx-2 md:mx-auto sm:px-8 sm:my-5">
 
       <!-- Title and Summary Display Section -->
       <div class="mb-8">
