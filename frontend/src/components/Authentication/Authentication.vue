@@ -399,7 +399,7 @@ export default {
               const date = new Date();
               const month = date.getMonth() + 1;
               const year = date.getFullYear();
-              const inventoryKey = `${year}-${month < 10 ? '0' + month : month}-05`;
+              const inventoryKey = `${year}-${month < 10 ? '0' + month : month}-5`;
 
               // Create inventory document if user is a restaurant and create a map objects of inventory lvels with YYYY-MM-05 as key
               return setDoc(doc(db, "inventoryLevels", user.uid), {
