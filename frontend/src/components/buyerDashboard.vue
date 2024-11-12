@@ -175,8 +175,10 @@ function transformDataForChart(inventoryData, item) {
             if (interval.endsWith("-5")) {
                 // Different logic for intervals ending with '-5'
                 // Add your alternate logic here to set selectedCategory when interval ends with '-5'
+                
                 for (const category in pastInv[interval].beforeOrder) {
-                    if (pastInv[interval].beforeOrder[category][item]) {
+                    if (pastInv[interval].beforeOrder[category]) {
+                        
                         selectedCategory = category;
                         break; // Found the category, exit the loop
                     }
@@ -197,9 +199,7 @@ function transformDataForChart(inventoryData, item) {
             // Get values for beforeOrder and afterOrder
             const beforeOrderLevel = pastInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
             const afterOrderLevel = pastInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
-
-
-
+            
 
 
             if (interval.endsWith("-5")) {
@@ -275,6 +275,7 @@ function transformDataForChart(inventoryData, item) {
 
             const currentBeforeOrderLevel = currentInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
             const currentAfterOrderLevel = currentInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
+            
             if (currentBeforeOrderLevel !== null) {
                 // Add InventoryLevel for beforeOrder (renamed)
                 chartDataArray.push({
@@ -329,7 +330,7 @@ function transformDataForChart(inventoryData, item) {
 
 
     chartDataArray.sort((a, b) => (a.interval > b.interval ? 1 : -1));
-
+  
     return chartDataArray;
 }
 
@@ -563,7 +564,7 @@ function calculateOULForAllItems(itemMean, itemSD, serviceLevel) {
             safetyStock,
             OUL
         };
-        console.log(OULResults);
+        
     }
     return OULResults;
 }
