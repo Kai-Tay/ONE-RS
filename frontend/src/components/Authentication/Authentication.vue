@@ -414,6 +414,7 @@ export default {
               // Create restaurant document if user is NOT a supplier
               if (!this.isSupplier) {
                 return setDoc(doc(db, "restaurant", user.uid), {
+                  inventoryTypes: {},
                 });
               }
               return Promise.resolve();
