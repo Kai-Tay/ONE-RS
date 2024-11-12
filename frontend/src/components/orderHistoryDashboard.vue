@@ -171,11 +171,12 @@ export default {
                             monthlyTotals[monthName] = 0;
                         }
                         monthlyTotals[monthName] += totalPrice;
-
+                        console.log(data.orderedItems)
                         // Accumulate category totals
                         data.orderedItems.forEach(item => {
+                            console.log(item.purchaseQuantity, item.category)
                             const category = item.category;
-                            const quantity = parseInt(item.quantity) || 0;
+                            const quantity = parseInt(item.purchaseQuantity) || 0;
                             if (!categoryTotals[category]) {
                                 categoryTotals[category] = 0;
                             }
@@ -236,6 +237,7 @@ export default {
 
                 // Calculate total quantity of ALL items
                 let totalQuantity = 0;
+                console.log(categoryTotals)
                 for (const category in categoryTotals) {
                     totalQuantity += categoryTotals[category];
                 }
