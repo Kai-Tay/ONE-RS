@@ -21,11 +21,11 @@ const navigateTo = (route) => {
             <!-- Main content container -->
             <div class="flex h-full items-center">
                 <!-- Left side content -->
-                <div class="w-1/2">
-                    <div class="flex-grow flex items-center">
+                <div class="w-full md:w-1/2">
+                    <div class="flex-grow flex items-center justify-center md:justify-start">
                         <div class="max-w-2xl">
-                            <div class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold" ref="titleContainer">
-                                <h1 class="text-left text-white mb-2" v-if="isLoggedIn">
+                            <div class="text-4xl md:text-5xl lg:text-7xl font-bold" ref="titleContainer">
+                                <h1 class="text-center md:text-left text-white mb-2" v-if="isLoggedIn">
                                     Welcome, <br>{{ userName }}
                                 </h1>
                                 <h1 class="text-4xl md:text-7xl text-left text-white mb-2" v-else ref="mainTitle">
@@ -41,14 +41,14 @@ const navigateTo = (route) => {
                     <div class="flex-none max-w-2xl">
                         <div class="text-gray-200 text-2xl">
                             <div v-if="isLoggedIn">
-                                <p class="text-left text-gray-400" v-if="userType == 'supplier'">
+                                <p class="text-center md:text-left text-gray-400" v-if="userType == 'supplier'">
                                     Start setting up your listings!
                                 </p>
-                                <p class="text-left text-gray-400" v-else>
+                                <p class="text-center md:text-left text-gray-400" v-else>
                                     Start finding your ingredients from suppliers!
                                 </p>
                             </div>
-                            <p class="text-left text-gray-400" v-else>
+                            <p class="text-center md:text-left text-gray-400" v-else>
                                 The best place for restaurants and
                                 <br />
                                 suppliers to connect!
@@ -200,7 +200,7 @@ const navigateTo = (route) => {
                         </div>
                     </div>
 
-                    <div class="flex flex-col justify-between px-5" ref="orderCard" @mouseover="hoverAnimate($event)"
+                    <div class="flex flex-col justify-between px-5 bg-gray-200" ref="orderCard" @mouseover="hoverAnimate($event)"
                         @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 2:
                             <br>Place Order

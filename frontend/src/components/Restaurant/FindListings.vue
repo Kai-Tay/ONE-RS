@@ -67,12 +67,12 @@ import axios from 'axios';
                     </div>
 
                     <!-- Supplier Content on the Right -->
-                    <div class="sm:ml-4 w-3/5 flex flex-col">
-                        <CardHeader class="px-0 sm:px-6">
+                    <div class="sm:ml-4 w-3/5 flex flex-col items-center sm:items-start">
+                        <CardHeader class="px-0 sm:px-6 text-center sm:text-left">
                             <CardTitle>
-                                <div class="text-md sm:text-2xl">{{ listing.supplierName }}</div>
+                                <div class="text-md sm:text-2xl text-center sm:text-left">{{ listing.supplierName }}</div>
                             </CardTitle>
-                            <CardDescription class="text-lg px-0">
+                            <CardDescription class="text-lg px-0 text-center sm:text-left">
                                 {{
                                     Array.from(new Set(listing.inventory.map(item => item.category))).join(", ")
                                 }}
@@ -84,7 +84,7 @@ import axios from 'axios';
                     </div>
                     <div class="w-3/5">
                         <CardContent class="px-0 sm:px-6 ">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col items-center sm:items-start">
                                 <CardDescription class="text-md font-bold">Available Ingredients</CardDescription>
                                 <CardDescription class="text-md" v-for="item in listing.inventory"
                                     :key="item.productName">
