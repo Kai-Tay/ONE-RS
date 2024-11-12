@@ -28,7 +28,7 @@ const navigateTo = (route) => {
                                 <h1 class="text-center md:text-left text-white mb-2" v-if="isLoggedIn">
                                     Welcome, <br>{{ userName }}
                                 </h1>
-                                <h1 class="text-4xl md:text-7xl text-left text-white mb-2" v-else ref="mainTitle">
+                                <h1 class="text-4xl md:text-7xl text-center md:text-left text-white mb-2" v-else ref="mainTitle">
                                     Welcome to
                                     <br />
                                     ONE.RS
