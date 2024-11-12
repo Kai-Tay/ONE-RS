@@ -165,16 +165,14 @@ export default {
                         // Split the formatted date string to get the month name
                         const [day, monthName] = formattedDate.split(' ');
 
-                        // Ensure totalPrice is a number and accumulate monthly totals
+                        // Accumulate monthly totals
                         const totalPrice = parseFloat(data.totalPrice) || 0;
                         if (!monthlyTotals[monthName]) {
                             monthlyTotals[monthName] = 0;
                         }
                         monthlyTotals[monthName] += totalPrice;
-                        console.log(data.orderedItems)
                         // Accumulate category totals
                         data.orderedItems.forEach(item => {
-                            console.log(item.purchaseQuantity, item.category)
                             const category = item.category;
                             const quantity = parseInt(item.purchaseQuantity) || 0;
                             if (!categoryTotals[category]) {
@@ -203,8 +201,6 @@ export default {
                         total: monthlyTotals[month]
                     }));
 
-                console.log("Monthly Totals for Chart:", this.monthlyTotals);
-
                 // Calculate Total
                 for (let month in monthlyTotals) {
                     this.total += monthlyTotals[month];
@@ -231,13 +227,12 @@ export default {
                         }
                     }
                     else {
-                        console.log(`Previous month's total is 0, cannot calculate percentage change.`);
+                        this.percentageChange = "NA";
                     }
                 }
 
                 // Calculate total quantity of ALL items
                 let totalQuantity = 0;
-                console.log(categoryTotals)
                 for (const category in categoryTotals) {
                     totalQuantity += categoryTotals[category];
                 }
@@ -247,8 +242,6 @@ export default {
                     name: category,
                     percentage: Number(((categoryTotals[category] / totalQuantity) * 100).toFixed(2))
                 }));
-
-                console.log("Category Percentages:", this.categoryPercentages);
 
                 // Fetch user details for each order
                 for (const order of orders) {
@@ -275,8 +268,6 @@ export default {
                     this.orderHistory.push(order);
 
                 }
-
-                console.log("Order History with user details:", this.orderHistory);
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
@@ -300,7 +291,6 @@ export default {
         this.userId = sessionStorage.uid;
         this.userType = sessionStorage.userType;
         this.fetchOrderData();
-        console.log()
     }
 }
 </script>

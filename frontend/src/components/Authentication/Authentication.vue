@@ -300,12 +300,10 @@ export default {
       sessionStorage.setItem('userName', userName);
       sessionStorage.setItem('uid', uid);
       sessionStorage.setItem('points', points);
-      console.log("ADDED SESSION")
     },
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          console.log(userCredential)
           // Set User Type
           const uid = userCredential.user.uid;
 
@@ -341,7 +339,6 @@ export default {
         .catch((error) => {
           // Wrong password
           // alert("Wrong Username/Password. Try Again!")
-          console.log(error)
 
           this.statusHeader = "Log In Unsuccessful";
           this.statusDescription = "Wrong Username/Password. Try Again!";

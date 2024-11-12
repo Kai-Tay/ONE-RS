@@ -163,12 +163,10 @@ export default {
         // Check if user is already logged in and change the nav bar accordingly
         checkSessionStorage() {
             if (sessionStorage.getItem('uid') != null) {
-                console.log("User is logged in HEHEHARHAR");
                 this.isLoggedIn = true;
                 this.userName = sessionStorage.getItem('userName');
                 this.userType = sessionStorage.getItem('userType');
             } else {
-                console.log("User is not logged in HEHEHARHAR");
                 this.isLoggedIn = false;
             }
 
@@ -185,8 +183,6 @@ export default {
                         const expirationTime = new Date(idTokenResult.authTime).getTime() + 3600000; // Convert to milliseconds
                         const currentTime = new Date().getTime(); // Get current time in milliseconds
                         const uid = idTokenResult.claims.user_id;
-                        console.log("Current time: ", currentTime);
-                        console.log("Auth Expiration time: ", expirationTime);
                         // Check if the token is expired
                         if (currentTime > expirationTime) {
                             signOut(auth).then(() => {

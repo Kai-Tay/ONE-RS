@@ -132,8 +132,6 @@ const saveChanges = async () => {
 
     // Close the edit dialog manually
     isEditing.value = false;
-
-    console.log('Item updated successfully');
   } catch (error) {
     console.error('Error updating item:', error);
   }
