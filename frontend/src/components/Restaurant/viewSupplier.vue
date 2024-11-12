@@ -842,7 +842,7 @@ export default {
         // Check Inventory Levels if is in current month...
         // this.checkInventoryLevels();
 
-        this.updateInventoryLevels();
+        // this.updateInventoryLevels();
 
     },
 };
