@@ -5,13 +5,9 @@
         <!-- Category Select -->
         <div class="mb-6">
             <label for="categorySelect" class="block text-gray-700 font-medium mb-2">Select Category:</label>
-            <select 
-                id="categorySelect" 
-                v-model="selectedCategory" 
-                @change="onCategoryChange" 
+            <select id="categorySelect" v-model="selectedCategory" @change="onCategoryChange"
                 :disabled="!inventoryDataLoaded"
-                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
-            >
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2">
                 <option v-for="(items, category) in inventoryData" :key="category" :value="category">
                     {{ category }}
                 </option>
@@ -21,12 +17,8 @@
         <!-- Item Select -->
         <div class="mb-6">
             <label for="itemSelect" class="block text-gray-700 font-medium mb-2">Select Item:</label>
-            <select 
-                id="itemSelect" 
-                v-model="selectedItem" 
-                :disabled="!selectedCategory"
-                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
-            >
+            <select id="itemSelect" v-model="selectedItem" :disabled="!selectedCategory"
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2">
                 <option v-for="(quantity, item) in filteredItems" :key="item" :value="item">
                     {{ item }}
                 </option>
@@ -36,55 +28,32 @@
         <!-- Service Level Input -->
         <div class="mb-6">
             <label for="serviceLevel" class="block text-gray-700 font-medium mb-2">Service Level (%):</label>
-            <input 
-                type="number" 
-                id="serviceLevel" 
-                v-model="serviceLevel" 
-                min="0" 
-                max="100" 
-                @input="updateDependentValues"
-                placeholder="96"
-                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2"
-            />
+            <input type="number" id="serviceLevel" v-model="serviceLevel" min="0" max="100"
+                @input="updateDependentValues" placeholder="96"
+                class="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2" />
             <div v-if="serviceLevelWarning" class="text-red-500 text-sm mt-1">{{ serviceLevelWarning }}</div>
         </div>
 
 
-        <div class="p-8 bg-gray-100 overflow-x-auto">
-          <!-- Card Section -->
-          <div class="max-w-full mx-auto bg-white shadow-lg rounded-lg p-6 min-w-[500px]">
-            <!-- Chart Section -->
-            <div class="flex justify-center items-center w-full">
-              <div 
-                class="relative w-full" 
-                style="height: auto;"
-                ref="chartContainer"
-              >
-                <LineChart
-                  :key="updateCounter"
-                  :data="filteredChartData"
-                  index="interval"
-                  :categories="['InventoryLevel', 'OUL', 'SafetyStock']"
-                  class="w-full h-full"
-                  :colors="['orange','blue','green']"
-                />
-              </div>
-            </div>
-          </div>
+        <div class="bg-gray-100 overflow-x-auto">
+            <Card>
+                <CardContent>
+                    <LineChart :key="updateCounter" :data="filteredChartData" index="interval"
+                        :categories="['InventoryLevel', 'OUL', 'SafetyStock']" class="w-full h-full"
+                        :colors="['orange', 'blue', 'green']" />
+                </CardContent>
+            </Card>
         </div>
-
-
-
 
         <!-- Divider -->
         <div class="border-t border-gray-300 my-8"></div>
 
         <!-- Inventory Levels Table -->
-          <div>
-              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Inventory Levels</h2>
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Inventory Levels</h2>
 
-              <!-- Loading indicator -->
-              <div v-if="loadingTable" class="text-center text-gray-600">Loading...</div>
+            <!-- Loading indicator -->
+            <div v-if="loadingTable" class="text-center text-gray-600">Loading...</div>
 
             <!-- Table -->
             <div v-else class="overflow-x-auto">
@@ -100,17 +69,15 @@
                     <tbody>
                         <template v-for="(items, category) in currentInventoryLevels" :key="category">
                             <tr v-for="(level, item, index) in items" :key="item" class="border-b border-gray-200">
-                                <td v-if="index === 0" :rowspan="Object.keys(items).length" class="px-4 py-3 font-medium text-gray-800 bg-gray-100">
+                                <td v-if="index === 0" :rowspan="Object.keys(items).length"
+                                    class="px-4 py-3 font-medium text-gray-800 bg-gray-100">
                                     {{ category }}
                                 </td>
                                 <td class="px-4 py-3 text-gray-700">{{ item }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ level }}</td>
                                 <td class="px-4 py-3">
-                                    <input 
-                                        type="number" 
-                                        v-model.number="updatedLevels[category][item]" 
-                                        class="w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
+                                    <input type="number" v-model.number="updatedLevels[category][item]"
+                                        class="w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-blue-500 focus:border-blue-500" />
                                 </td>
                             </tr>
                         </template>
@@ -119,10 +86,8 @@
             </div>
 
             <!-- Submit Button -->
-            <button 
-                @click="submitUpdatedLevels" 
-                class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition duration-150 ease-in-out"
-            >
+            <button @click="submitUpdatedLevels"
+                class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition duration-150 ease-in-out">
                 Submit
             </button>
         </div>
@@ -133,6 +98,7 @@
 <script setup>
 import { db } from '../firebase.js';
 import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { Card, CardContent } from './ui/card/index.js';
 import { LineChart } from '@/components/ui/chart-line';
 import { ref, watch, computed, onMounted } from 'vue';
 
@@ -149,8 +115,8 @@ const updateCounter = ref(0);
 
 const calculatedResults = ref(null);
 const filteredChartData = computed(() => {
-  // Use slice to return the last 5 months of data (for example)
-  return chartData.value.slice(-20);
+    // Use slice to return the last 5 months of data (for example)
+    return chartData.value.slice(-20);
 });
 
 
@@ -169,7 +135,7 @@ const selectedInterval = ref("");
 const currentIntervalDisplay = computed(() => selectedInterval.value);
 const nextIntervalDisplay = computed(() => {
     if (!selectedInterval.value) return ''; // Add null check
-    
+
     const [year, month, interval] = selectedInterval.value.split('-').map(Number);
     if (interval === 5) {
         const nextMonth = month === 12 ? 1 : month + 1;
@@ -195,12 +161,12 @@ async function fetchInventoryData(restaurantId) {
 // Process and transform data for the chart
 function transformDataForChart(inventoryData, item) {
     const chartDataArray = [];
-   
+
     // Check if pastInventoryLevel exists
     if (inventoryData.pastInventoryLevels) {
         // Process past inventory levels
         for (const [interval, categories] of Object.entries(inventoryData.pastInventoryLevels)) {
-  
+
 
             const pastInv = inventoryData.pastInventoryLevels;
 
@@ -224,7 +190,7 @@ function transformDataForChart(inventoryData, item) {
                     }
                 }
             }
-         
+
             // Ensure "beef" data exists in "meat" category
             const beefExists = categories[selectedCategory]?.[item];
 
@@ -232,7 +198,7 @@ function transformDataForChart(inventoryData, item) {
             const beforeOrderLevel = pastInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
             const afterOrderLevel = pastInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
 
-          
+
 
 
 
@@ -291,46 +257,46 @@ function transformDataForChart(inventoryData, item) {
     const currentInv = inventoryData.currentInventoryLevel;
     // Ensure "beef" data exists in "meat" category
     if (currentInv) {
-    const interval = Object.keys(currentInv)[0]; // Get the single key
-    
-    if (interval.endsWith("-5")) {
-       
+        const interval = Object.keys(currentInv)[0]; // Get the single key
 
-        
-        // Add further processing here if needed
-        let selectedCategory = null;
+        if (interval.endsWith("-5")) {
+
+
+
+            // Add further processing here if needed
+            let selectedCategory = null;
             for (const category in currentInv[interval].beforeOrder) {
                 if (currentInv[interval].beforeOrder[category][item]) {
                     selectedCategory = category;
                     break; // Found the category, exit the loop
-        
+
                 }
             }
-            
-        const currentBeforeOrderLevel = currentInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
-        const currentAfterOrderLevel = currentInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
-        if (currentBeforeOrderLevel !== null) {
-            // Add InventoryLevel for beforeOrder (renamed)
-            chartDataArray.push({
-                interval: `${interval}-1`, // New interval for beforeOrder
-                category: selectedCategory,
-                itemType: item,
-                InventoryLevel: currentBeforeOrderLevel, // Use InventoryLevel to display beforeOrder
-                OUL: storedOULResults[item]?.OUL || 0, // Add OUL for beef
-                SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
-            });
+
+            const currentBeforeOrderLevel = currentInv[interval].beforeOrder?.[selectedCategory]?.[item] || null;
+            const currentAfterOrderLevel = currentInv[interval].afterOrder?.[selectedCategory]?.[item] || null;
+            if (currentBeforeOrderLevel !== null) {
+                // Add InventoryLevel for beforeOrder (renamed)
+                chartDataArray.push({
+                    interval: `${interval}-1`, // New interval for beforeOrder
+                    category: selectedCategory,
+                    itemType: item,
+                    InventoryLevel: currentBeforeOrderLevel, // Use InventoryLevel to display beforeOrder
+                    OUL: storedOULResults[item]?.OUL || 0, // Add OUL for beef
+                    SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
+                });
             } else {
                 console.log(`No beforeOrder level for interval ${interval}`);
             }
 
             // Check if afterOrderLevel exists
-            if ( currentAfterOrderLevel !== null) {
+            if (currentAfterOrderLevel !== null) {
                 // Add InventoryLevel for afterOrder (renamed)
                 chartDataArray.push({
                     interval: `${interval}-2`, // New interval for afterOrder
                     category: selectedCategory,
                     itemType: item,
-                    InventoryLevel:  currentAfterOrderLevel, // Use InventoryLevel to display afterOrder
+                    InventoryLevel: currentAfterOrderLevel, // Use InventoryLevel to display afterOrder
                     OUL: storedOULResults[item]?.OUL || 0, // Add OUL for beef
                     SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                 });
@@ -340,20 +306,20 @@ function transformDataForChart(inventoryData, item) {
 
 
 
-    } else {
-        const currentBeefExists = currentInv[interval][selectedCategory]?.[item] || null;
-        if (currentBeefExists) {
-            const singleInventoryLevel = categories[selectedCategory][item];
-            chartDataArray.push({
-                interval,
-                category: selectedCategory,
-                itemType: item,
-                InventoryLevel: singleInventoryLevel,
-                OUL: storedOULResults[item]?.OUL || 0, // Add OUL for beef
-                SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
-            });
+        } else {
+            const currentBeefExists = currentInv[interval][selectedCategory]?.[item] || null;
+            if (currentBeefExists) {
+                const singleInventoryLevel = categories[selectedCategory][item];
+                chartDataArray.push({
+                    interval,
+                    category: selectedCategory,
+                    itemType: item,
+                    InventoryLevel: singleInventoryLevel,
+                    OUL: storedOULResults[item]?.OUL || 0, // Add OUL for beef
+                    SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
+                });
+            }
         }
-    }
 
 
     } else {
@@ -410,7 +376,7 @@ const filteredItems = computed(() => {
 function onCategoryChange() {
     selectedItem.value = null; // Reset selected item
     const items = Object.keys(filteredItems.value);
-    
+
     if (items.length > 0) {
         selectedItem.value = items[0]; // Auto-select the first item
 
@@ -435,14 +401,14 @@ watch(serviceLevel, (newLevel) => {
 
 function recalculateOULAndSS(newLevel) {
     if (calculatedResults.value) { // Check if calculatedResults has data
-        
+
         storedOULResults = calculateOULForAllItems(calculatedResults.value.itemMean, calculatedResults.value.itemSD, newLevel);
-        
+
         if (selectedItem.value) {
             updateChartData(selectedItem.value);
         }
-        } else {
-            console.log("No calculated results available for recalculating OUL and SS.");
+    } else {
+        console.log("No calculated results available for recalculating OUL and SS.");
     }
 }
 
@@ -451,21 +417,21 @@ function recalculateOULAndSS(newLevel) {
 // Function to update chart data based on selected item
 async function updateChartData(item) {
     if (item) {
-  
-    
+
+
         const oulValue = getOUL(item); // Fetch OUL for the selected item
         const ssValue = getSS(item);   // Fetch Safety Stock for the selected item
 
         try {
-        const inventoryData = await fetchInventoryData(sessionStorage.getItem("uid")); // Await the fetch call
-        if (inventoryData) {
-            chartData.value = transformDataForChart(inventoryData, item);  // Assign to the existing chartData ref
-          
-        }
+            const inventoryData = await fetchInventoryData(sessionStorage.getItem("uid")); // Await the fetch call
+            if (inventoryData) {
+                chartData.value = transformDataForChart(inventoryData, item);  // Assign to the existing chartData ref
 
-        updateCounter.value++;
+            }
+
+            updateCounter.value++;
         } catch (error) {
-        console.error("Error fetching inventory data:", error);
+            console.error("Error fetching inventory data:", error);
         }
     }
 }
@@ -480,17 +446,17 @@ async function main(currentUserId) {
     if (results) {
         calculatedResults.value = results;
         storedOULResults = calculateOULForAllItems(results.itemMean, results.itemSD, serviceLevel);
-      
+
     } else {
         console.log("No results returned.");
-    } 
+    }
 }
 
 // Fetch mean demand and standard deviation from Firestore
 async function calculateMeanDemandAndSd(restaurantId) {
     const restaurantRef = doc(db, 'restaurant', restaurantId);
     const restaurantDoc = await getDoc(restaurantRef);
-  
+
     if (!restaurantDoc.exists()) {
         console.log("Restaurant not found");
         return;
@@ -590,7 +556,7 @@ function calculateOULForAllItems(itemMean, itemSD, serviceLevel) {
         const stdDevTL = stdDev * Math.sqrt(totalTime);
         const safetyStock = Z * stdDevTL;
         const OUL = meanDemandTL + safetyStock;
-      
+
         OULResults[item] = {
             meanDemandTL,
             stdDevTL,
@@ -697,8 +663,8 @@ async function submitUpdatedLevels() {
 
             // Step 5: Calculate the difference, using `afterOrder` if it exists (for "-5" intervals); otherwise, compare directly
             const demandDifference = {};
-            const comparisonSource = currentInterval.endsWith("-5") 
-                ? (currentIntervalData?.afterOrder || currentIntervalData?.beforeOrder) 
+            const comparisonSource = currentInterval.endsWith("-5")
+                ? (currentIntervalData?.afterOrder || currentIntervalData?.beforeOrder)
                 : currentIntervalData;
 
             for (const category in comparisonSource) {
@@ -741,7 +707,9 @@ table {
     width: 100%;
     border-collapse: collapse;
 }
-th, td {
+
+th,
+td {
     border: 1px solid #ddd;
     padding: 8px;
 }
