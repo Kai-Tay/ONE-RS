@@ -178,11 +178,6 @@ const bestSellingProduct = computed(() => {
   return maxSalesProduct;
 });
 
-const totalSalesAmount = computed(() => {
-  return inventoryData.value.reduce((total, item) => {
-    return total + item.purchaseQuantity * item.pricePerUnit;
-  }, 0);
-});
 
 const lowStockItems = computed(() => {
   return inventoryData.value
@@ -215,7 +210,7 @@ onMounted(() => {
           </Card>
 
           <!-- Low Stock Items Card -->
-          <Card class="p-4 flex flex-col justify-center">
+          <Card class="p-4  flex flex-col justify-center">
               <p class="text-sm font-medium text-red-500">Low Stock Items</p>
               <p class="text-2xl font-semibold">
                 <span v-if="lowStockItems.length > 0">{{ lowStockItems.join(', ') }}</span>
