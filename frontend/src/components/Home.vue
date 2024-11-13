@@ -142,8 +142,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
-                        ref="aiCard">
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden" ref="aiCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">
                                 Inventory Management
@@ -160,15 +159,16 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div
-                            class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
-                            <img src="../assets/img/oners_orderHistory.png" alt="Homepage Image" style="width: 250%;"
-                                class=" object-cover rounded-lg shadow-lg" />
+                        <div class="relative h-96 overflow-hidden">
+                            <div
+                                class="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden lg:block md:w-1/2 lg:max-w-1/2 -mb-20">
+                                <img src="../assets/img/oners_orderHistory.png" alt="Homepage Image"
+                                    class="object-cover rounded-lg shadow-lg" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
-                        ref="dashboardCard">
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden" ref="dashboardCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">Real-Time Chat Translation
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -183,10 +183,12 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div
-                            class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
-                            <img src="../assets/img/oners_chat.png" alt="Homepage Image" style="width: 250%;"
-                                class=" object-cover rounded-lg shadow-lg" />
+                        <div class="relative h-96 overflow-hidden">
+                            <div
+                                class="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden lg:block md:w-1/2 lg:max-w-1/2 -mb-20">
+                                <img src="../assets/img/oners_chat.png" alt="Homepage Image"
+                                    class="object-cover rounded-lg shadow-lg" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,8 +268,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
-                        ref="aiCard">
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden" ref="aiCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">AI Sourcing
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -284,15 +285,16 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div
-                            class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
-                            <img src="../assets/img/oners_findSuppliers.png" alt="Homepage Image" style="width: 250%;"
-                                class="object-cover rounded-lg shadow-lg" />
+                        <div class="relative h-96 overflow-hidden">
+                            <div
+                                class="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden lg:block md:w-1/2 lg:max-w-1/2 -mb-20">
+                                <img src="../assets/img/oners_findSuppliers.png" alt="Homepage Image"
+                                    class="object-cover rounded-lg shadow-lg" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
-                        ref="dashboardCard">
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden" ref="dashboardCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">Predictive Dashboard
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -308,10 +310,12 @@ const navigateTo = (route) => {
                             </div>
                         </div>
 
-                        <div
-                            class="md:absolute relative md:bottom-1 md:right-1/4 md:left-1/4 md:w-1/2 md:h-72 hidden md:block md:pt-5">
-                            <img src="../assets/img/oners_dashboard.png" alt="Homepage Image" style="width: 250%;"
-                                class="object-cover rounded-lg shadow-lg" />
+                        <div class="relative h-96 overflow-hidden">
+                            <div
+                                class="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden lg:block md:w-1/2 lg:w-1/2 -mb-20">
+                                <img src="../assets/img/oners_dashboard.png" alt="Homepage Image"
+                                    class="object-cover rounded-lg shadow-lg" />
+                            </div>
                         </div>
                     </div>
                 </div>
