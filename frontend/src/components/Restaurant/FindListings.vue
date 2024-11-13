@@ -15,7 +15,7 @@ import axios from 'axios';
 </script>
 
 <template>
-    <div class="container mx-auto my-5 px-8 " v-if="loading">
+    <div class=" mx-auto my-5 px-8 " v-if="loading">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <Skeleton class="h-[20px] w-[140px] rounded-xl my-1" />
