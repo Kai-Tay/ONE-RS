@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <form @submit.prevent="sendMessage" class="flex p-4 bg-gray-100 border-t border-gray-300 fixed bottom-0 left-0 w-full box-border">
+                <form @submit.prevent="sendMessage" class="flex p-4 bg-gray-100 border-t border-gray-300 w-full box-border">
                     <Input
                         v-model="newMessage"
                         :id="messageInputId"
@@ -240,7 +240,7 @@ const loadMessages = () => {
 
             messages.value.forEach(message => {
                 if (!userNames.value[message.senderId]) {
-                    fetchUserName(message.senderId);
+                    getUserName(message.senderId);
                 }
                 if (!companyNames.value[message.senderId]) {
                     fetchCompanyName(message.senderId);
@@ -276,6 +276,23 @@ const getCompanyName = (userId) => {
         return 'Loading...';
     }
     return companyNames.value[userId];
+};
+
+const fetchUserName = async (userId) => {
+    if (userNames.value[userId]) return;
+
+    try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            userNames.value[userId] = userData.userName
+        } else {
+            userNames.value[userId] = 'Unknown user';
+        }
+    } catch (err) {
+        console.error("Error fetching user name: ", err);
+        userNames.value[userId] = 'Unknown user';
+    }
 };
 
 const getUserName = (userId) => {
