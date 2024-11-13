@@ -1,16 +1,15 @@
 <template>
     <footer class="bg-gray-900 text-white py-8 px-16 lg:px-28">
-        <div class="mx-auto text-center space-y-4 ">
+        <div class="mx-auto text-center">
             <!-- Website Name -->
-            <h2 class="text-2xl font-bold text-white">ONE.RS 🧑‍🍳</h2>
+            <h2 class="text-2xl font-bold text-white mb-1">ONE.RS 🧑‍🍳</h2>
+            <p class="text-m text-white">Optimal Network Excellence in Restaurant Supply</p>
 
             <!-- Contact Information -->
-            <div class=" text-sm md:text-lg">
-                <p class="text-gray-400 ">Effortless sourcing for restaurant owners. </p>
-                <p class="text-gray-400 ">Discover and connect with reliable suppliers, simplify orders, and ensure
-                    your kitchen is always stocked with the finest ingredients.</p>
+            <div class="text-sm md:text-lg mt-3">
+                <p class="text-gray-500">Effortless sourcing for restaurant owners. Discover and connect with reliable suppliers</p>
             </div>
-            <p class="text-gray-400">contact@oners.com</p>
+            <p class="text-gray-500 mt-2">contact@oners.com</p>
 
             <!-- Bottom Footer -->
             <div class="mt-6 border-t border-gray-700 pt-4">
