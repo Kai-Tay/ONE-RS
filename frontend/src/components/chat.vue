@@ -6,7 +6,6 @@
             <!-- Chat Interface -->
             <div class="flex flex-col h-full w-full">
                 <h2 class="text-xl font-bold mb-4">{{ supplierName }}</h2>
-                <p>Supplier ID: {{ supplierId }}</p>
                 <div class="mb-4 flex items-center space-x-4">
                     <div class="w-[130px]">
                         <Select v-model="targetLanguage">
