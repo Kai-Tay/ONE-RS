@@ -165,17 +165,16 @@ export default {
                         // Split the formatted date string to get the month name
                         const [day, monthName] = formattedDate.split(' ');
 
-                        // Ensure totalPrice is a number and accumulate monthly totals
+                        // Accumulate monthly totals
                         const totalPrice = parseFloat(data.totalPrice) || 0;
                         if (!monthlyTotals[monthName]) {
                             monthlyTotals[monthName] = 0;
                         }
                         monthlyTotals[monthName] += totalPrice;
-
                         // Accumulate category totals
                         data.orderedItems.forEach(item => {
                             const category = item.category;
-                            const quantity = parseInt(item.quantity) || 0;
+                            const quantity = parseInt(item.purchaseQuantity) || 0;
                             if (!categoryTotals[category]) {
                                 categoryTotals[category] = 0;
                             }
@@ -201,8 +200,6 @@ export default {
                         month,
                         total: monthlyTotals[month]
                     }));
-
-                console.log("Monthly Totals for Chart:", this.monthlyTotals);
 
                 // Calculate Total
                 for (let month in monthlyTotals) {
@@ -230,7 +227,7 @@ export default {
                         }
                     }
                     else {
-                        console.log(`Previous month's total is 0, cannot calculate percentage change.`);
+                        this.percentageChange = "NA";
                     }
                 }
 
@@ -245,8 +242,6 @@ export default {
                     name: category,
                     percentage: Number(((categoryTotals[category] / totalQuantity) * 100).toFixed(2))
                 }));
-
-                console.log("Category Percentages:", this.categoryPercentages);
 
                 // Fetch user details for each order
                 for (const order of orders) {
@@ -273,8 +268,6 @@ export default {
                     this.orderHistory.push(order);
 
                 }
-
-                console.log("Order History with user details:", this.orderHistory);
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
@@ -298,7 +291,6 @@ export default {
         this.userId = sessionStorage.uid;
         this.userType = sessionStorage.userType;
         this.fetchOrderData();
-        console.log()
     }
 }
 </script>

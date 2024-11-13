@@ -132,8 +132,6 @@ const saveChanges = async () => {
 
     // Close the edit dialog manually
     isEditing.value = false;
-
-    console.log('Item updated successfully');
   } catch (error) {
     console.error('Error updating item:', error);
   }
@@ -178,11 +176,6 @@ const bestSellingProduct = computed(() => {
   return maxSalesProduct;
 });
 
-const totalSalesAmount = computed(() => {
-  return inventoryData.value.reduce((total, item) => {
-    return total + item.purchaseQuantity * item.pricePerUnit;
-  }, 0);
-});
 
 const lowStockItems = computed(() => {
   return inventoryData.value
@@ -207,17 +200,11 @@ onMounted(() => {
         <p class="text-sm mb-4">Manage your Inventory</p>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Best Selling Product Card -->
           <Card class="p-4 flex flex-col justify-center">
               <p class="text-sm font-medium text-green-600">Best Selling Product</p>
               <p class="text-2xl font-semibold">{{ bestSellingProduct || 'No sales data available' }}</p>
-          </Card>
-
-          <!-- Total Sales Amount Card -->
-          <Card class="p-4 flex flex-col justify-center">
-              <p class="text-sm font-medium text-grey-800">Total Sales Amount</p>
-              <p class="text-3xl font-semibold">${{ totalSalesAmount.toFixed(2) }}</p>
           </Card>
 
           <!-- Low Stock Items Card -->

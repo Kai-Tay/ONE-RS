@@ -300,12 +300,10 @@ export default {
       sessionStorage.setItem('userName', userName);
       sessionStorage.setItem('uid', uid);
       sessionStorage.setItem('points', points);
-      console.log("ADDED SESSION")
     },
     handleLogin() {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          console.log(userCredential)
           // Set User Type
           const uid = userCredential.user.uid;
 
@@ -341,7 +339,6 @@ export default {
         .catch((error) => {
           // Wrong password
           // alert("Wrong Username/Password. Try Again!")
-          console.log(error)
 
           this.statusHeader = "Log In Unsuccessful";
           this.statusDescription = "Wrong Username/Password. Try Again!";
@@ -402,7 +399,7 @@ export default {
               const date = new Date();
               const month = date.getMonth() + 1;
               const year = date.getFullYear();
-              const inventoryKey = `${year}-${month < 10 ? '0' + month : month}-05`;
+              const inventoryKey = `${year}-${month < 10 ? '0' + month : month}-5`;
 
               // Create inventory document if user is a restaurant and create a map objects of inventory lvels with YYYY-MM-05 as key
               return setDoc(doc(db, "inventoryLevels", user.uid), {
@@ -417,6 +414,7 @@ export default {
               // Create restaurant document if user is NOT a supplier
               if (!this.isSupplier) {
                 return setDoc(doc(db, "restaurant", user.uid), {
+                  inventoryTypes: {},
                 });
               }
               return Promise.resolve();

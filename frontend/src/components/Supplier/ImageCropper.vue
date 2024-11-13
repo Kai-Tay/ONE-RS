@@ -17,18 +17,14 @@ const imageUrl = ref('');
 
 // Create URL for the uploaded image
 const createImageUrl = () => {
-    console.log('Creating image URL for file:', props.imageFile); // Debug log
     if (props.imageFile) {
         imageUrl.value = URL.createObjectURL(props.imageFile);
-        console.log('Created URL:', imageUrl.value); // Debug log
     }
 };
 
 // Function to get the cropped image
 const crop = () => {
-    console.log('Cropping image...'); // Debug log
     if (!cropperRef.value) {
-        console.error('Cropper ref is null'); // Debug log
         return;
     }
 
@@ -56,13 +52,11 @@ const handleCancel = () => {
 
 // Create image URL immediately when component mounts
 onMounted(() => {
-    console.log('ImageCropper mounted'); // Debug log
     createImageUrl();
 });
 
 // Also watch for changes in the image file
 watch(() => props.imageFile, () => {
-    console.log('Image file changed'); // Debug log
     createImageUrl();
 });
 </script>

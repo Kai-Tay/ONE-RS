@@ -668,38 +668,38 @@ export default {
             this.updateInventoryLevels();
 
         },
-        async checkInventoryLevels() {
-            // Fetch the inventory listing and retrieve the latest month documet YYYY-MM-number
-            const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
+        // async checkInventoryLevels() {
+        //     // Fetch the inventory listing and retrieve the latest month documet YYYY-MM-number
+        //     const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
 
-            //Check if the latest document last number is a 4 
-            const inventorySnapshot = await getDoc(inventoryRef);
-            const inventoryData = inventorySnapshot.data().currentInventoryLevel;
+        //     //Check if the latest document last number is a 4 
+        //     const inventorySnapshot = await getDoc(inventoryRef);
+        //     const inventoryData = inventorySnapshot.data().currentInventoryLevel;
 
-            // Sort document keys by YYYY-MM-HighestNumber
-            const sortedKeys = Object.keys(inventoryData)
-                .sort((a, b) => {
-                    // Split each key into [YYYY, MM, Number]
-                    const [yearA, monthA, numberA] = a.split('-').map(Number);
-                    const [yearB, monthB, numberB] = b.split('-').map(Number);
+        //     // Sort document keys by YYYY-MM-HighestNumber
+        //     const sortedKeys = Object.keys(inventoryData)
+        //         .sort((a, b) => {
+        //             // Split each key into [YYYY, MM, Number]
+        //             const [yearA, monthA, numberA] = a.split('-').map(Number);
+        //             const [yearB, monthB, numberB] = b.split('-').map(Number);
 
-                    // Sort by year, then month, then number
-                    return yearB - yearA || monthB - monthA || numberB - numberA;
-                });
+        //             // Sort by year, then month, then number
+        //             return yearB - yearA || monthB - monthA || numberB - numberA;
+        //         });
 
-            // Retrieve the latest document key
-            const docTitle = sortedKeys[0];
+        //     // Retrieve the latest document key
+        //     const docTitle = sortedKeys[0];
 
-            // Check if month is currentMonth
-            const currentMonth = new Date().getMonth() + 1;
+        //     // Check if month is currentMonth
+        //     const currentMonth = new Date().getMonth() + 1;
 
-            // Check if currentMonth is correct month
-            if (docTitle.split("-")[1] != currentMonth) {
-                this.status = "Inventory not Updated";
-                this.description = "Please update inventory to latest month!";
-                this.showDialog = true;
-            }
-        },
+        //     // Check if currentMonth is correct month
+        //     if (docTitle.split("-")[1] != currentMonth) {
+        //         this.status = "Inventory not Updated";
+        //         this.description = "Please update inventory to latest month!";
+        //         this.showDialog = true;
+        //     }
+        // },
         async updateInventoryLevels() {
             // Fetch the inventory listing and retrieve the latest month documet YYYY-MM-number
             const inventoryRef = doc(db, "inventoryLevels", sessionStorage.getItem("uid"));
@@ -743,7 +743,7 @@ export default {
                         console.log(orderMonth, month);
                         return orderMonth == month && order.buyerID == sessionStorage.getItem("uid");
                     });
-                    console.log("Filtered Order History: ", filteredOrderHistory);
+                    // console.log("Filtered Order History: ", filteredOrderHistory);
 
                     // Calculate total qty based on {category: {subcategory:qty}}
                     const totalQty = filteredOrderHistory.reduce((acc, order) => {
@@ -779,7 +779,7 @@ export default {
                         return acc;
                     }, { ...beforeOrder });  // Start with a copy of beforeOrder
 
-                    console.log("Merged Order: ", mergedOrder);
+                    // console.log("Merged Order: ", mergedOrder);
 
                     // Update the inventory levels with afterOrder in inventoryData[docTitle]
                     const updatedInventoryData = {
@@ -791,17 +791,19 @@ export default {
                     };
 
                     // Send data to database
-                    // await updateDoc(inventoryRef, {
-                    //     currentInventoryLevel: updatedInventoryData,
-                    // });
+                    await updateDoc(inventoryRef, {
+                        currentInventoryLevel: updatedInventoryData,
+                    });
 
                     // Add categories to restaurant database
                     const restaurantRef = doc(db, "restaurant", sessionStorage.getItem("uid"));
                     const restaurantSnapshot = await getDoc(restaurantRef);
                     const restaurantData = restaurantSnapshot.data().inventoryTypes;
-
+                    
+                    console.log(restaurantData)
                     // Look into mergedOrder, check if category exists in restaurantData else add it
                     Object.keys(mergedOrder).forEach(category => {
+                        console.log("Category", category)
                         if (!restaurantData[category]) {
                             restaurantData[category] = {};
                         }

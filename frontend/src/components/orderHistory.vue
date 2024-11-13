@@ -319,8 +319,6 @@ export default {
 
                     this.orderHistory.push(order);
                 }
-
-                console.log("Order History with user details:", this.orderHistory);
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
