@@ -439,7 +439,7 @@ export default {
               }, 2000);
             })
             .catch((error) => {
-              console.error("Error adding document: ", error);
+              // console.log.error("Error adding document: ", error);
               this.statusHeader = "Sign Up Error";
               this.statusDescription = "Error creating account. Please try again.";
               this.statusSuccess = false;
@@ -447,7 +447,7 @@ export default {
             });
         })
         .catch((error) => {
-          console.error("Error in Signing Up, Please Try Again!", error);
+          // console.log.error("Error in Signing Up, Please Try Again!", error);
           this.statusHeader = "Signed Up Unsuccessful";
           this.statusDescription = "Error in Signing Up, Please Try Again!";
           this.statusSuccess = false;

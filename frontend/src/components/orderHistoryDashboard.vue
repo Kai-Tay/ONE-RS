@@ -133,7 +133,7 @@ export default {
                 }
                 return null;
             } catch (error) {
-                console.error("Error fetching user details:", error);
+                // console.log.error("Error fetching user details:", error);
                 return null;
             }
         },
@@ -269,7 +269,7 @@ export default {
 
                 }
             } catch (error) {
-                console.error("Error fetching order history:", error);
+                // console.log.error("Error fetching order history:", error);
             }
         }
     },

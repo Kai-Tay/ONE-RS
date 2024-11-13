@@ -272,7 +272,7 @@ export default {
                 }
                 return null;
             } catch (error) {
-                console.error("Error fetching user details:", error);
+                // console.log.error("Error fetching user details:", error);
                 return null;
             }
         },
@@ -324,7 +324,7 @@ export default {
                 this.orderHistory.sort((a, b) => b.date.toDate() - a.date.toDate());
 
             } catch (error) {
-                console.error("Error fetching order history:", error);
+                // console.log.error("Error fetching order history:", error);
             }
 
             // Simulate data fetching or delay

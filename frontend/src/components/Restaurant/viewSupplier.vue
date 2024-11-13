@@ -521,7 +521,7 @@ export default {
                 this.supplierListing = mergedData;
 
             } catch (error) {
-                console.error('Error fetching listings:', error)
+                // console.log.error('Error fetching listings:', error)
             }
         },
 
@@ -539,7 +539,7 @@ export default {
 
             // Add Phone Number to restaurantPhoneNumber
             this.restaurantPhoneNumber = this.userInfo.companyNumber;
-            console.log(this.userInfo);
+            // console.log.log(this.userInfo);
         },
         async createPayment() {
             try {
@@ -576,7 +576,7 @@ export default {
                 paymentElement.mount('#checkout-form');
 
             } catch (error) {
-                console.error("Error during payment process:", error);
+                // console.log.error("Error during payment process:", error);
                 this.errorMessage = error.message || 'An error occurred during the payment process.';
             }
 
@@ -621,11 +621,11 @@ export default {
                             listingItem.quantity -= orderItem.purchaseQuantity;
                         }
                     });
-                    console.log(listingItem)
+                    // console.log.log(listingItem)
                     return listingItem;
                 });
 
-                console.log(updateQuantity);
+                // console.log.log(updateQuantity);
                 // Send data to database
                 await updateDoc(listingRef, {
                     inventory: updateQuantity,
@@ -722,13 +722,13 @@ export default {
             // Retrieve the latest document key
             const docTitle = sortedKeys[0];
 
-            console.log("Doc Title: ", docTitle);
+            // console.log.log("Doc Title: ", docTitle);
 
             // Check if docTitle is not undefined
             if (docTitle) {
                 const month = docTitle.split("-")[1];
 
-                console.log("Month: ", month);
+                // console.log.log("Month: ", month);
                 // Check if its the 5th interval
                 if (docTitle[docTitle.length - 1] === "5") {
 
@@ -740,10 +740,10 @@ export default {
                     // Filter out data from user for the month
                     const filteredOrderHistory = orderHistoryData.filter(order => {
                         const orderMonth = order.date.toDate().getMonth() + 1;
-                        console.log(orderMonth, month);
+                        // console.log.log(orderMonth, month);
                         return orderMonth == month && order.buyerID == sessionStorage.getItem("uid");
                     });
-                    // console.log("Filtered Order History: ", filteredOrderHistory);
+                    // // console.log.log("Filtered Order History: ", filteredOrderHistory);
 
                     // Calculate total qty based on {category: {subcategory:qty}}
                     const totalQty = filteredOrderHistory.reduce((acc, order) => {
@@ -766,7 +766,7 @@ export default {
 
                     // Merge the inventory levels by adding totalQty to beforeOrder (if totalqty keys not in beforeOrder, add it)
                     const beforeOrder = JSON.parse(JSON.stringify(inventoryData[docTitle].beforeOrder));
-                    console.log(inventoryData[docTitle].beforeOrder)
+                    // console.log.log(inventoryData[docTitle].beforeOrder)
                     const mergedOrder = Object.keys(totalQty).reduce((acc, category) => {
                         // Initialize category if it doesn't exist
                         acc[category] = acc[category] || {};
@@ -779,7 +779,7 @@ export default {
                         return acc;
                     }, { ...beforeOrder });  // Start with a copy of beforeOrder
 
-                    // console.log("Merged Order: ", mergedOrder);
+                    // // console.log.log("Merged Order: ", mergedOrder);
 
                     // Update the inventory levels with afterOrder in inventoryData[docTitle]
                     const updatedInventoryData = {
@@ -800,10 +800,10 @@ export default {
                     const restaurantSnapshot = await getDoc(restaurantRef);
                     const restaurantData = restaurantSnapshot.data().inventoryTypes;
                     
-                    console.log(restaurantData)
+                    // console.log.log(restaurantData)
                     // Look into mergedOrder, check if category exists in restaurantData else add it
                     Object.keys(mergedOrder).forEach(category => {
-                        console.log("Category", category)
+                        // console.log.log("Category", category)
                         if (!restaurantData[category]) {
                             restaurantData[category] = {};
                         }
@@ -814,7 +814,7 @@ export default {
                             restaurantData[category][subcategory] = 0;
                         });
                     });
-                    console.log(restaurantData)
+                    // console.log.log(restaurantData)
 
                     // Send data to database
                     await updateDoc(restaurantRef, {
@@ -822,7 +822,7 @@ export default {
                     });
                 }
             } else {
-                console.log("No inventory data found");
+                // console.log.log("No inventory data found");
             }
         },
     },

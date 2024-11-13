@@ -163,7 +163,7 @@ const sendMessage = async () => {
 
         newMessage.value = '';
     } catch (err) {
-        console.error("Error sending message: ", err);
+        // console.log.error("Error sending message: ", err);
         error.value = "Failed to send message: " + err.message;
     }
 };
@@ -199,7 +199,7 @@ const translateAllMessages = async () => {
             translatedText: translatedTexts[index]
         }));
     } catch (error) {
-        console.error('Translation error:', error);
+        // console.log.error('Translation error:', error);
         error.value = `Error: Could not translate messages. ${error.response?.data?.error?.message || error.message}`;
     } finally {
         isTranslating.value = false;
@@ -220,7 +220,7 @@ const groupedMessages = computed(() => {
 
 const loadMessages = () => {
     if (!currentUser.value || !supplierId) {
-        console.error("No current user or supplier ID");
+        // console.log.error("No current user or supplier ID");
         return;
     }
 
@@ -247,7 +247,7 @@ const loadMessages = () => {
             });
         }
     }, (err) => {
-        console.error("Error loading messages: ", err);
+        // console.log.error("Error loading messages: ", err);
         error.value = "Failed to load messages: " + err.message;
     });
 };
@@ -264,7 +264,7 @@ const fetchCompanyName = async (userId) => {
             companyNames.value[userId] = 'Unknown Company';
         }
     } catch (err) {
-        console.error("Error fetching company name: ", err);
+        // console.log.error("Error fetching company name: ", err);
         companyNames.value[userId] = 'Unknown Company';
     }
 };
@@ -289,7 +289,7 @@ const fetchUserName = async (userId) => {
             userNames.value[userId] = 'Unknown user';
         }
     } catch (err) {
-        console.error("Error fetching user name: ", err);
+        // console.log.error("Error fetching user name: ", err);
         userNames.value[userId] = 'Unknown user';
     }
 };
@@ -328,11 +328,11 @@ onMounted(() => {
                     // Start loading messages immediately since we have the supplierId
                     loadMessages();
                 } else {
-                    console.error('User document not found in Firestore');
+                    // console.log.error('User document not found in Firestore');
                     currentUser.value = null;
                 }
             } catch (error) {
-                console.error('Error fetching user document:', error);
+                // console.log.error('Error fetching user document:', error);
                 currentUser.value = null;
             }
         } else {

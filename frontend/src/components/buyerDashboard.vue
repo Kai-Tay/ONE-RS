@@ -158,7 +158,7 @@ function openDialog(header, desc) {
     status.value = header;
     description.value = desc;
     showDialog.value = true;
-    console.log("Dialog opened with:", header, desc);
+    // console.log.log("Dialog opened with:", header, desc);
 }
 
 // Function to close dialog
@@ -187,7 +187,7 @@ async function fetchInventoryData(restaurantId) {
     const inventorySnapshot = await getDoc(inventoryCollection);
 
     if (!inventorySnapshot.exists()) {
-        console.log("Restaurant not found");
+        // console.log.log("Restaurant not found");
         return null;
     }
 
@@ -252,7 +252,7 @@ function transformDataForChart(inventoryData, item) {
                         SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                     });
                 } else {
-                    console.log(`No beforeOrder level for interval ${interval}`);
+                    // console.log.log(`No beforeOrder level for interval ${interval}`);
                 }
 
                 // Check if afterOrderLevel exists
@@ -267,7 +267,7 @@ function transformDataForChart(inventoryData, item) {
                         SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                     });
                 } else {
-                    console.log(`No afterOrder level for interval ${interval}`);
+                    // console.log.log(`No afterOrder level for interval ${interval}`);
                 }
             } else {
                 // Single inventory level for other intervals
@@ -282,12 +282,12 @@ function transformDataForChart(inventoryData, item) {
                         SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                     });
                 } else {
-                    console.log(`No beef data for interval ${interval}`);
+                    // console.log.log(`No beef data for interval ${interval}`);
                 }
             }
         }
     } else {
-        console.log("No pastInventoryLevel data found");
+        // console.log.log("No pastInventoryLevel data found");
     }
 
     // Check if currentInventoryLevel exists and includes "meat" and "beef" data
@@ -324,7 +324,7 @@ function transformDataForChart(inventoryData, item) {
                     SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                 });
             } else {
-                console.log(`No beforeOrder level for interval ${interval}`);
+                // console.log.log(`No beforeOrder level for interval ${interval}`);
             }
 
             // Check if afterOrderLevel exists
@@ -339,7 +339,7 @@ function transformDataForChart(inventoryData, item) {
                     SafetyStock: storedOULResults[item]?.safetyStock || 0, // Add Safety Stock for beef
                 });
             } else {
-                console.log(`No afterOrder level for interval ${interval}`);
+                // console.log.log(`No afterOrder level for interval ${interval}`);
             }
 
 
@@ -361,7 +361,7 @@ function transformDataForChart(inventoryData, item) {
 
 
     } else {
-        console.log("No current inventory level data found");
+        // console.log.log("No current inventory level data found");
     }
 
 
@@ -379,7 +379,7 @@ onMounted(async () => {
         await fetchItemsInInventory(currentUserId);
         await fetchCurrentInventory(); // Add this line
     } catch (error) {
-        console.error("Error during mounted lifecycle:", error);
+        // console.log.error("Error during mounted lifecycle:", error);
     }
 });
 
@@ -389,7 +389,7 @@ async function fetchItemsInInventory(restaurantId) {
     const restaurantSnapshot = await getDoc(restaurantCollection);
 
     if (!restaurantSnapshot.exists()) {
-        console.log("Restaurant not found");
+        // console.log.log("Restaurant not found");
         return;
     }
 
@@ -446,7 +446,7 @@ function recalculateOULAndSS(newLevel) {
             updateChartData(selectedItem.value);
         }
     } else {
-        console.log("No calculated results available for recalculating OUL and SS.");
+        // console.log.log("No calculated results available for recalculating OUL and SS.");
     }
 }
 
@@ -469,7 +469,7 @@ async function updateChartData(item) {
 
             updateCounter.value++;
         } catch (error) {
-            console.error("Error fetching inventory data:", error);
+            // console.log.error("Error fetching inventory data:", error);
         }
     }
 }
@@ -486,7 +486,7 @@ async function main(currentUserId) {
         storedOULResults = calculateOULForAllItems(results.itemMean, results.itemSD, serviceLevel);
 
     } else {
-        console.log("No results returned.");
+        // console.log.log("No results returned.");
     }
 }
 
@@ -496,7 +496,7 @@ async function calculateMeanDemandAndSd(restaurantId) {
     const restaurantDoc = await getDoc(restaurantRef);
 
     if (!restaurantDoc.exists()) {
-        console.log("Restaurant not found");
+        // console.log.log("Restaurant not found");
         return;
     }
 
@@ -648,7 +648,7 @@ async function fetchCurrentInventory() {
             }
         }
     } catch (error) {
-        console.error("Error fetching inventory data:", error);
+        // console.log.error("Error fetching inventory data:", error);
     } finally {
         loadingTable.value = false;
     }
@@ -729,10 +729,10 @@ async function submitUpdatedLevels() {
             // alert("Inventory updated, archived, and demand recorded successfully!");
             await fetchCurrentInventory();
         } else {
-            console.error("No document found for the provided user ID:", currentUserId);
+            // console.log.error("No document found for the provided user ID:", currentUserId);
         }
     } catch (error) {
-        console.error("Error updating inventory:", error);
+        // console.log.error("Error updating inventory:", error);
         // alert("Failed to update inventory.");
         openDialog("Error", "Failed to update inventory.");
     }

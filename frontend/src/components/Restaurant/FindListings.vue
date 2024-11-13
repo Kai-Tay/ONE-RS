@@ -192,7 +192,7 @@ export default {
                 this.filteredListings = this.listings;
 
             } catch (error) {
-                console.error('Error fetching listings:', error)
+                // console.log.error('Error fetching listings:', error)
             }
             // Simulate data fetching or delay
             setTimeout(() => {
@@ -228,7 +228,7 @@ export default {
 
                 }
             } else {
-                console.log(this.searchResult)
+                // console.log.log(this.searchResult)
                 // If search is empty, revert it back to all listings
                 this.filteredListings = this.listings;
             }
@@ -238,7 +238,7 @@ export default {
         },
         performAiSearch() {
             let queryList = [];
-            console.log("Using AI Search now")
+            // console.log.log("Using AI Search now")
             // Perform AI search here by calling backend API (INSERT ACTUAL BACKEND SERVER URL)
             const url = "http://54.169.182.213/search-ai";
             axios.post(url, {
@@ -264,7 +264,7 @@ export default {
                 })
                 .catch(error => {
                     // process error object
-                    console.log(error)
+                    // console.log.log(error)
                 });
         },
     },

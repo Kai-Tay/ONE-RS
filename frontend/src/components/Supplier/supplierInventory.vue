@@ -133,7 +133,7 @@ const saveChanges = async () => {
     // Close the edit dialog manually
     isEditing.value = false;
   } catch (error) {
-    console.error('Error updating item:', error);
+    // console.log.error('Error updating item:', error);
   }
 };
 
@@ -148,7 +148,7 @@ const deleteItem = async (item) => {
 
     inventoryData.value = newInventory;
   } catch (error) {
-    console.error('Error deleting item:', error);
+    // console.log.error('Error deleting item:', error);
   }
 };
 

@@ -126,7 +126,7 @@ const addNewIngredient = async () => {
             alert('Supplier document not found.');
         }
     } catch (error) {
-        console.error("Error adding new ingredient: ", error);
+        // console.log.error("Error adding new ingredient: ", error);
         alert("Failed to add ingredient.");
     } finally {
         isLoading.value = false;

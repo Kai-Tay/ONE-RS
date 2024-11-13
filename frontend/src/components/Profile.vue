@@ -226,7 +226,7 @@ const loadUserData = async (user) => {
             }
         }
     } catch (err) {
-        console.error('Failed to load profile data:', err)
+        // console.log.error('Failed to load profile data:', err)
     } finally {
         loading.value = false
     }
@@ -263,7 +263,7 @@ const handleSubmit = async () => {
         }, 1000)
 
     } catch (err) {
-        console.error('Failed to update profile:', err)
+        // console.log.error('Failed to update profile:', err)
     } finally {
         saving.value = false
     }
@@ -286,7 +286,7 @@ const handleSubmit = async () => {
 //         showDeleteDialog.value = false
 //         router.push('/login')
 //     } catch (err) {
-//         console.error('Failed to delete account:', err)
+//         // console.log.error('Failed to delete account:', err)
 //         // You might want to show an error message to the user here
 //     } finally {
 //         saving.value = false
@@ -296,7 +296,7 @@ const handleSubmit = async () => {
 onMounted(() => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log(user)
+            // console.log.log(user)
             loadUserData(user)
         } else {
             loading.value = false

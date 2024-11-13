@@ -64,7 +64,7 @@ export default {
             // Use the actual current interval value here
             const currentInterval = this.selectedInterval; // Assuming this is stored in `selectedInterval`
             return currentInterval;
-            console.log(this.selectedInterval);
+            // console.log.log(this.selectedInterval);
         },
         nextIntervalDisplay() {
             const [year, month, interval] = this.selectedInterval.split('-').map(Number);
@@ -93,7 +93,7 @@ export default {
             this.currentInventoryLevels = {};
 
             const inventoryData = data.currentInventoryLevel[this.selectedInterval];
-            console.log(inventoryData.afterOrder);
+            // console.log.log(inventoryData.afterOrder);
 
             if (this.selectedInterval.endsWith("-5")) {
                 // Handle intervals that end with "-5"
@@ -118,13 +118,13 @@ export default {
             // Initialize `updatedLevels` to allow for user edits
             this.updatedLevels = JSON.parse(JSON.stringify(this.currentInventoryLevels));
             } else {
-                console.error("No valid interval found for the current data.");
+                // console.log.error("No valid interval found for the current data.");
             }
         } else {
-            console.error("No document found for the provided restaurant ID:", this.restaurantId);
+            // console.log.error("No document found for the provided restaurant ID:", this.restaurantId);
         }
         } catch (error) {
-            console.error("Error fetching inventory data:", error);
+            // console.log.error("Error fetching inventory data:", error);
         } finally {
             this.loadingTable = false;  // Set loading to false once the data fetching is complete
         }
@@ -194,10 +194,10 @@ export default {
 
                 alert("Inventory updated and archived successfully!");
             } else {
-                console.error("No document found for the provided restaurant ID:", this.restaurantId);
+                // console.log.error("No document found for the provided restaurant ID:", this.restaurantId);
             }
         } catch (error) {
-            console.error("Error updating inventory:", error);
+            // console.log.error("Error updating inventory:", error);
             alert("Failed to update inventory.");
         }
     }
