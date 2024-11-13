@@ -13,7 +13,7 @@ from vertexai.generative_models import GenerativeModel, Part, SafetySetting
 
 app = Flask(__name__)
 CORS(app, origins="http://localhost:5173")
-CORS(app, origins="http://oners-frontend.s3-website-ap-southeast-1.amazonaws.com")
+CORS(app, origins="http://oners.s3-website-ap-southeast-1.amazonaws.com")
 
 
 @app.route('/')

@@ -319,14 +319,20 @@ export default {
 
                     this.orderHistory.push(order);
                 }
+
+                // Sort orders by date in descending order to show the latest order at the top
+                this.orderHistory.sort((a, b) => b.date.toDate() - a.date.toDate());
+
             } catch (error) {
                 console.error("Error fetching order history:", error);
             }
+
             // Simulate data fetching or delay
             setTimeout(() => {
                 this.loading = false; // Set loading to false once data is loaded
             }, 250);
         }
+
     },
     mounted() {
         this.fetchOrderHistory();
