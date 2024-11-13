@@ -86,12 +86,31 @@
             </div>
 
             <!-- Submit Button -->
-            <button @click="submitUpdatedLevels"
+            <Button @click="submitUpdatedLevels"
                 class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition duration-150 ease-in-out">
                 Submit
-            </button>
+            </Button>
         </div>
     </div>
+
+    <Dialog :open="showDialog">
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle class="tw-text-xl">{{ status }}</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+                {{ description }}
+            </DialogDescription>
+            <DialogFooter class="sm:justify-start">
+                <DialogClose as-child>
+                    <Button type="button" variant="secondary" @click="closeDialog">
+                        Close
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    
 </template>
 
 
@@ -101,6 +120,8 @@ import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore"
 import { Card, CardContent } from './ui/card/index.js';
 import { LineChart } from '@/components/ui/chart-line';
 import { ref, watch, computed, onMounted } from 'vue';
+import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const selectedCategory = ref(null);
 const selectedItem = ref(null);
@@ -127,7 +148,23 @@ const currentInventoryLevels = ref({});
 const updatedLevels = ref({});
 const selectedInterval = ref("");
 
+// Define reactive dialog control
+const showDialog = ref(false);
+const status = ref('');
+const description = ref('');
 
+// Function to open dialog
+function openDialog(header, desc) {
+    status.value = header;
+    description.value = desc;
+    showDialog.value = true;
+    console.log("Dialog opened with:", header, desc);
+}
+
+// Function to close dialog
+function closeDialog() {
+    showDialog.value = false;
+}
 
 
 
@@ -688,14 +725,16 @@ async function submitUpdatedLevels() {
                 [`actualDemand.${currentInterval}`]: demandDifference
             });
 
-            alert("Inventory updated, archived, and demand recorded successfully!");
+            openDialog("Updated", "Inventory updated, archived, and demand recorded successfully!");
+            // alert("Inventory updated, archived, and demand recorded successfully!");
             await fetchCurrentInventory();
         } else {
             console.error("No document found for the provided user ID:", currentUserId);
         }
     } catch (error) {
         console.error("Error updating inventory:", error);
-        alert("Failed to update inventory.");
+        // alert("Failed to update inventory.");
+        openDialog("Error", "Failed to update inventory.");
     }
 }
 
