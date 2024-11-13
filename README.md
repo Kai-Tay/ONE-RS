@@ -20,7 +20,7 @@ ONE.RS is a platform that connects restaurant owners with suppliers, allowing ea
 	npm run dev
 
 3. **Run the Backend Server**  
-   Not needed at the frontend is currently connected to AWS EC2 Backend
+   Not needed as the frontend is currently connected to AWS EC2 Backend
 
 
 ## Deployment
