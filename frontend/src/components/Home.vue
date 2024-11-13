@@ -17,7 +17,7 @@ const navigateTo = (route) => {
         <Navbar v-if="$route.path === '/'" />
 
 
-        <header class="bg-gray-900 h-screen flex flex-col p-8" @click="scrollToFeatures">
+        <header class="bg-gray-900 h-screen flex flex-col p-8 cursor-pointer" @click="scrollToFeatures">
             <!-- Main content container -->
             <div class="flex h-full items-center">
                 <!-- Left side content -->
@@ -72,7 +72,7 @@ const navigateTo = (route) => {
             <section id="features" v-if="userType == 'supplier'">
                 <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
 
-                    <div class="flex flex-col justify-between bg-black text-white px-5"
+                    <div class="flex flex-col justify-between bg-black text-white px-5 cursor-pointer"
                         @click="navigateTo('/supplierInventory')" ref="listingsCard" @mouseover="hoverAnimate($event)"
                         @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 1:
@@ -93,7 +93,7 @@ const navigateTo = (route) => {
                         </div>
                     </div>
 
-                    <div class="flex flex-col justify-between px-5 bg-gray-200" ref="ordersCard"
+                    <div class="flex flex-col justify-between px-5 bg-gray-200 cursor-pointer" ref="ordersCard"
                         @click="navigateTo('/supplierOrders')" @mouseover="hoverAnimate($event)"
                         @mouseout="hoverOffAnimate($event)">
                         <h2 class="text-4xl font-bold mt-4">Step 2:
@@ -142,7 +142,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-                    <div class="bg-gray-100 px-5 flex flex-col cursor-pointer relative group overflow-hidden"
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
                         ref="aiCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">
@@ -167,7 +167,7 @@ const navigateTo = (route) => {
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 px-5 flex flex-col cursor-pointer relative group overflow-hidden"
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
                         ref="dashboardCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">Real-Time Chat Translation
@@ -195,7 +195,7 @@ const navigateTo = (route) => {
 
             <!-- Restaurant -->
             <section id="features" v-else>
-                <div class="grid grid-cols-1 md:grid-cols-3 h-screen">
+                <div class="grid grid-cols-1 md:grid-cols-3 h-screen cursor-pointer">
                     <!-- Map Image of Restaurants Connecting -->
                     <div class="flex flex-col justify-between bg-black text-white px-5" @click="navigateTo('/find')"
                         ref="findCard" @mouseover="hoverAnimate($event)" @mouseout="hoverOffAnimate($event)">
@@ -266,7 +266,7 @@ const navigateTo = (route) => {
                 </div>
 
                 <div class="h-screen grid grid-rows-2 gap-4" ref="bottomGrid">
-                    <div class="bg-gray-100 px-5 flex flex-col cursor-pointer relative group overflow-hidden"
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
                         ref="aiCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">AI Sourcing
@@ -291,7 +291,7 @@ const navigateTo = (route) => {
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 px-5 flex flex-col cursor-pointer relative group overflow-hidden"
+                    <div class="bg-gray-100 px-5 flex flex-col relative group overflow-hidden"
                         ref="dashboardCard">
                         <div class="firstFade">
                             <h2 class="hide text-4xl font-bold mt-4 flex items-center gap-4">Predictive Dashboard
