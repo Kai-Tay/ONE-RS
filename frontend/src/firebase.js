@@ -20,7 +20,7 @@ export const auth = getAuth(app);
 // Initialize Firestore (DB)
 export const db = getFirestore(app);
 
-console.log('Firebase App Initialized! 🔥');
+// console.log('Firebase App Initialized! 🔥');
 
 export default app;
 
